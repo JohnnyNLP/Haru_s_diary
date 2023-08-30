@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "540500483957",
+    "project_id": "haru-s-diary",
+    "storage_bucket": "haru-s-diary.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540500483957:android:68316ae02ac948bc9e3d3c",
+        "android_client_info": {
+          "package_name": "com.example.haru_diary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "540500483957-64lvk1jsq04gh30mo3qc5jbd990qkjo6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBR5a9hqheiSH7T--KK1llF6V4lN0_lHWY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "540500483957-64lvk1jsq04gh30mo3qc5jbd990qkjo6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "540500483957-tto5ptchs3serk2kg3oul1c46mca9jck.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.haruDiary"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
