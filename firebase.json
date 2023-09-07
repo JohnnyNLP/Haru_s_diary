@@ -1,0 +1,26 @@
+{
+  "emulators": {
+    "firestore": {
+      "host": "0.0.0.0",
+      "port": "8080"
+    },
+    "functions": {
+      "host": "0.0.0.0",
+      "port": "5001"
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "runtime": "python311",
+      "memory": "512MB",
+      "codebase": "default",
+      "ignore": [
+        "venv",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    }
+  ]
+}

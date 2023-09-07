@@ -46,3 +46,5 @@ app.*.map.json
 # custom
 *.env
 /lib/firebase_options.dart
+*.bak
+/functions/path/to/haru-s-diary-firebase-adminsdk-jom67-47ca164d79.json
