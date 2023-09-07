@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:haru_diary/custom/custom_app_bar.dart';
 import 'package:intl/intl.dart';
 
@@ -20,6 +21,7 @@ class HomeScreen2 extends StatefulWidget {
 
 class _HomeScreen2State extends State<HomeScreen2> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _authentication = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -43,7 +45,11 @@ class _HomeScreen2State extends State<HomeScreen2> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 CustomTopContainer(
-                  sIcon: Icons.home,
+                  sIcon: Icons.logout,
+                  // sText: 'Logout',
+                  sOnPressed: () {
+                    _authentication.signOut();
+                  },
                   eText: 'Edit Home',
                   eIcon: Icons.keyboard_control,
                 ),

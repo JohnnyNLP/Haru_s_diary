@@ -501,18 +501,18 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                           showSpinner = true;
                         });
                         if (isSignupScreen) {
-                          if (userPickedImage == null) {
-                            setState(() {
-                              showSpinner = false;
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Please pick your image'),
-                                backgroundColor: Colors.blue,
-                              ),
-                            );
-                            return;
-                          }
+                          // if (userPickedImage == null) {
+                          //   setState(() {
+                          //     showSpinner = false;
+                          //   });
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     SnackBar(
+                          //       content: Text('Please pick your image'),
+                          //       backgroundColor: Colors.blue,
+                          //     ),
+                          //   );
+                          //   return;
+                          // }
                           _tryValidation();
                           try {
                             final newUser = await _authentication
@@ -521,13 +521,16 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                               password: userPassword,
                             );
 
-                            final refImage = FirebaseStorage.instance
-                                .ref()
-                                .child('picked_image')
-                                .child('${newUser.user!.uid}.png');
+                            var url = '';
+                            if (userPickedImage != null) {
+                              final refImage = FirebaseStorage.instance
+                                  .ref()
+                                  .child('picked_image')
+                                  .child('${newUser.user!.uid}.png');
 
-                            await refImage.putFile(userPickedImage!);
-                            final url = await refImage.getDownloadURL();
+                              await refImage.putFile(userPickedImage!);
+                              url = await refImage.getDownloadURL();
+                            }
 
                             await FirebaseFirestore.instance
                                 .collection('user')
