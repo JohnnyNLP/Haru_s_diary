@@ -2,7 +2,7 @@ from firebase_functions import https_fn, options
 from firebase_admin import initialize_app, auth, credentials, firestore
 from flask import Flask, request
 from flask_cors import CORS
-from datetime import datetime
+import Timestamp
 
 # 환경 변수
 from dotenv import load_dotenv
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     # 일기 작성 함수 호출 => diary_prompt+log
     diary_ref = db.collection('user').document(userID).collection('diary').document(date)
-    diary_ref.set({"content": diary['text'], "time":datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'userID': userID})
+    diary_ref.set({"content": diary['text'], "time":Timestamp.now(), 'userID': userID})
 
 # 로컬 테스트용 - 감정 분석
 if __name__ == "__main__":
@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
     # 일기 작성 함수 호출 => diary_prompt+log
     sent_ref = db.collection('user').document(userID).collection('sentiment').document(date)
-    sent_ref.set({"content": sent['text'], "time":datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'userID': userID})
+    sent_ref.set({"content": sent['text'], "time":Timestamp.now(), 'userID': userID})
 
     
 
