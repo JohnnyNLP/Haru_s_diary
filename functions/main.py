@@ -2,8 +2,22 @@ from firebase_functions import https_fn, options
 from firebase_admin import initialize_app, auth, credentials, firestore
 from flask import Flask, request
 from flask_cors import CORS
-from langchain.llms import OpenAI
+from datetime import datetime
 
+# 환경 변수
+from dotenv import load_dotenv
+import os
+
+# LLM 관련
+import openai
+from langchain.chains import LLMChain
+from langchain.llms import OpenAI
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import PromptTemplate
+
+# Load .env file
+load_dotenv()
+OPENAI_API_KEY=os.getenv('GPT_API_KEY')
 cred = credentials.Certificate(
     "functions/path/to/haru-s-diary-firebase-adminsdk-jom67-47ca164d79.json"
 )
@@ -11,24 +25,46 @@ initialize_app(cred)
 app = Flask(__name__)
 CORS(app)
 
+# 유저 ID 및 날짜 받아오는 부분
+userID = 'FQgUM4cbV8hSAzqc9XiPrDh5SGm2'
+date = '20230907'
 
-# 로컬 테스트용
+# 로컬 테스트용 - 일기 작성
 if __name__ == "__main__":
     # db 접속
     db = firestore.client()
 
-    # 문서 경로 지정
-    doc_ref = db.collection("user").document("localTest")
+    # 중첩된 컬렉션과 문서에 접근
+    doc_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').order_by('time', direction=firestore.Query.ASCENDING)
 
-    # 데이터 쓰기
-    doc_ref.set({"field_name": "value", "another_field": 123})
+    # 일기 작성용 프롬프트 작성
+    doc_prompt = db.collection('prompt').document('diary')
+    diary_prompt = doc_prompt.get().to_dict()['prompt']
+    #print(diary_prompt)
 
-    # 데이터 읽기
-    doc = doc_ref.get()
-    if doc.exists:
-        print(doc._data)
-    else:
-        print("Document not found")
+    # 일기 작성 위한 로그 수집
+    log = ''
+    docs = doc_ref.stream()
+    for doc in docs:
+        if doc.to_dict()['userName'] == 'you':
+            log += 'user : '+doc.to_dict()['text']+'\n'
+        else :
+            log += 'assistant : '+doc.to_dict()['text']+'\n'
+    #print(log)
+
+    # Langchain으로 일기 작성
+    llm = ChatOpenAI(temperature=1, openai_api_key=OPENAI_API_KEY, model_name='gpt-4', max_tokens=1024)
+    llm_chain = LLMChain(
+        llm = llm,
+        prompt = PromptTemplate.from_template(diary_prompt)
+    )
+    diary = llm_chain(log)
+    #print(diary['text'])
+
+    # 일기 작성 함수 호출 => diary_prompt+log
+    diary_ref = db.collection('user').document(userID).collection('diary').document(date)
+    diary_ref.set({"content": diary['text'], "time":datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'userID': userID})
+
 
 
 @https_fn.on_call()

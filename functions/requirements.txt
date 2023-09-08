@@ -1,5 +1,0 @@
-firebase_functions
-Flask==2.3.3
-flask_cors==4.0.0
-langchain==0.0.279
-openai==0.28.0
