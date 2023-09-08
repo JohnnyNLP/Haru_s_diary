@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:haru_diary/screens/home_screen.dart';
 import 'package:haru_diary/screens/login_signup_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -26,21 +27,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => ProgressProvider(false),
-      child: MaterialApp(
-        title: 'haru_diary',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return HomeScreen2();
-            }
-            return LoginSignupScreen();
-          },
+    return ScreenUtilInit(
+      designSize: Size(360, 780),
+      builder: (context, child) => ChangeNotifierProvider(
+        create: (context) => ProgressProvider(false),
+        child: MaterialApp(
+          title: 'haru_diary',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: StreamBuilder(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return HomeScreen2();
+              }
+              return LoginSignupScreen();
+            },
+          ),
         ),
       ),
     );

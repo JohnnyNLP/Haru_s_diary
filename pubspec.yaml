@@ -45,6 +45,7 @@ dependencies:
   image_picker: ^1.0.4  # 이미지 파일 관리
   firebase_storage: ^11.2.6 # 이미지 저장
   cloud_functions: ^4.4.0 # FirebaseFunctions 사용
+  flutter_screenutil: ^5.9.0  # 일관된 UI 관리
 
   google_fonts: ^5.1.0
   shared_preferences: ^2.2.1
@@ -57,7 +58,7 @@ dependencies:
   auto_size_text: ^3.0.0
   flutter_animate: ^4.2.0+1
   percent_indicator: ^4.2.3
-
+  table_calendar: ^3.0.9
 
 
   # The following adds the Cupertino Icons font to your application.
