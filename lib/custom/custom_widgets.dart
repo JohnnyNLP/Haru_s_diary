@@ -1,3 +1,4 @@
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -66,8 +67,8 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
     Widget textWidget = loading
         ? Center(
             child: Container(
-              width: 23,
-              height: 23,
+              width: 23.w,
+              height: 23.h,
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
                   widget.options.textStyle!.color ?? Colors.white,
@@ -129,7 +130,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
         return null;
       }),
       padding: MaterialStateProperty.all(widget.options.padding ??
-          const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0)),
+          EdgeInsets.symmetric(horizontal: 8.0.w, vertical: 4.0.h)),
       elevation:
           MaterialStateProperty.all<double>(widget.options.elevation ?? 2.0),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../custom/custom_theme.dart';
 import '../screens/diary_screen.dart';
 
@@ -16,9 +17,9 @@ class Bookmarks extends StatelessWidget {
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.all(4.0),
+          padding: EdgeInsets.all(4.w),
           child: Container(
-            padding: EdgeInsetsDirectional.fromSTEB(24, 12, 24, 12),
+            padding: EdgeInsetsDirectional.fromSTEB(24.w, 12.h, 24.w, 12.h),
             width: double.infinity,
             decoration: BoxDecoration(
               color: CustomTheme.of(context).secondaryBackground,
@@ -47,7 +48,7 @@ class Bookmarks extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             ),
                       ),
-                      SizedBox(height: 4),
+                      SizedBox(height: 4.h),
                       Text(
                         title,
                         maxLines: 1,

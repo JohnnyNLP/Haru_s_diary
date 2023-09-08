@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haru_diary/custom/custom_app_bar.dart';
+import 'package:haru_diary/screens/calendar_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 
-import '../custom/custom_top_container.dart';
+import '/custom/custom_top_container.dart';
 import '/custom/custom_icon_button.dart';
 import '/custom/custom_theme.dart';
 import '/custom/custom_widgets.dart';
-import 'package:flutter/material.dart';
 
 import 'chat_screen.dart';
 import 'diary_screen.dart';
@@ -39,7 +41,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+            padding: EdgeInsetsDirectional.fromSTEB(16.w, 16.h, 16.w, 0.h),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -60,35 +62,36 @@ class _HomeScreen2State extends State<HomeScreen2> {
                 Align(
                   alignment: AlignmentDirectional(-1, 0),
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(0.w, 10.h, 0.w, 10.h),
                     child: Text(
                       '<나의 하루>',
                       style: CustomTheme.of(context).bodyMedium.override(
                             fontFamily: 'Readex Pro',
                             color: Color(0xFF394249),
-                            fontSize: 18,
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.w600,
                           ),
                     ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                  padding: EdgeInsetsDirectional.fromSTEB(0.w, 0.h, 0.w, 10.h),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Image.network(
                       'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1286&q=80',
-                      width: 243,
-                      height: 234,
+                      width: 243.w,
+                      height: 234.h,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                  padding: EdgeInsetsDirectional.fromSTEB(0.w, 0.h, 0.w, 10.h),
                   child: Container(
-                    width: 100,
-                    height: 140,
+                    width: 100.w,
+                    height: 140.h,
                     decoration: BoxDecoration(
                       color: CustomTheme.of(context).secondaryBackground,
                     ),
@@ -96,7 +99,8 @@ class _HomeScreen2State extends State<HomeScreen2> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              0.w, 10.h, 0.w, 10.h),
                           child: FFButtonWidget(
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
@@ -105,12 +109,12 @@ class _HomeScreen2State extends State<HomeScreen2> {
                             },
                             text: '대화 하기',
                             options: FFButtonOptions(
-                              width: 290,
-                              height: 50,
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                              iconPadding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                              width: 290.w,
+                              height: 50.h,
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  0.w, 0.h, 0.w, 0.h),
+                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  0.w, 0.h, 0.w, 0.h),
                               color: Color(0xFFF9DE7A),
                               textStyle:
                                   CustomTheme.of(context).titleSmall.override(
@@ -121,14 +125,15 @@ class _HomeScreen2State extends State<HomeScreen2> {
                               elevation: 2,
                               borderSide: BorderSide(
                                 color: Colors.transparent,
-                                width: 1,
+                                width: 1.w,
                               ),
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              0.w, 10.h, 0.w, 10.h),
                           child: FFButtonWidget(
                             onPressed: () {
                               print('Button pressed ...');
@@ -141,12 +146,12 @@ class _HomeScreen2State extends State<HomeScreen2> {
                             },
                             text: '오늘의 일기',
                             options: FFButtonOptions(
-                              width: 290,
-                              height: 50,
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                              iconPadding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                              width: 290.w,
+                              height: 50.h,
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  0.w, 0.h, 0.w, 0.h),
+                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  0.w, 0.h, 0.w, 0.h),
                               color: Color(0xFFF9DE7A),
                               textStyle:
                                   CustomTheme.of(context).titleSmall.override(
@@ -157,7 +162,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
                               elevation: 2,
                               borderSide: BorderSide(
                                 color: Colors.transparent,
-                                width: 1,
+                                width: 1.w,
                               ),
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -181,13 +186,13 @@ class _HomeScreen2State extends State<HomeScreen2> {
                         children: [
                           CustomIconButton(
                             borderRadius: 20,
-                            borderWidth: 1,
-                            buttonSize: 56,
+                            borderWidth: 1.w,
+                            buttonSize: 56.h,
                             fillColor: Color(0xFFFAFAFA),
                             icon: Icon(
                               Icons.menu_book_rounded,
                               color: CustomTheme.of(context).primaryText,
-                              size: 40,
+                              size: 40.h,
                             ),
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
@@ -206,15 +211,17 @@ class _HomeScreen2State extends State<HomeScreen2> {
                         children: [
                           CustomIconButton(
                             borderRadius: 20,
-                            borderWidth: 1,
-                            buttonSize: 56,
+                            borderWidth: 1.w,
+                            buttonSize: 56.h,
                             icon: Icon(
                               Icons.calendar_month,
                               color: CustomTheme.of(context).primaryText,
-                              size: 40,
+                              size: 40.h,
                             ),
                             onPressed: () {
-                              print('IconButton pressed ...');
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const CalendarScreen(),
+                              ));
                             },
                           ),
                           Text(
@@ -228,12 +235,12 @@ class _HomeScreen2State extends State<HomeScreen2> {
                           CustomIconButton(
                             borderColor: Colors.transparent,
                             borderRadius: 20,
-                            borderWidth: 1,
-                            buttonSize: 56,
+                            borderWidth: 1.w,
+                            buttonSize: 56.h,
                             icon: Icon(
                               Icons.settings_sharp,
                               color: CustomTheme.of(context).primaryText,
-                              size: 40,
+                              size: 40.h,
                             ),
                             onPressed: () {
                               print('IconButton pressed ...');
@@ -248,36 +255,6 @@ class _HomeScreen2State extends State<HomeScreen2> {
                     ],
                   ),
                 ),
-                // Padding(
-                //   padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 8),
-                //   child: Container(
-                //     decoration: BoxDecoration(),
-                //     child: Row(
-                //       mainAxisSize: MainAxisSize.max,
-                //       children: [
-                //         Padding(
-                //           padding: EdgeInsetsDirectional.fromSTEB(49, 0, 0, 0),
-                //           child: Text(
-                //             'Diary',
-                //             textAlign: TextAlign.start,
-                //             style: CustomTheme.of(context).bodyMedium,
-                //           ),
-                //         ),
-                //         Padding(
-                //           padding: EdgeInsetsDirectional.fromSTEB(51, 0, 42, 0),
-                //           child: Text(
-                //             'Calendar',
-                //             style: CustomTheme.of(context).bodyMedium,
-                //           ),
-                //         ),
-                //         Text(
-                //           'Setting',
-                //           style: CustomTheme.of(context).bodyMedium,
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),

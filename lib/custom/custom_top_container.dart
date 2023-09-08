@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'custom_icon_button.dart';
 import 'custom_theme.dart';
 
@@ -23,8 +24,8 @@ class CustomTopContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100,
-      height: 40,
+      width: 100.w,
+      height: 40.h,
       decoration: BoxDecoration(
         color: Color(0xFFFAFAFA),
       ),
@@ -37,12 +38,12 @@ class CustomTopContainer extends StatelessWidget {
               CustomIconButton(
                 borderColor: Colors.transparent,
                 borderRadius: 20,
-                buttonSize: 40,
+                buttonSize: 40.h,
                 fillColor: Color(0xFFFAFAFA),
                 icon: Icon(
                   sIcon,
                   color: CustomTheme.of(context).tertiary,
-                  size: 30,
+                  size: 30.h,
                 ),
                 onPressed: sOnPressed ?? () {},
               ),
@@ -52,7 +53,7 @@ class CustomTopContainer extends StatelessWidget {
                 style: CustomTheme.of(context).bodyMedium.override(
                       fontFamily: 'Readex Pro',
                       color: Color(0xFF66686D),
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       // fontWeight: FontWeight.w600,
                     ),
               ),
@@ -65,7 +66,7 @@ class CustomTopContainer extends StatelessWidget {
                   style: CustomTheme.of(context).bodyMedium.override(
                         fontFamily: 'Readex Pro',
                         color: Color(0xFF66686D),
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         // fontWeight: FontWeight.w600,
                       ),
                 ),
@@ -73,12 +74,12 @@ class CustomTopContainer extends StatelessWidget {
                 CustomIconButton(
                   borderColor: Colors.transparent,
                   borderRadius: 20,
-                  buttonSize: 40,
+                  buttonSize: 40.h,
                   fillColor: Color(0xFFFAFAFA),
                   icon: Icon(
                     eIcon,
                     color: CustomTheme.of(context).tertiary,
-                    size: 29,
+                    size: 29.h,
                   ),
                   onPressed: eOnPressed ?? () {},
                 ),

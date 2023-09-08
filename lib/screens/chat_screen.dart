@@ -10,8 +10,6 @@ import '../custom/custom_theme.dart';
 import '../custom/custom_top_container.dart';
 import '/chat/new_message.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:provider/provider.dart';
-import '/provider/progress_provider.dart';
 import 'package:intl/intl.dart';
 
 class ChatScreen extends StatefulWidget {

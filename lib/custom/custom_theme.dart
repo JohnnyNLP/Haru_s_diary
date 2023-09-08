@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,79 +51,91 @@ abstract class CustomTheme {
         'Poppins',
         color: primaryText,
         fontWeight: FontWeight.w600,
-        fontSize: 24,
+        fontSize: 24.sp,
       );
   TextStyle get title2 => GoogleFonts.getFont(
         'Poppins',
         color: secondaryText,
         fontWeight: FontWeight.w600,
-        fontSize: 22,
+        fontSize: 22.sp,
       );
   TextStyle get title3 => GoogleFonts.getFont(
         'Poppins',
         color: primaryText,
         fontWeight: FontWeight.w600,
-        fontSize: 20,
+        fontSize: 20.sp,
       );
   TextStyle get subtitle1 => GoogleFonts.getFont(
         'Poppins',
         color: primaryText,
         fontWeight: FontWeight.w600,
-        fontSize: 18,
+        fontSize: 18.sp,
       );
   TextStyle get subtitle2 => GoogleFonts.getFont(
         'Poppins',
         color: secondaryText,
         fontWeight: FontWeight.w600,
-        fontSize: 16,
+        fontSize: 16.sp,
       );
   TextStyle get bodyText1 => GoogleFonts.getFont(
         'Poppins',
         color: primaryText,
         fontWeight: FontWeight.w600,
-        fontSize: 14,
+        fontSize: 14.sp,
       );
   TextStyle get bodyText2 => GoogleFonts.getFont(
         'Poppins',
         color: secondaryText,
         fontWeight: FontWeight.w600,
-        fontSize: 14,
+        fontSize: 14.sp,
       );
   TextStyle get headlineSmall => GoogleFonts.getFont(
         'Poppins',
         color: primaryText,
         fontWeight: FontWeight.w400,
-        fontSize: 24,
+        fontSize: 24.sp,
       );
   TextStyle get headlineMedium => GoogleFonts.getFont(
         'Poppins',
         color: primaryText,
         fontWeight: FontWeight.w400,
-        fontSize: 28,
+        fontSize: 28.sp,
       );
   TextStyle get titleSmall => GoogleFonts.getFont(
         'Poppins',
         color: Colors.white,
         fontWeight: FontWeight.w500,
-        fontSize: 14,
+        fontSize: 14.sp,
       );
   TextStyle get bodySmall => GoogleFonts.getFont(
         'Poppins',
         color: primaryText,
         fontWeight: FontWeight.w400,
-        fontSize: 12,
+        fontSize: 12.sp,
       );
   TextStyle get bodyMedium => GoogleFonts.getFont(
         'Poppins',
         color: primaryText,
         fontWeight: FontWeight.w400,
-        fontSize: 14,
+        fontSize: 14.sp,
       );
   TextStyle get displaySmall => GoogleFonts.getFont(
         'Poppins',
         color: primaryText,
         fontWeight: FontWeight.w400,
-        fontSize: 36,
+        fontSize: 36.sp,
+      );
+  TextStyle get labelLarge => GoogleFonts.getFont(
+        'Secondary Family',
+        color: secondaryText,
+        fontWeight: FontWeight.w400,
+        fontSize: 16.sp,
+      );
+  TextStyle get labelMedium => GoogleFonts.getFont(
+        'Secondary Family',
+        color: secondaryText,
+        fontWeight: FontWeight.w400,
+        fontSize: 14.sp,
       );
 }
 
