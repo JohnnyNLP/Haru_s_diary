@@ -35,16 +35,16 @@ if __name__ == "__main__":
     db = firestore.client()
 
     # 중첩된 컬렉션과 문서에 접근
-    doc_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').order_by('time', direction=firestore.Query.ASCENDING)
+    log_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').order_by('time', direction=firestore.Query.ASCENDING)
 
     # 일기 작성용 프롬프트 작성
-    doc_prompt = db.collection('prompt').document('diary')
-    diary_prompt = doc_prompt.get().to_dict()['prompt']
+    diary_prompt_ref = db.collection('prompt').document('diary')
+    diary_prompt = diary_prompt_ref.get().to_dict()['prompt']
     #print(diary_prompt)
 
     # 일기 작성 위한 로그 수집
     log = ''
-    docs = doc_ref.stream()
+    docs = log_ref.stream()
     for doc in docs:
         if doc.to_dict()['userName'] == 'you':
             log += 'user : '+doc.to_dict()['text']+'\n'
@@ -64,6 +64,44 @@ if __name__ == "__main__":
     # 일기 작성 함수 호출 => diary_prompt+log
     diary_ref = db.collection('user').document(userID).collection('diary').document(date)
     diary_ref.set({"content": diary['text'], "time":datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'userID': userID})
+
+# 로컬 테스트용 - 감정 분석
+if __name__ == "__main__":
+    # db 접속
+    db = firestore.client()
+
+    # 중첩된 컬렉션과 문서에 접근
+    log_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').order_by('time', direction=firestore.Query.ASCENDING)
+
+    # 감정 분석용 프롬프트 작성
+    sent_prompt_ref = db.collection('prompt').document('sentiment')
+    sent_prompt = sent_prompt_ref.get().to_dict()['prompt']
+    # print(sent_prompt)
+
+    # 감정 분석 위한 로그 수집
+    log = ''
+    docs = log_ref.stream()
+    for doc in docs:
+        if doc.to_dict()['userName'] == 'you':
+            log += 'user : '+doc.to_dict()['text']+'\n'
+        else :
+            log += 'assistant : '+doc.to_dict()['text']+'\n'
+    # print(log)
+
+    # Langchain으로 감정 분석
+    llm = ChatOpenAI(temperature=0, openai_api_key=OPENAI_API_KEY, model_name='gpt-4', max_tokens=1024)
+    llm_chain = LLMChain(
+        llm = llm,
+        prompt = PromptTemplate.from_template(sent_prompt)
+    )
+    sent = llm_chain(log)
+    # print(sent['text'])
+
+    # 일기 작성 함수 호출 => diary_prompt+log
+    sent_ref = db.collection('user').document(userID).collection('sentiment').document(date)
+    sent_ref.set({"content": sent['text'], "time":datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'userID': userID})
+
+    
 
 
 
