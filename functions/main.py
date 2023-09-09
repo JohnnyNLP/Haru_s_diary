@@ -168,7 +168,7 @@ def defaultOpenAI(req: https_fn.CallableRequest):
     
     ## 반말로 output 고정
     informal_korean = ChatOpenAI(
-    openai_api_key=OPENAI_API_KEY,
+    openai_api_key=api_key,
     temperature=1,
     model='gpt-3.5-turbo'
     )
