@@ -24,16 +24,16 @@ from langchain.callbacks import get_openai_callback
 load_dotenv()
 OPENAI_API_KEY=os.getenv('GPT_API_KEY')
 
-# current_script_directory = os.path.dirname(os.path.abspath(__name__))
+current_script_directory = os.path.dirname(os.path.abspath(__name__))
 
-# # 서비스 계정 키 파일의 상대 경로
-# relative_path_to_keyfile = "haru-s-diary-firebase-adminsdk-jom67-47ca164d79.json"
+# 서비스 계정 키 파일의 상대 경로
+relative_path_to_keyfile = "haru-s-diary-firebase-adminsdk-jom67-47ca164d79.json"
 
-# # 서비스 계정 키 파일을 포함한 전체 경로
-# keyfile_path = os.path.join(current_script_directory, relative_path_to_keyfile)
+# 서비스 계정 키 파일을 포함한 전체 경로
+keyfile_path = os.path.join(current_script_directory, relative_path_to_keyfile)
 
-# # credentials.Certificate()로 Firebase Admin SDK 초기화
-# cred = credentials.Certificate(keyfile_path)
+# credentials.Certificate()로 Firebase Admin SDK 초기화
+cred = credentials.Certificate(keyfile_path)
 
 cred = credentials.Certificate(
     "funtions/path/to/haru-s-diary-firebase-adminsdk-jom67-47ca164d79.json"
@@ -118,88 +118,63 @@ if __name__ == "__main__":
     sent_ref = db.collection('user').document(userID).collection('sentiment').document(date)
     sent_ref.set({"content": sent['text'], "time":Timestamp.now(), 'userID': userID})
 
-    
+### Client 에서 받아야할 data
+# userID = 'Puv6AjEOLTV5TsxTtVkCLCq961D3'
+# date = '20230909'
+# chat_template = "You are user's close friend named '오하루' who is good at psychological counseling. You are chatting with your friend for Cognitive behavioural therapy in informal Korean. Respond within maximum 10 tokens. Respond in a friendly, gentle and sweet tone. If the user have a day, respond with empathy. If you know enough details of user's day, give advice. If your friend feel better, ask any positive questions. Use one appropriate emoticons in 30 percents of your total answers. When user expresses their interest, ask a detailed question about the topic. When answering, do not use the same expressions twice. Greet your friend first with 'How was your today?'. Current conversation: {history} user: {input} AI:"
+# informal_template = "You have good comprehension in Korean if the sentence is informal.If {AIoutput} is formal Korean, change it into informal Korean:"
+# #user_message = req.data['prompt']
+# db = firestore.client()
+# history = db.collection('user').document(userID).collection('chat').document(date)['memory']
 
-# Chat
 @https_fn.on_call()
 def defaultOpenAI(req: https_fn.CallableRequest):
-    # ID 토큰 가져오기
-    # id_token = request.headers.get("Authorization").split("Bearer ")[1]
-    # ID 토큰 검증
-    # try:
-    #     decoded_token = auth.verify_id_token(id_token)
-    #     uid = decoded_token["uid"]
-    # except ValueError:
-    #     return {"body": "Unauthenticated", "statusCode": 401}
+    userID = req.data["userID"]
+    date = req.data["date"]
+    user_message = req.data["prompt"] 
+    chat_template = req.data["chat_template"] 
+    informal_template = req.data['informal_template']
+    history = req.data['history']
 
-    # 클라이어트 요청에서 받아온 데이터
-    
-    db = firestore.Client()
-    uid = req.auth.uid
-    chat_ref = db.collection("user").document(uid).collection('chat')
-    chat_message = chat_ref.document("20230908").collection("conversation").orderBy("time", "asc")
-    conversations = chat_message.stream()
-    history = ""
-    for conversation in conversations:
-        if conversation.to_dict()['userName'] == '오하루':
-            text = conversation.to_dict().get("text", "")
-            history += f"AI: {text}\n"
-        else : 
-            text = conversation.to_dict().get("text", "")
-            history += f"user: {text}\n"
-    
-    api_key = req.data["api_key"]
-    prompt = req.data["prompt"] # ???? 내용이 확인이 안됨
-
-    ## chat-langchain
+    # LLM
     chat = ChatOpenAI(
-    openai_api_key=api_key,
+    openai_api_key=OPENAI_API_KEY,
     temperature=1,
     model='gpt-3.5-turbo'
     )
-    chat_template = db.collection('prompt').document('chat')
-    chat_prompt = PromptTemplate(input_variables=['history', 'input'], template=chat_template)
-    conversation = ConversationChain(
-    prompt=chat_prompt,
-    llm=chat,
-    memory=ConversationSummaryBufferMemory(llm=chat),
-    output_key="AIoutput"
-    )
-    
-    ## 반말로 output 고정
     informal_korean = ChatOpenAI(
-    openai_api_key=api_key,
+    openai_api_key=OPENAI_API_KEY,
     temperature=1,
     model='gpt-3.5-turbo'
     )
+    memory = ConversationSummaryBufferMemory(llm=chat, max_token_limit=40)
 
-    informal_template = db.collection('prompt').document('informal')
+    # Prompt
+    PROMPT_chat = PromptTemplate(input_variables=['history', 'input'], template=chat_template)
     PROMPT_informal = PromptTemplate(input_variables=['AIoutput'], template=informal_template)
-    informal_output = LLMChain(
-    prompt=PROMPT_informal,
-    llm = informal_korean,
+
+    # Chain
+    conversation = ConversationChain(
+    prompt=PROMPT_chat,
+    llm = chat,
+    memory = memory,
+    output_key="AIoutput",
+    verbose=True
     )
+    informal_output = LLMChain(
+        prompt=PROMPT_informal,
+        llm = informal_korean,
+        output_key="final_output",
+        verbose=True
+    )   
 
-    ### chain+model 실행 -> return 값
-    user_meg = req.data.get("text", "")
-    response = conversation.run({
-    'history': history,
-    'input': user_meg
-    })
-    final_output = informal_output.run(response)
-    return {"body": final_output, "statusCode": 200}
+    # AI 답변 생성
+    final_AI = informal_output.run(conversation.run({'history':history, 'input': user_message}))
     
+    # DB로 저장되어야 하는 데이터
+    db.collection('user').document(userID).collection('chat').document(date)['memory'] = memory.load_memory_variables({})['history']
 
-
-
-
-    # # langchain 사용 코드
-    # llm = ChatOpenAI(openai_api_key=api_key, temperature=1)
-    # body = llm(prompt)
-
-    # # .......
-
-    # return {"body": body, "statusCode": 200}
+    return {'body' : final_AI,  "statusCode": 200}
 
 
 @https_fn.on_request(
