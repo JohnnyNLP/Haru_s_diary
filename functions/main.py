@@ -2,6 +2,7 @@ from firebase_functions import https_fn, options
 from firebase_admin import initialize_app, auth, credentials, firestore
 from flask import Flask, request
 from flask_cors import CORS
+import Timestamp
 from google.cloud import firestore
 
 # 환경 변수
