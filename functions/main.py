@@ -5,7 +5,6 @@ from flask_cors import CORS
 from google.cloud import firestore
 from google.cloud.firestore import SERVER_TIMESTAMP
 
-
 # 환경 변수
 from dotenv import load_dotenv
 import os
@@ -21,36 +20,18 @@ from langchain.chains import LLMChain, ConversationChain
 from langchain.chains.conversation.memory import ConversationSummaryBufferMemory
 from langchain.callbacks import get_openai_callback
 
-
-# Load .env file
-load_dotenv()
-OPENAI_API_KEY=os.getenv('GPT_API_KEY')
-
-current_script_directory = os.path.dirname(os.path.abspath(__name__))
-
-# 서비스 계정 키 파일의 상대 경로
-relative_path_to_keyfile = "haru-s-diary-firebase-adminsdk-jom67-47ca164d79.json"
-
-# 서비스 계정 키 파일을 포함한 전체 경로
-keyfile_path = os.path.join(current_script_directory, relative_path_to_keyfile)
-
-# credentials.Certificate()로 Firebase Admin SDK 초기화
-cred = credentials.Certificate(keyfile_path)
-
 cred = credentials.Certificate(
-    "funtions/path/to/haru-s-diary-firebase-adminsdk-jom67-47ca164d79.json"
+    "path/to/haru-s-diary-firebase-adminsdk-jom67-47ca164d79.json"
 )
 initialize_app(cred)
 app = Flask(__name__)
 CORS(app)
 
-# 유저 ID 및 날짜 받아오는 부분
-userID = 'FQgUM4cbV8hSAzqc9XiPrDh5SGm2'
-date = '20230907'
-
-# 로컬 테스트용 - 일기 작성
-if __name__ == "__main__":
-    # db 접속
+@https_fn.on_call()
+def writeDiary(req: https_fn.CallableRequest):
+    OPENAI_API_KEY=req.data["OPENAI_API_KEY"]
+    userID = req.data["userID"] 
+    date = req.data["date"] 
     db = firestore.client()
 
     # 중첩된 컬렉션과 문서에 접근
@@ -84,9 +65,11 @@ if __name__ == "__main__":
     diary_ref = db.collection('user').document(userID).collection('diary').document(date)
     diary_ref.set({"content": diary['text'], "time":SERVER_TIMESTAMP, 'userID': userID})
 
-# 로컬 테스트용 - 감정 분석
-if __name__ == "__main__":
-    # db 접속
+@https_fn.on_call()
+def sentAnal(req: https_fn.CallableRequest):
+    OPENAI_API_KEY=req.data["OPENAI_API_KEY"]
+    userID = req.data["userID"] 
+    date = req.data["date"] 
     db = firestore.client()
 
     # 중첩된 컬렉션과 문서에 접근
@@ -129,16 +112,15 @@ if __name__ == "__main__":
 # history = db.collection('user').document(userID).collection('chat').document(date)['memory']
 # cf) db = firestore.client()
 @https_fn.on_call()
-def ChatAI(req: https_fn.CallableRequest):
+def defaultOpenAI(req: https_fn.CallableRequest):
+    OPENAI_API_KEY=req.data["OPENAI_API_KEY"]
     db = firestore.client()
     userID = req.data["userID"] 
     date = req.data["date"] 
     user_message = req.data["prompt"] # 사용자 입력값
     chat_template = req.data["chat_template"] # db.collection('prompt').document('chat').get().to_dict()['prompt']
     informal_template = req.data['informal_template'] # db.collection('prompt').document('informal').get().to_dict()['prompt']
-    
-    # 함수 안에서 호출
-    memory = db.collection('user').document(userID).collection('chat').document(date).get().to_dict()['memory']
+    memory = req.data['memory'] # db.collection('user').document(userID).collection('chat').document(date).get().to_dict()['memory']
 
     # LLM
     chat = ChatOpenAI(
@@ -189,17 +171,3 @@ def ChatAI(req: https_fn.CallableRequest):
     conversation_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').add(data)
 
     return {'body' : final_AI,  "statusCode": 200}
-
-
-@https_fn.on_request(
-    cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"])
-)
-def requestOpenAI(req: https_fn.Request) -> https_fn.Response:
-    data = request.json
-
-    api_key = data.get("api_key")
-    prompt = data.get("prompt")
-
-    llm = OpenAI(openai_api_key=api_key, temperature=0.9)
-
-    return https_fn.Response(f"{llm(prompt)}")
