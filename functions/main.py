@@ -32,7 +32,7 @@ def writeDiary(req: https_fn.CallableRequest):
     OPENAI_API_KEY=req.data["OPENAI_API_KEY"]
     userID = req.data["userID"] 
     date = req.data["date"] 
-    db = firestore.client()
+    db = firestore.Client()
 
     # 중첩된 컬렉션과 문서에 접근
     log_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').order_by('time', direction=firestore.Query.ASCENDING)
@@ -70,7 +70,7 @@ def sentAnal(req: https_fn.CallableRequest):
     OPENAI_API_KEY=req.data["OPENAI_API_KEY"]
     userID = req.data["userID"] 
     date = req.data["date"] 
-    db = firestore.client()
+    db = firestore.Client()
 
     # 중첩된 컬렉션과 문서에 접근
     log_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').order_by('time', direction=firestore.Query.ASCENDING)
@@ -114,7 +114,7 @@ def sentAnal(req: https_fn.CallableRequest):
 @https_fn.on_call()
 def ChatAI(req: https_fn.CallableRequest):
     OPENAI_API_KEY=req.data["OPENAI_API_KEY"]
-    db = firestore.client()
+    db = firestore.Client()
     userID = req.data["userID"] 
     date = req.data["date"] 
     user_message = req.data["prompt"] # 사용자 입력값
