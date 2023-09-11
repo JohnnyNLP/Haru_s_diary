@@ -112,7 +112,7 @@ def sentAnal(req: https_fn.CallableRequest):
 # history = db.collection('user').document(userID).collection('chat').document(date)['memory']
 # cf) db = firestore.client()
 @https_fn.on_call()
-def defaultOpenAI(req: https_fn.CallableRequest):
+def ChatAI(req: https_fn.CallableRequest):
     OPENAI_API_KEY=req.data["OPENAI_API_KEY"]
     db = firestore.client()
     userID = req.data["userID"] 
@@ -120,7 +120,7 @@ def defaultOpenAI(req: https_fn.CallableRequest):
     user_message = req.data["prompt"] # 사용자 입력값
     chat_template = req.data["chat_template"] # db.collection('prompt').document('chat').get().to_dict()['prompt']
     informal_template = req.data['informal_template'] # db.collection('prompt').document('informal').get().to_dict()['prompt']
-    memory = req.data['memory'] # db.collection('user').document(userID).collection('chat').document(date).get().to_dict()['memory']
+    memory = db.collection('user').document(userID).collection('chat').document(date).get().to_dict()['memory']
 
     # LLM
     chat = ChatOpenAI(
