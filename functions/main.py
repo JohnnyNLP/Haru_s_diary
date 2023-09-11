@@ -181,7 +181,7 @@ def defaultOpenAI(req: https_fn.CallableRequest):
     data = {
         "text":final_AI,
         "time":Timestamp.now(),
-        'userID': userID,
+        'userID': "gpt-3.5-turbo",
         "userName": "오하루"
         }
     conversation_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').add(data)
