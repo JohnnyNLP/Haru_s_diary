@@ -186,7 +186,7 @@ def defaultOpenAI(req: https_fn.CallableRequest):
         }
     conversation_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').add(data)
 
-    return {'body' : conversation_ref,  "statusCode": 200}
+    return {'body' : final_AI,  "statusCode": 200}
 
 
 @https_fn.on_request(
