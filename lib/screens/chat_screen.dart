@@ -63,16 +63,20 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void getConversation() async {
-    conversation = <Map<String, String>>[];
-    final QuerySnapshot<Map<String, dynamic>> firstSnapshot =
-        await userChatStream!.first;
-    for (QueryDocumentSnapshot doc in firstSnapshot.docs
-        .sublist(0, min(100, firstSnapshot.docs.length))
-        .reversed) {
-      conversation!.add({
-        'role': doc['userID'] == 'gpt-3.5-turbo' ? 'assistant' : 'user',
-        'content': '${doc['text']}'
-      });
+    try {
+      conversation = <Map<String, String>>[];
+      final QuerySnapshot<Map<String, dynamic>> firstSnapshot =
+          await userChatStream!.first;
+      for (QueryDocumentSnapshot doc in firstSnapshot.docs
+          .sublist(0, min(100, firstSnapshot.docs.length))
+          .reversed) {
+        conversation!.add({
+          'role': doc['userID'] == 'gpt-3.5-turbo' ? 'assistant' : 'user',
+          'content': '${doc['text']}'
+        });
+      }
+    } catch (e) {
+      print(e);
     }
   }
 

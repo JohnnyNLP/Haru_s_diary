@@ -28,10 +28,10 @@ class GptApiClass {
       },
     ];
     final send = initMessage + messages;
-    print(send);
+
     final headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $_apiKey',
+      'Authorization': 'Bearer ${_apiKey}',
     };
     final body = jsonEncode({
       'model': _model,
@@ -39,19 +39,23 @@ class GptApiClass {
       'max_tokens': _max_tokens,
     });
 
-    final response = await http.post(
-      Uri.parse('https://api.openai.com/v1/chat/completions'),
-      headers: headers,
-      body: body,
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data =
-          jsonDecode(utf8.decode(response.bodyBytes));
-      print(data);
-      return data['choices'][0]['message']['content'];
-    } else {
-      return 'Error: ${response.body}';
+    try {
+      final response = await http.post(
+        Uri.parse('https://api.openai.com/v1/chat/completions'),
+        headers: headers,
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data =
+            jsonDecode(utf8.decode(response.bodyBytes));
+        print(data);
+        return data['choices'][0]['message']['content'];
+      } else {
+        return '관리자에게 문의하시기 바랍니다.\n[Error: ${response.body}]';
+      }
+    } catch (e) {
+      // print(e);
+      return '관리자에게 문의하시기 바랍니다.\n[Exception: ${e}]';
     }
   }
 
@@ -67,7 +71,7 @@ class GptApiClass {
       },
     ];
     final send = initMessage + messages;
-    print(send);
+
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $_apiKey',

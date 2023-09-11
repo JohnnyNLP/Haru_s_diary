@@ -1,3 +1,5 @@
+import '../custom/custom_app_bar.dart';
+import '../custom/custom_top_container.dart';
 import '/Custom/Custom_calendar.dart';
 import '/Custom/Custom_theme.dart';
 import '/Custom/Custom_widgets.dart';
@@ -26,26 +28,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Color(0xFFFAFAFA),
-        appBar: AppBar(
-          backgroundColor: Color(0xFFF9DE7A),
-          automaticallyImplyLeading: false,
-          title: Align(
-            alignment: AlignmentDirectional(-1, 0),
-            child: Text(
-              'Calendar',
-              textAlign: TextAlign.start,
-              style: CustomTheme.of(context).headlineMedium.override(
-                    fontFamily: 'Outfit',
-                    color: Color(0xFF394249),
-                    fontSize: 22.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-          ),
-          actions: [],
-          centerTitle: false,
-          elevation: 2,
-        ),
+        appBar: CustomAppBar(text: 'Calendar'),
         body: SafeArea(
           top: true,
           child: Padding(
@@ -54,55 +37,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  width: 100.w,
-                  height: 41.h,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFAFAFA),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      FFButtonWidget(
-                        onPressed: () {
-                          print('Button pressed ...');
-                        },
-                        text: '',
-                        icon: Icon(
-                          Icons.chevron_left_outlined,
-                          color: CustomTheme.of(context).tertiary,
-                          size: 36,
-                        ),
-                        options: FFButtonOptions(
-                          width: 42.w,
-                          height: 51.h,
-                          padding: EdgeInsetsDirectional.fromSTEB(
-                              4.w, 0.h, 0.w, 0.h),
-                          iconPadding: EdgeInsetsDirectional.fromSTEB(
-                              0.w, 0.h, 0.w, 0.h),
-                          color: Color(0xFFFAFAFA),
-                          textStyle:
-                              CustomTheme.of(context).titleSmall.override(
-                                    fontFamily: 'Readex Pro',
-                                    color: Color(0xFFFAFAFA),
-                                  ),
-                          borderSide: BorderSide(
-                            color: Colors.transparent,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      Text(
-                        'Back',
-                        style: CustomTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Readex Pro',
-                              color: Color(0xFF394249),
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                    ],
-                  ),
+                CustomTopContainer(
+                  sText: 'Back',
+                  sIcon: Icons.chevron_left_outlined,
+                  sOnPressed: () {
+                    Navigator.pop(context);
+                  },
+                  // eText: 'Edit Home',
+                  // eIcon: Icons.keyboard_control,
                 ),
                 Divider(
                   thickness: 2,

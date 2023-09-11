@@ -91,10 +91,12 @@ class _DiaryScreenState extends State<DiaryScreen> {
       _toggleLoading();
     } else {
       documentSnapshot = await diaryRef!.get();
-      Map<String, dynamic> diary =
-          documentSnapshot.data() as Map<String, dynamic>;
-      _titleController.text = diary['title'] ?? 'No title';
-      _contentController.text = diary['content'] ?? 'No content';
+      if (documentSnapshot.data() != null) {
+        Map<String, dynamic> diary =
+            documentSnapshot.data() as Map<String, dynamic>;
+        _titleController.text = diary['title'] ?? 'No title';
+        _contentController.text = diary['content'] ?? 'No content';
+      }
     }
   }
 
