@@ -128,11 +128,15 @@ def ChatAI(req: https_fn.CallableRequest):
     userID = req.data["userID"] 
     date = req.data["date"] 
     user_message = req.data["prompt"] # 사용자 입력값
-    chat_template = req.data["chat_template"] # db.collection('prompt').document('chat').get().to_dict()['prompt']
-    informal_template = req.data['informal_template'] # db.collection('prompt').document('informal').get().to_dict()['prompt']
+
+    # prompt_content(all)
+    chat_template = req.data["chat_template"] 
+    informal_template = req.data['informal_template'] 
+
+    # memory
     memory = db.collection('user').document(userID).collection('chat').document(date).get()
     # memory 데이터 필드 null 체크 추가
-    memory = memory.to_dict()['memory'] if memory.exists else ''
+    history = memory.to_dict()['memory'] if memory.exists else ''
 
     # LLM
     chat = ChatOpenAI(
@@ -167,11 +171,11 @@ def ChatAI(req: https_fn.CallableRequest):
     )   
 
     # AI 답변 생성
-    final_AI = informal_output.run(conversation.run({'history':memory, 'input': user_message}))
+    final_AI = informal_output.run(conversation.run({'history':history, 'input': user_message}))
     
     # DB로 저장되어야 하는 데이터
     memory_ref = db.collection('user').document(userID).collection('chat').document(date)
-    new_history = memory.load_memory_variables({})['history']
+    new_history = memory_LLM.load_memory_variables({})['history']
     memory_ref.update({"memory": new_history})
     # AI 답변도 DB로 저장
     data = {
