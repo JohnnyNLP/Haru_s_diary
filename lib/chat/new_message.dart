@@ -3,15 +3,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '/api/gpt_api.dart';
+import 'package:haru_diary/api/functions.dart';
 import 'package:provider/provider.dart';
 import '/provider/progress_provider.dart';
 
 class NewMessage extends StatefulWidget {
-  const NewMessage(this.collectionPath, this.userChatStream, {super.key});
+  const NewMessage(this.collectionPath, this.userChatStream, this.date,
+      {super.key});
 
   final String collectionPath;
   final Stream<QuerySnapshot<Map<String, dynamic>>> userChatStream;
+  final String date;
 
   @override
   State<NewMessage> createState() => _NewMessageState();
@@ -50,12 +52,22 @@ class _NewMessageState extends State<NewMessage> {
     return conversation;
   }
 
-  void _gptMessage([msg]) async {
-    final pp = Provider.of<ProgressProvider>(context, listen: false);
-    pp.setProgress(
-        true); //  todo: message.dart의 CircularProgressIndicator와 겹침 해결 필요
-    final request = msg == null ? await getConversation() : msg;
-    final message = await GptApiClass().sendMessage(request);
+  void _gptMessage(msg) async {
+    // final pp = Provider.of<ProgressProvider>(context, listen: false);
+    // pp.setProgress(
+    //     true); //  todo: message.dart의 CircularProgressIndicator와 겹침 해결 필요
+
+    final prompt = msg == null ? '먼저 인사해줘' : msg;
+    final message = await func.haruChat(
+      prompt,
+      widget.date,
+      Provider.of<ProgressProvider>(context, listen: false)
+          .prefs!
+          .getString('chatTemplate'),
+      Provider.of<ProgressProvider>(context, listen: false)
+          .prefs!
+          .getString('imformalTemplate'),
+    );
 
     FirebaseFirestore.instance.collection(widget.collectionPath).add({
       'text': message,
@@ -63,25 +75,26 @@ class _NewMessageState extends State<NewMessage> {
       'userID': 'gpt-3.5-turbo',
       'userName': '오하루',
     });
-    pp.setProgress(false);
+    // pp.setProgress(false);
   }
 
   void _sendMessage() async {
-    FocusScope.of(context).unfocus();
-    final user = FirebaseAuth.instance.currentUser;
-    final userData = await FirebaseFirestore.instance
-        .collection('user')
-        .doc(user!.uid)
-        .get();
-    FirebaseFirestore.instance.collection(widget.collectionPath).add({
-      'text': _userEnterMessage,
-      'time': Timestamp.now(),
-      'userID': user.uid,
-      'userName': userData.data()!['userName'],
-      'userImage': userData['picked_image'],
-    });
-    _controller.clear();
-    _gptMessage();
+    _gptMessage(_userEnterMessage);
+    // FocusScope.of(context).unfocus();
+    // final user = FirebaseAuth.instance.currentUser;
+    // final userData = await FirebaseFirestore.instance
+    //     .collection('user')
+    //     .doc(user!.uid)
+    //     .get();
+    // FirebaseFirestore.instance.collection(widget.collectionPath).add({
+    //   'text': _userEnterMessage,
+    //   'time': Timestamp.now(),
+    //   'userID': user.uid,
+    //   'userName': userData.data()!['userName'],
+    //   'userImage': userData['picked_image'],
+    // });
+    // _controller.clear();
+    // _gptMessage(_userEnterMessage);
   }
 
   @override

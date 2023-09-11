@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
 
 class Functions {
   // 필드, 생성자, 메서드 등
@@ -26,14 +23,19 @@ class Functions {
     _functionsForProd = FirebaseFunctions.instanceFor();
   }
 
-  // on_call() 방식 호출
-  Future<String> defaultOpenAI(prompt) async {
+  Future<String> haruChat(
+      prompt, date, chat_template, informal_template) async {
     try {
-      // _functionsForProd.useFunctionsEmulator('172.30.1.42', 5001); // 에뮬 사용
-      HttpsCallable callable = _functionsForProd.httpsCallable('defaultOpenAI');
+      print([prompt, date, chat_template, informal_template]);
+      _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
+      HttpsCallable callable = _functionsForProd.httpsCallable('ChatAI');
       final response = await callable.call(<String, dynamic>{
-        'api_key': dotenv.env['GPT_API_KEY'].toString(),
+        'userID': FirebaseAuth.instance.currentUser!.uid,
+        'date': date,
         'prompt': prompt,
+        'chat_template': chat_template,
+        'informal_template': informal_template,
+        'OPENAI_API_KEY': dotenv.env['GPT_API_KEY'].toString(),
         'push': true,
       });
       if (response.data['statusCode'] == 200) {
@@ -48,30 +50,27 @@ class Functions {
     }
   }
 
-  // on_request 방식 호출
-  void requestOpenAI(prompt) async {
-    final token = await FirebaseAuth.instance.currentUser!.getIdToken();
+  // functions 호출용 테스트 함수
+  Future<String> testFunction(functionName, keyValue) async {
     try {
-      final response = await http.post(
-        Uri.parse(
-            // 'http://172.30.1.42:5001/haru-s-diary/us-central1/requestOpenAI'),
-            'https://requestopenai-qu6gkckzzq-uc.a.run.app'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer ${token!}',
-        },
-        body: jsonEncode({
-          'api_key': dotenv.env['GPT_API_KEY'].toString(),
-          'prompt': prompt,
-        }),
-      );
-      if (response.statusCode == 200) {
-        print('Server Response: ${response.body}');
+      _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
+      // _functionsForProd.useFunctionsEmulator('172.30.1.42', 5001); // 에뮬 사용
+      HttpsCallable callable = _functionsForProd.httpsCallable(functionName);
+      final fixed = <String, dynamic>{
+        'userID': FirebaseAuth.instance.currentUser!.uid,
+        'api_key': dotenv.env['GPT_API_KEY'].toString(),
+        'push': true,
+      };
+      final response = await callable.call({...fixed, ...keyValue});
+      if (response.data['statusCode'] == 200) {
+        return response.data['body'];
       } else {
-        print('Error with the request: ${response.statusCode}');
+        return '${response.data['statusCode']} error: ${response.data['body']}';
       }
+    } on FirebaseFunctionsException catch (e) {
+      return 'Function error: ${e.code}\n${e.message}\n${e.details}';
     } catch (e) {
-      print(e);
+      return 'Error: $e';
     }
   }
 }

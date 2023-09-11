@@ -4,7 +4,10 @@ import 'package:haru_diary/custom/custom_app_bar.dart';
 import 'package:haru_diary/screens/calendar_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../api/functions.dart';
+import '../provider/progress_provider.dart';
 import '/custom/custom_top_container.dart';
 import '/custom/custom_icon_button.dart';
 import '/custom/custom_theme.dart';
@@ -32,6 +35,8 @@ class _HomeScreen2State extends State<HomeScreen2> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<ProgressProvider>(context, listen: false).setUserPrefs();
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -242,8 +247,18 @@ class _HomeScreen2State extends State<HomeScreen2> {
                               color: CustomTheme.of(context).primaryText,
                               size: 40.h,
                             ),
-                            onPressed: () {
-                              print('IconButton pressed ...');
+                            onPressed: () async {
+                              // 호출하려는 main.py의 함수명 적으면 됨
+                              var functionName = 'ChatAI';
+                              // 아래와같이 테스트 시 필요한 값 키밸류쌍으로 하드코딩해서 호출
+                              // 현재는 아무렇게나 값 넣어서 정상호출 안 됨
+                              var keyValue = <String, dynamic>{
+                                'date': '20230911',
+                                'prompt': '하이',
+                              };
+                              var returnValue = await func.testFunction(
+                                  functionName, keyValue);
+                              print(returnValue);
                             },
                           ),
                           Text(

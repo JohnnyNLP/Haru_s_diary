@@ -113,6 +113,16 @@ def sentAnal(req: https_fn.CallableRequest):
 # cf) db = firestore.client()
 @https_fn.on_call()
 def ChatAI(req: https_fn.CallableRequest):
+
+    # ID 토큰 가져오기 및 검증 추가
+    id_token = request.headers.get("Authorization").split("Bearer ")[1]
+    try:
+        decoded_token = auth.verify_id_token(id_token)
+        uid = decoded_token["uid"]
+        print(uid)
+    except ValueError:
+        return {"body": "Unauthenticated", "statusCode": 401}
+    
     OPENAI_API_KEY=req.data["OPENAI_API_KEY"]
     db = firestore.Client()
     userID = req.data["userID"] 
@@ -120,7 +130,9 @@ def ChatAI(req: https_fn.CallableRequest):
     user_message = req.data["prompt"] # 사용자 입력값
     chat_template = req.data["chat_template"] # db.collection('prompt').document('chat').get().to_dict()['prompt']
     informal_template = req.data['informal_template'] # db.collection('prompt').document('informal').get().to_dict()['prompt']
-    memory = db.collection('user').document(userID).collection('chat').document(date).get().to_dict()['memory']
+    memory = db.collection('user').document(userID).collection('chat').document(date).get()
+    # memory 데이터 필드 null 체크 추가
+    memory = memory.to_dict()['memory'] if memory.exists else ''
 
     # LLM
     chat = ChatOpenAI(

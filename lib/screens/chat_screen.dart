@@ -25,7 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
   String? collectionPath;
   Stream<QuerySnapshot<Map<String, dynamic>>>? userChatStream;
   List<Map<String, String>>? conversation;
-  String? _date;
+  String? date;
 
   @override
   void initState() {
@@ -58,8 +58,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void setCollectionPath() {
-    _date = DateFormat('yyyyMMdd').format(DateTime.now());
-    collectionPath = '/user/${loggedUser!.uid}/chat/${_date}/conversation';
+    date = DateFormat('yyyyMMdd').format(DateTime.now());
+    collectionPath = '/user/${loggedUser!.uid}/chat/${date}/conversation';
   }
 
   void getConversation() async {
@@ -104,7 +104,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   eOnPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
-                            DiaryScreen(_date!, conversation!)));
+                            DiaryScreen(date!, conversation!)));
                   },
                 ),
                 Divider(
@@ -121,7 +121,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       child: Messages(collectionPath!, userChatStream!)),
                 ),
-                NewMessage(collectionPath!, userChatStream!),
+                NewMessage(collectionPath!, userChatStream!, date!),
               ],
             ),
           ),
