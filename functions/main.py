@@ -2,8 +2,8 @@ from firebase_functions import https_fn, options
 from firebase_admin import initialize_app, auth, credentials, firestore
 from flask import Flask, request
 from flask_cors import CORS
-import Timestamp
 from google.cloud import firestore
+from google.cloud.firestore import SERVER_TIMESTAMP
 
 
 # 환경 변수
@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     # 일기 작성 함수 호출 => diary_prompt+log
     diary_ref = db.collection('user').document(userID).collection('diary').document(date)
-    diary_ref.set({"content": diary['text'], "time":Timestamp.now(), 'userID': userID})
+    diary_ref.set({"content": diary['text'], "time":SERVER_TIMESTAMP, 'userID': userID})
 
 # 로컬 테스트용 - 감정 분석
 if __name__ == "__main__":
@@ -118,7 +118,7 @@ if __name__ == "__main__":
 
     # 일기 작성 함수 호출 => diary_prompt+log
     sent_ref = db.collection('user').document(userID).collection('sentiment').document(date)
-    sent_ref.set({"content": sent['text'], "time":Timestamp.now(), 'userID': userID})
+    sent_ref.set({"content": sent['text'], "time":SERVER_TIMESTAMP, 'userID': userID})
 
 ### Client 에서 받아야할 data
 # userID = 'Puv6AjEOLTV5TsxTtVkCLCq961D3'
@@ -180,7 +180,7 @@ def defaultOpenAI(req: https_fn.CallableRequest):
     # AI 답변도 DB로 저장
     data = {
         "text":final_AI,
-        "time":Timestamp.now(),
+        "time":SERVER_TIMESTAMP,
         'userID': "gpt-3.5-turbo",
         "userName": "오하루"
         }
