@@ -129,14 +129,16 @@ if __name__ == "__main__":
 # history = db.collection('user').document(userID).collection('chat').document(date)['memory']
 # cf) db = firestore.client()
 @https_fn.on_call()
-def defaultOpenAI(req: https_fn.CallableRequest):
+def ChatAI(req: https_fn.CallableRequest):
     db = firestore.client()
     userID = req.data["userID"] 
     date = req.data["date"] 
     user_message = req.data["prompt"] # 사용자 입력값
     chat_template = req.data["chat_template"] # db.collection('prompt').document('chat').get().to_dict()['prompt']
     informal_template = req.data['informal_template'] # db.collection('prompt').document('informal').get().to_dict()['prompt']
-    memory = req.data['memory'] # db.collection('user').document(userID).collection('chat').document(date).get().to_dict()['memory']
+    
+    # 함수 안에서 호출
+    memory = db.collection('user').document(userID).collection('chat').document(date).get().to_dict()['memory']
 
     # LLM
     chat = ChatOpenAI(
