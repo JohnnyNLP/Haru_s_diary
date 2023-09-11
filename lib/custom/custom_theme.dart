@@ -126,13 +126,13 @@ abstract class CustomTheme {
         fontSize: 36.sp,
       );
   TextStyle get labelLarge => GoogleFonts.getFont(
-        'Secondary Family',
+        'Poppins',
         color: secondaryText,
         fontWeight: FontWeight.w400,
         fontSize: 16.sp,
       );
   TextStyle get labelMedium => GoogleFonts.getFont(
-        'Secondary Family',
+        'Poppins',
         color: secondaryText,
         fontWeight: FontWeight.w400,
         fontSize: 14.sp,

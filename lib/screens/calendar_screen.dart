@@ -2,6 +2,7 @@ import '/Custom/Custom_calendar.dart';
 import '/Custom/Custom_theme.dart';
 import '/Custom/Custom_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
@@ -36,7 +37,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               style: CustomTheme.of(context).headlineMedium.override(
                     fontFamily: 'Outfit',
                     color: Color(0xFF394249),
-                    fontSize: 22,
+                    fontSize: 22.sp,
                     fontWeight: FontWeight.w600,
                   ),
             ),
@@ -48,14 +49,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+            padding: EdgeInsetsDirectional.fromSTEB(16.w, 16.h, 16.w, 0.h),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(
-                  width: 100,
-                  height: 41,
+                  width: 100.w,
+                  height: 41.h,
                   decoration: BoxDecoration(
                     color: Color(0xFFFAFAFA),
                   ),
@@ -73,11 +74,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           size: 36,
                         ),
                         options: FFButtonOptions(
-                          width: 42,
-                          height: 51,
-                          padding: EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
-                          iconPadding:
-                              EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                          width: 42.w,
+                          height: 51.h,
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              4.w, 0.h, 0.w, 0.h),
+                          iconPadding: EdgeInsetsDirectional.fromSTEB(
+                              0.w, 0.h, 0.w, 0.h),
                           color: Color(0xFFFAFAFA),
                           textStyle:
                               CustomTheme.of(context).titleSmall.override(
@@ -95,7 +97,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         style: CustomTheme.of(context).bodyMedium.override(
                               fontFamily: 'Readex Pro',
                               color: Color(0xFF394249),
-                              fontSize: 18,
+                              fontSize: 18.sp,
                               fontWeight: FontWeight.w600,
                             ),
                       ),
@@ -107,19 +109,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   color: CustomTheme.of(context).alternate,
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(5, 20, 0, 0),
+                  padding: EdgeInsetsDirectional.fromSTEB(5.w, 20.h, 0.w, 0.h),
                   child: Text(
                     '켈린더로 일기를 확인하세요.',
                     style: CustomTheme.of(context).bodyMedium.override(
                           fontFamily: 'Readex Pro',
                           color: Color(0xFF333C49),
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
                         ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                  padding: EdgeInsetsDirectional.fromSTEB(0.w, 10.h, 0.w, 0.h),
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -134,7 +136,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
+                      padding: EdgeInsetsDirectional.fromSTEB(
+                          10.w, 10.h, 10.w, 10.h),
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -145,7 +148,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             iconColor: CustomTheme.of(context).secondaryText,
                             weekFormat: false,
                             weekStartsMonday: true,
-                            rowHeight: 64,
+                            rowHeight: 64.h,
                             onChange: (DateTimeRange? newSelectedDate) {
                               // setState(() =>
                               //     _model.calendarSelectedDay = newSelectedDate);

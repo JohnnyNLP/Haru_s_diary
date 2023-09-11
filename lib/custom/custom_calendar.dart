@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 DateTime kFirstDay = DateTime(1970, 1, 1);
 DateTime kLastDay = DateTime(2100, 1, 1);
@@ -151,10 +152,10 @@ class _CustomCalendarState extends State<CustomCalendar> {
               holidayTextStyle: widget.dateStyle ??
                   const TextStyle(color: const Color(0xFF5C6BC0)),
               selectedTextStyle:
-                  const TextStyle(color: Color(0xFFFAFAFA), fontSize: 16.0)
+                  TextStyle(color: Color(0xFFFAFAFA), fontSize: 16.0.sp)
                       .merge(widget.selectedDateStyle),
               todayTextStyle:
-                  const TextStyle(color: Color(0xFFFAFAFA), fontSize: 16.0)
+                  TextStyle(color: Color(0xFFFAFAFA), fontSize: 16.0.sp)
                       .merge(widget.selectedDateStyle),
               outsideTextStyle: const TextStyle(color: Color(0xFF9E9E9E))
                   .merge(widget.inactiveDateStyle),
@@ -222,13 +223,13 @@ class CalendarHeader extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            const SizedBox(
-              width: 20,
+            SizedBox(
+              width: 20.w,
             ),
             Expanded(
               child: Text(
                 DateFormat.yMMMM(locale).format(focusedDay),
-                style: const TextStyle(fontSize: 17).merge(titleStyle),
+                style: TextStyle(fontSize: 17.sp).merge(titleStyle),
               ),
             ),
             CustomIconButton(
