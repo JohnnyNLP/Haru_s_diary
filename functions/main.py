@@ -5,6 +5,7 @@ from flask_cors import CORS
 import Timestamp
 from google.cloud import firestore
 
+
 # 환경 변수
 from dotenv import load_dotenv
 import os
@@ -125,17 +126,17 @@ if __name__ == "__main__":
 # chat_template = "You are user's close friend named '오하루' who is good at psychological counseling. You are chatting with your friend for Cognitive behavioural therapy in informal Korean. Respond within maximum 10 tokens. Respond in a friendly, gentle and sweet tone. If the user have a day, respond with empathy. If you know enough details of user's day, give advice. If your friend feel better, ask any positive questions. Use one appropriate emoticons in 30 percents of your total answers. When user expresses their interest, ask a detailed question about the topic. When answering, do not use the same expressions twice. Greet your friend first with 'How was your today?'. Current conversation: {history} user: {input} AI:"
 # informal_template = "You have good comprehension in Korean if the sentence is informal.If {AIoutput} is formal Korean, change it into informal Korean:"
 # #user_message = req.data['prompt']
-# db = firestore.client()
 # history = db.collection('user').document(userID).collection('chat').document(date)['memory']
-
+# cf) db = firestore.client()
 @https_fn.on_call()
 def defaultOpenAI(req: https_fn.CallableRequest):
-    userID = req.data["userID"]
-    date = req.data["date"]
-    user_message = req.data["prompt"] 
-    chat_template = req.data["chat_template"] 
-    informal_template = req.data['informal_template']
-    history = req.data['history']
+    db = firestore.client()
+    userID = req.data["userID"] 
+    date = req.data["date"] 
+    user_message = req.data["prompt"] # 사용자 입력값
+    chat_template = req.data["chat_template"] # db.collection('prompt').document('chat').get().to_dict()['prompt']
+    informal_template = req.data['informal_template'] # db.collection('prompt').document('informal').get().to_dict()['prompt']
+    memory = req.data['memory'] # db.collection('user').document(userID).collection('chat').document(date).get().to_dict()['memory']
 
     # LLM
     chat = ChatOpenAI(
@@ -148,7 +149,7 @@ def defaultOpenAI(req: https_fn.CallableRequest):
     temperature=1,
     model='gpt-3.5-turbo'
     )
-    memory = ConversationSummaryBufferMemory(llm=chat, max_token_limit=40)
+    memory_LLM = ConversationSummaryBufferMemory(llm=chat, max_token_limit=40)
 
     # Prompt
     PROMPT_chat = PromptTemplate(input_variables=['history', 'input'], template=chat_template)
@@ -158,7 +159,7 @@ def defaultOpenAI(req: https_fn.CallableRequest):
     conversation = ConversationChain(
     prompt=PROMPT_chat,
     llm = chat,
-    memory = memory,
+    memory = memory_LLM,
     output_key="AIoutput",
     verbose=True
     )
@@ -170,12 +171,22 @@ def defaultOpenAI(req: https_fn.CallableRequest):
     )   
 
     # AI 답변 생성
-    final_AI = informal_output.run(conversation.run({'history':history, 'input': user_message}))
+    final_AI = informal_output.run(conversation.run({'history':memory, 'input': user_message}))
     
     # DB로 저장되어야 하는 데이터
-    db.collection('user').document(userID).collection('chat').document(date)['memory'] = memory.load_memory_variables({})['history']
+    memory_ref = db.collection('user').document(userID).collection('chat').document(date)
+    new_history = memory.load_memory_variables({})['history']
+    memory_ref.update({"memory": new_history})
+    # AI 답변도 DB로 저장
+    data = {
+        "text":final_AI,
+        "time":Timestamp.now(),
+        'userID': userID,
+        "userName": "오하루"
+        }
+    conversation_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').add(data)
 
-    return {'body' : final_AI,  "statusCode": 200}
+    return {'body' : conversation_ref,  "statusCode": 200}
 
 
 @https_fn.on_request(
