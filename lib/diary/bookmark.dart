@@ -71,7 +71,7 @@ class Bookmarks extends StatelessWidget {
                   ),
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => DiaryScreen(date, [])));
+                        builder: (context) => DiaryScreen(date, false)));
                   },
                 ),
               ],

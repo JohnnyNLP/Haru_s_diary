@@ -1,3 +1,4 @@
+import '../api/functions.dart';
 import '../custom/custom_app_bar.dart';
 import '../custom/custom_theme.dart';
 import '../custom/custom_top_container.dart';
@@ -8,13 +9,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '/api/gpt_api.dart';
-
 class DiaryScreen extends StatefulWidget {
-  const DiaryScreen(this._date, this._conversation, {Key? key})
-      : super(key: key);
+  const DiaryScreen(this._date, this._write, {Key? key}) : super(key: key);
   final String _date;
-  final List<Map<String, String>> _conversation;
+  final bool _write;
 
   @override
   _DiaryScreenState createState() => _DiaryScreenState();
@@ -79,23 +77,20 @@ class _DiaryScreenState extends State<DiaryScreen> {
         .doc(widget._date);
   }
 
-// GPT API를 이용해 일기를 생성하는 메서드
-  Future<void> getGptDiary() async {
-    final message = await GptApiClass().makeDiary(widget._conversation);
-    _contentController.text = message;
-  }
-
-// Firestore에서 일기를 가져오는 메서드
   Future<void> _fetchDiary() async {
-    DocumentSnapshot documentSnapshot = await diaryRef!.get();
+    print(widget._write);
+    if (widget._write) {
+      _toggleLoading();
 
-    if (!documentSnapshot.exists && widget._conversation.length > 0) {
+      var returnValue =
+          await func.callFunctions('writeDiary', {'date': widget._date});
+      print(returnValue);
+
       _toggleLoading();
-      await getGptDiary();
-      await _updateDiary();
-      _toggleLoading();
-    } else {
-      documentSnapshot = await diaryRef!.get();
+    }
+    DocumentSnapshot documentSnapshot = await diaryRef!.get();
+    print(!documentSnapshot.exists);
+    if (documentSnapshot.data() != null) {
       Map<String, dynamic> diary =
           documentSnapshot.data() as Map<String, dynamic>;
       _titleController.text = diary['title'] ?? 'No title';

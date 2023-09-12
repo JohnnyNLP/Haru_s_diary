@@ -1,13 +1,13 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:haru_diary/screens/diary_screen.dart';
+import 'package:provider/provider.dart';
 import '../chat/message.dart';
 import '../custom/custom_app_bar.dart';
 import '../custom/custom_theme.dart';
 import '../custom/custom_top_container.dart';
+import '../provider/progress_provider.dart';
 import '/chat/new_message.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:intl/intl.dart';
@@ -21,10 +21,10 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final _authentication = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
   User? loggedUser;
   String? collectionPath;
   Stream<QuerySnapshot<Map<String, dynamic>>>? userChatStream;
-  List<Map<String, String>>? conversation;
   String? date;
 
   @override
@@ -33,8 +33,6 @@ class _ChatScreenState extends State<ChatScreen> {
     getCurrentUser();
     setCollectionPath();
     setChatStream();
-    getConversation();
-    // Provider.of<ProgressProvider>(context, listen: false).setProgress(false);
   }
 
   void getCurrentUser() {
@@ -49,11 +47,10 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void setChatStream() {
-    final Stream<QuerySnapshot<Map<String, dynamic>>> chatStream =
-        FirebaseFirestore.instance
-            .collection(collectionPath!)
-            .orderBy('time', descending: true)
-            .snapshots();
+    final Stream<QuerySnapshot<Map<String, dynamic>>> chatStream = _firestore
+        .collection(collectionPath!)
+        .orderBy('time', descending: true)
+        .snapshots();
     userChatStream = chatStream;
   }
 
@@ -62,31 +59,13 @@ class _ChatScreenState extends State<ChatScreen> {
     collectionPath = '/user/${loggedUser!.uid}/chat/${date}/conversation';
   }
 
-  void getConversation() async {
-    try {
-      conversation = <Map<String, String>>[];
-      final QuerySnapshot<Map<String, dynamic>> firstSnapshot =
-          await userChatStream!.first;
-      for (QueryDocumentSnapshot doc in firstSnapshot.docs
-          .sublist(0, min(100, firstSnapshot.docs.length))
-          .reversed) {
-        conversation!.add({
-          'role': doc['userID'] == 'gpt-3.5-turbo' ? 'assistant' : 'user',
-          'content': '${doc['text']}'
-        });
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: CustomAppBar(text: '하루의 대화방'),
+        appBar: CustomAppBar(text: '오하루'),
         body: ModalProgressHUD(
           inAsyncCall:
-              false, //Provider.of<ProgressProvider>(context).isProgress!,
+              false, // Provider.of<ProgressProvider>(context).isProgress!,
           child: Padding(
             padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
             child: Column(
@@ -99,12 +78,36 @@ class _ChatScreenState extends State<ChatScreen> {
                   sOnPressed: () {
                     Navigator.pop(context);
                   },
-                  eText: '일기쓰기',
+                  eText: '하루의 일기쓰기',
                   eIcon: Icons.create_outlined,
-                  eOnPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            DiaryScreen(date!, conversation!)));
+                  eOnPressed: () async {
+                    var conv =
+                        await _firestore.collection(collectionPath!).get();
+                    var len = conv.docs.length;
+                    if (len < 5) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('알림'),
+                            content: Text(
+                                '대화가 충분히 이루어지면, 하루가 대신 일기를 작성해줍니다.\n대화를 조금만 더 진행해주세요.\n\n하루와 한 대화: ${len}마디'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('확인'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // 다이얼로그를 닫습니다.
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              DiaryScreen(date!, conv.docs.length > 0)));
+                    }
                   },
                 ),
                 Divider(

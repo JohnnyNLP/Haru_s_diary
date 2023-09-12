@@ -17,17 +17,18 @@ class Functions {
 
   Functions._internal() {
     // _functionsForEmulator = FirebaseFunctions.instanceFor();
-    // _functionsForEmulator.useFunctionsEmulator('172.30.1.42', 5001);
+    // _functionsForEmulator.useFunctionsEmulator('localhost', 5001);
     // instanceFor() 로 새로운 객체 생성하려 해도 기존 객체 리턴하므로 생성자 뜯어고칠 거 아니면
     // useFunctionsEmulator 사용 후엔 재기동이 맘 편함.
     _functionsForProd = FirebaseFunctions.instanceFor();
+    _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
   }
 
   Future<String> haruChat(
       prompt, date, chat_template, informal_template) async {
     try {
-      print([prompt, date, chat_template, informal_template]);
       _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
+      print([prompt, date, chat_template, informal_template]);
       HttpsCallable callable = _functionsForProd.httpsCallable('ChatAI');
       final response = await callable.call(<String, dynamic>{
         'userID': FirebaseAuth.instance.currentUser!.uid,
@@ -50,15 +51,42 @@ class Functions {
     }
   }
 
+  Future<String> callFunctions(functionName, keyValue) async {
+    try {
+      _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
+      HttpsCallable callable = _functionsForProd.httpsCallable(functionName);
+
+      final request = {
+        ...{
+          // 공통으로 적용되는 request
+          'userID': FirebaseAuth.instance.currentUser!.uid,
+          'OPENAI_API_KEY': dotenv.env['GPT_API_KEY'].toString(),
+          'push': true,
+        },
+        ...keyValue // 호출 시 명시한 keyValue
+      };
+      print(request);
+      final response = await callable.call(request);
+      if (response.data['statusCode'] == 200) {
+        return response.data['body'];
+      } else {
+        return '${response.data['statusCode']} error: ${response.data['body']}';
+      }
+    } on FirebaseFunctionsException catch (e) {
+      return 'Function error: ${e.code}\n${e.message}\n${e.details}';
+    } catch (e) {
+      return 'Error: $e';
+    }
+  }
+
   // functions 호출용 테스트 함수
   Future<String> testFunction(functionName, keyValue) async {
     try {
       _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
-      // _functionsForProd.useFunctionsEmulator('172.30.1.42', 5001); // 에뮬 사용
       HttpsCallable callable = _functionsForProd.httpsCallable(functionName);
       final fixed = <String, dynamic>{
         'userID': FirebaseAuth.instance.currentUser!.uid,
-        'api_key': dotenv.env['GPT_API_KEY'].toString(),
+        'OPENAI_API_KEY': dotenv.env['GPT_API_KEY'].toString(),
         'push': true,
       };
       final response = await callable.call({...fixed, ...keyValue});

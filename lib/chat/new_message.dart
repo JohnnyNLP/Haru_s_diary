@@ -30,7 +30,7 @@ class _NewMessageState extends State<NewMessage> {
       // 여기에서 비동기 작업을 수행
       final conv = await getConversation();
       if (conv.length == 0) {
-        _gptMessage('반말로 먼저 인사해줘');
+        _gptMessage('안녕');
       }
     });
   }
@@ -66,13 +66,6 @@ class _NewMessageState extends State<NewMessage> {
           .getString('imformalTemplate'),
     );
     print(message);
-
-    // FirebaseFirestore.instance.collection(widget.collectionPath).add({
-    //   'text': message,
-    //   'time': Timestamp.now(),
-    //   'userID': 'gpt-3.5-turbo',
-    //   'userName': '오하루',
-    // });
     // pp.setProgress(false);
   }
 

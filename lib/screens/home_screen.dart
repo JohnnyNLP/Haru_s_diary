@@ -5,7 +5,9 @@ import 'package:haru_diary/custom/custom_app_bar.dart';
 import 'package:haru_diary/screens/calendar_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../provider/progress_provider.dart';
 import '/custom/custom_top_container.dart';
 import '/custom/custom_icon_button.dart';
 import '/custom/custom_theme.dart';
@@ -33,6 +35,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<ProgressProvider>(context, listen: false).setUserPrefs();
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -143,7 +146,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
                                   builder: (context) => DiaryScreen(
                                       DateFormat('yyyyMMdd')
                                           .format(DateTime.now()),
-                                      [])));
+                                      false)));
                             },
                             text: '오늘의 일기',
                             options: FFButtonOptions(
