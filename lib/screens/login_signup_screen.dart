@@ -1,7 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import '/add_image/add_image.dart';
 import '../custom/palette.dart';
@@ -14,7 +11,6 @@ class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _LoginSignupScreenState createState() => _LoginSignupScreenState();
 }
 
@@ -45,7 +41,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
       context: context,
       builder: (context) {
         return Dialog(
-          backgroundColor: Colors.white,
+          backgroundColor: Color.fromARGB(255, 243, 231, 119),
           child: AddImage(pickedImage),
         );
       },
@@ -55,7 +51,15 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Palette.backgroundColor,
+      appBar: AppBar(
+        title: Text(
+          'Login', // AppBar의 이름을 "Login"으로 설정
+          style: TextStyle(
+              color: const Color.fromARGB(255, 58, 58, 59), // 텍스트 색상 변경
+              fontSize: 30),
+        ),
+        backgroundColor: Color(0xFFF9DE7A), // 배경색을 노란색으로 설정
+      ),
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
         child: GestureDetector(
@@ -64,63 +68,6 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
           },
           child: Stack(
             children: [
-              // 배경
-              Positioned(
-                top: 0,
-                right: 0,
-                left: 0,
-                child: Container(
-                  height: 280,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('image/room.jpg'),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.only(top: 90, left: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                              text: 'Welcome',
-                              style: TextStyle(
-                                letterSpacing: 1.0,
-                                fontSize: 25,
-                                color: Colors.green[900],
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: isSignupScreen
-                                      ? ' to Haru\'s Diary!'
-                                      : ' back',
-                                  style: TextStyle(
-                                    letterSpacing: 1.0,
-                                    fontSize: 25,
-                                    color: Colors.green[900],
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              ]),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Text(
-                          isSignupScreen
-                              ? 'Signup to continue'
-                              : 'Signin to continue',
-                          style: TextStyle(
-                            letterSpacing: 1.0,
-                            color: Colors.green[900],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
               // 텍스트 폼 필드
               AnimatedPositioned(
                 duration: Duration(milliseconds: 500),
@@ -138,7 +85,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                     borderRadius: BorderRadius.circular(15.0),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
+                        color:
+                            Color.fromARGB(255, 240, 234, 234).withOpacity(0.3),
                         blurRadius: 15,
                         spreadRadius: 5,
                       ),
@@ -165,15 +113,16 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.bold,
                                       color: !isSignupScreen
-                                          ? Palette.activeColor
+                                          ? const Color.fromARGB(
+                                              255, 58, 58, 59) // login 글자색
                                           : Palette.textColor1,
                                     ),
                                   ),
                                   if (!isSignupScreen)
                                     Container(
                                       margin: EdgeInsets.only(top: 3),
-                                      height: 2.0,
-                                      width: 55.0,
+                                      height: 3.0,
+                                      width: 59.0,
                                       color: Colors.orange,
                                     )
                                 ],
@@ -195,7 +144,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.bold,
                                           color: isSignupScreen
-                                              ? Palette.activeColor
+                                              ? const Color.fromARGB(255, 58,
+                                                  58, 59) // sign up 글자색
                                               : Palette.textColor1,
                                         ),
                                       ),
@@ -210,7 +160,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                           child: Icon(
                                             Icons.image,
                                             color: isSignupScreen
-                                                ? Colors.cyan
+                                                ? Color.fromARGB(
+                                                    255, 238, 190, 126)
                                                 : Colors.grey[300],
                                           ),
                                         ),
@@ -219,8 +170,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   if (isSignupScreen)
                                     Container(
                                       margin: EdgeInsets.fromLTRB(0, 3, 35, 0),
-                                      height: 2.0,
-                                      width: 55.0,
+                                      height: 3.0,
+                                      width: 70.0,
                                       color: Colors.orange,
                                     )
                                 ],
@@ -287,7 +238,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                     validator: (value) {
                                       if (value!.isEmpty ||
                                           !value.contains('@')) {
-                                        return 'Please enter valid email address.';
+                                        return 'Please enter a valid email address.';
                                       }
                                       return null;
                                     },
@@ -318,7 +269,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                           Radius.circular(35.0),
                                         ),
                                       ),
-                                      hintText: 'email',
+                                      hintText: 'Email',
                                       hintStyle: TextStyle(
                                         fontSize: 14,
                                         color: Palette.textColor1,
@@ -363,7 +314,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                           Radius.circular(35.0),
                                         ),
                                       ),
-                                      hintText: 'password',
+                                      hintText: 'Password',
                                       hintStyle: TextStyle(
                                         fontSize: 14,
                                         color: Palette.textColor1,
@@ -388,7 +339,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                     validator: (value) {
                                       if (value!.isEmpty ||
                                           !value.contains('@')) {
-                                        return 'Please enter valid email address.';
+                                        return 'Please enter a valid email address.';
                                       }
                                       return null;
                                     },
@@ -417,7 +368,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                           Radius.circular(35.0),
                                         ),
                                       ),
-                                      hintText: 'email',
+                                      hintText: 'Email',
                                       hintStyle: TextStyle(
                                         fontSize: 14,
                                         color: Palette.textColor1,
@@ -462,7 +413,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                           Radius.circular(35.0),
                                         ),
                                       ),
-                                      hintText: 'password',
+                                      hintText: 'Password',
                                       hintStyle: TextStyle(
                                         fontSize: 14,
                                         color: Palette.textColor1,
@@ -479,7 +430,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   ),
                 ),
               ),
-              // 전송버튼
+              // 전송 버튼
               AnimatedPositioned(
                 duration: Duration(milliseconds: 500),
                 curve: Curves.easeIn,
@@ -489,11 +440,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                 child: Center(
                   child: Container(
                     padding: EdgeInsets.all(15.0),
-                    height: 90.0,
-                    width: 90.0,
+                    height: 70.0, // sign up 버튼 크기 조절
+                    width: 280.0,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(50.0),
+                      borderRadius: BorderRadius.circular(5.0),
                     ),
                     child: GestureDetector(
                       onTap: () async {
@@ -501,18 +452,6 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                           showSpinner = true;
                         });
                         if (isSignupScreen) {
-                          // if (userPickedImage == null) {
-                          //   setState(() {
-                          //     showSpinner = false;
-                          //   });
-                          //   ScaffoldMessenger.of(context).showSnackBar(
-                          //     SnackBar(
-                          //       content: Text('Please pick your image'),
-                          //       backgroundColor: Colors.blue,
-                          //     ),
-                          //   );
-                          //   return;
-                          // }
                           _tryValidation();
                           try {
                             final newUser = await _authentication
@@ -542,17 +481,6 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                 'picked_image': url,
                               },
                             );
-
-                            // if (newUser.user != null) {
-                            //   Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder: (context) {
-                            //         return HomeScreen();
-                            //       },
-                            //     ),
-                            //   );
-                            // }
                           } catch (e) {
                             print(e);
                             if (mounted) {
@@ -576,16 +504,6 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                               email: userEmail,
                               password: userPassword,
                             );
-                            // if (newUser.user != null) {
-                            //   Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder: (context) {
-                            //         return HomeScreen();
-                            //       },
-                            //     ),
-                            //   );
-                            // }
                           } catch (e) {
                             print(e);
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -605,26 +523,31 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       child: Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [
-                              Colors.lightGreen,
-                              Colors.green,
-                            ],
+                            colors: [Color(0xFFF9DE7A), Color(0xFFF9DE7A)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
+                              color: Color.fromARGB(255, 78, 107, 105)
+                                  .withOpacity(0.3),
                               blurRadius: 1,
                               spreadRadius: 1,
                               offset: Offset(0, 1),
                             ),
                           ],
                         ),
-                        child: Icon(
-                          Icons.arrow_forward,
-                          color: Colors.white,
+                        child: Center(
+                          child: Text(
+                            'Sign up', // 텍스트로 변경
+                            style: TextStyle(
+                              color: Color.fromARGB(
+                                  255, 255, 249, 247), // 텍스트 색상 변경
+                              fontSize: 16, // 텍스트 크기 변경
+                              fontWeight: FontWeight.bold, // 텍스트 굵기 설정
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -632,46 +555,58 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                 ),
               ),
               // 구글 로그인
-              AnimatedPositioned(
-                duration: Duration(milliseconds: 500),
-                curve: Curves.easeIn,
-                top: isSignupScreen
-                    ? MediaQuery.of(context).size.height - 85.0
-                    : MediaQuery.of(context).size.height - 125.0,
-                right: 0,
-                left: 0,
+              // AnimatedPositioned(
+              //   duration: Duration(milliseconds: 500),
+              //   curve: Curves.easeIn,
+              //   top: isSignupScreen
+              //       ? MediaQuery.of(context).size.height - 85.0
+              //       : MediaQuery.of(context).size.height - 125.0,
+              //   right: 0,
+              //   left: 0,
+              //   child: Column(
+              //     children: [
+              //       Text(isSignupScreen ? 'or Signup with' : 'or Signin with'),
+              //       SizedBox(
+              //         height: 10.0,
+              //       ),
+              //       TextButton.icon(
+              //         onPressed: () async {
+              //           await _authentication.signInWithEmailAndPassword(
+              //             email: 'test@email.com',
+              //             password: '123456',
+              //           );
+              //         },
+              //         style: TextButton.styleFrom(
+              //           foregroundColor: Color.fromRGBO(165, 150, 150, 1),
+              //           minimumSize: Size(155, 40),
+              //           shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(20),
+              //           ),
+              //           backgroundColor: Palette.googleColor,
+              //         ),
+              //         icon: Icon(Icons.add),
+              //         label: Text('Google'),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+// APPbar 밑에 Sign Up 텍스트 스타일을 변경하는 부분
+              Center(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // 수직 방향으로 중앙 정렬
                   children: [
-                    Text(isSignupScreen ? 'or Signup with' : 'or Signin with'),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    TextButton.icon(
-                      onPressed: () async {
-                        await _authentication.signInWithEmailAndPassword(
-                          email: 'test@email.com',
-                          password: '123456',
-                        );
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) {
-                        //       return Counter();
-                        //     },
-                        //   ),
-                        // );
-                      },
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        minimumSize: Size(155, 40),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        backgroundColor: Palette.googleColor,
+                    Text(
+                      'Sign Up', // 원하는 텍스트로 변경
+                      style: TextStyle(
+                        fontSize: 40, // 텍스트 크기를 조정하세요
+                        color: Color.fromARGB(255, 68, 67, 67), // 텍스트 색상을 조정하세요
+                        fontWeight: FontWeight.bold, // 텍스트 굵기를 조정하세요
+                        fontFamily: 'YourFontFamily', // 폰트 패밀리를 지정하세요
+                        fontStyle: FontStyle.normal, // 이탤릭체를 사용할 경우 활성화하세요
+                        // letterSpacing: 2.0, // 글자 간격을 조정할 경우 활성화하세요
                       ),
-                      icon: Icon(Icons.add),
-                      label: Text('Google'),
                     ),
+                    SizedBox(height: 390), // 원하는 수직 간격을 조정하세요
                   ],
                 ),
               ),

@@ -1,13 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:haru_diary/api/functions.dart';
 import 'package:haru_diary/custom/custom_app_bar.dart';
 import 'package:haru_diary/screens/calendar_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../api/functions.dart';
-import '../provider/progress_provider.dart';
 import '/custom/custom_top_container.dart';
 import '/custom/custom_icon_button.dart';
 import '/custom/custom_theme.dart';
@@ -35,8 +33,6 @@ class _HomeScreen2State extends State<HomeScreen2> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<ProgressProvider>(context, listen: false).setUserPrefs();
-
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -205,10 +201,14 @@ class _HomeScreen2State extends State<HomeScreen2> {
                               ));
                             },
                           ),
-                          Text(
-                            'Diary',
-                            textAlign: TextAlign.start,
-                            style: CustomTheme.of(context).bodySmall,
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 6), // 하단 diary 글자 위치 이동(심기섭 수정)
+                            child: Text(
+                              'Diary',
+                              textAlign: TextAlign.start,
+                              style: CustomTheme.of(context).bodySmall,
+                            ),
                           ),
                         ],
                       ),
@@ -229,9 +229,13 @@ class _HomeScreen2State extends State<HomeScreen2> {
                               ));
                             },
                           ),
-                          Text(
-                            'Calendar',
-                            style: CustomTheme.of(context).bodySmall,
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 10), // 하단 Calendar 글자 위치 이동(심기섭 수정)
+                            child: Text(
+                              'Calendar',
+                              style: CustomTheme.of(context).bodySmall,
+                            ),
                           ),
                         ],
                       ),
@@ -261,9 +265,13 @@ class _HomeScreen2State extends State<HomeScreen2> {
                               print(returnValue);
                             },
                           ),
-                          Text(
-                            'Setting',
-                            style: CustomTheme.of(context).bodySmall,
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 6), // 하단 Setting 글자 위치 이동(심기섭 수정)
+                            child: Text(
+                              'Setting',
+                              style: CustomTheme.of(context).bodySmall,
+                            ),
                           ),
                         ],
                       ),

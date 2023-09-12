@@ -26,14 +26,14 @@ class _DiaryScreenState extends State<DiaryScreen> {
   TextEditingController _contentController = TextEditingController();
   // String? _diaryId;
   final emotion = false;
-  final _authentication = FirebaseAuth.instance;
+  final _authentication = FirebaseAuth.instance; //Firebase 인증 객체 생성
   User? loggedUser;
   DocumentReference? diaryRef;
   // todo: 현재 하루에 대화 하나 일기 하나 구조로 만들어둠.
   // 이후에 여러개 할 수 있게 수정해야함. 시간 없어서 일단 ㄱㄱ
-  bool _isLoading = false;
+  bool _isLoading = false; // 로딩 상태를 나타내는 변수
 
-  @override
+  @override // 아래 void initState()는 초기 상태 설정 메서드. 사용자 정보, 문서 레퍼런스, 일기 내용을 불러옴
   void initState() {
     super.initState();
     _getCurrentUser();
@@ -51,12 +51,14 @@ class _DiaryScreenState extends State<DiaryScreen> {
   //   });
   // }
 
+// 로딩 상태를 토글하는 메서드
   void _toggleLoading() {
     setState(() {
       _isLoading = !_isLoading;
     });
   }
 
+// 현재 로그인한 사용자 정보를 가져오는 메서드
   void _getCurrentUser() {
     final user = _authentication.currentUser;
     try {
@@ -68,6 +70,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
     }
   }
 
+// 일기의 Firestore문서 레퍼런스를 가져오는 메서드
   void _getDocumentReference() {
     diaryRef = FirebaseFirestore.instance
         .collection('user')
@@ -76,11 +79,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
         .doc(widget._date);
   }
 
+// GPT API를 이용해 일기를 생성하는 메서드
   Future<void> getGptDiary() async {
     final message = await GptApiClass().makeDiary(widget._conversation);
     _contentController.text = message;
   }
 
+// Firestore에서 일기를 가져오는 메서드
   Future<void> _fetchDiary() async {
     DocumentSnapshot documentSnapshot = await diaryRef!.get();
 
@@ -91,15 +96,14 @@ class _DiaryScreenState extends State<DiaryScreen> {
       _toggleLoading();
     } else {
       documentSnapshot = await diaryRef!.get();
-      if (documentSnapshot.data() != null) {
-        Map<String, dynamic> diary =
-            documentSnapshot.data() as Map<String, dynamic>;
-        _titleController.text = diary['title'] ?? 'No title';
-        _contentController.text = diary['content'] ?? 'No content';
-      }
+      Map<String, dynamic> diary =
+          documentSnapshot.data() as Map<String, dynamic>;
+      _titleController.text = diary['title'] ?? 'No title';
+      _contentController.text = diary['content'] ?? 'No content';
     }
   }
 
+// 일기를 Firestore에 업데이트 하는 메서드
   Future<void> _updateDiary({String? title, String? content}) async {
     await diaryRef!.set({
       'title': title ?? _titleController.text,
@@ -108,6 +112,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
     });
   }
 
+// UI를 빌드하는 메서드
   @override
   Widget build(BuildContext context) {
     return ModalProgressHUD(
