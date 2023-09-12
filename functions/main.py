@@ -63,7 +63,7 @@ def writeDiary(req: https_fn.CallableRequest):
 
     # 일기 작성 함수 호출 => diary_prompt+log
     diary_ref = db.collection('user').document(userID).collection('diary').document(date)
-    diary_ref.set({"content": diary['text'], "time":SERVER_TIMESTAMP, 'userID': userID})
+    diary_ref.set({"content": diary['text'], "time":SERVER_TIMESTAMP, 'userID': userID, 'title':'No title'})
 
 @https_fn.on_call()
 def sentAnal(req: https_fn.CallableRequest):
