@@ -171,7 +171,7 @@ def ChatAI(req: https_fn.CallableRequest):
     )   
 
     # AI 답변 생성
-    final_AI = informal_output.run(conversation.run({'history':history, 'input': user_message}))
+    final_AI = informal_output.run(conversation.run({'input': history + "Human:" + user_message})) 
     
     # DB로 저장되어야 하는 데이터
     memory_ref = db.collection('user').document(userID).collection('chat').document(date)
