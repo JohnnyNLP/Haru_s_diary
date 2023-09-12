@@ -21,8 +21,10 @@ class ProgressProvider with ChangeNotifier {
     final chatPrompt =
         await FirebaseFirestore.instance.collection('prompt').doc('chat').get();
     _prefs!.setString('chatTemplate', chatPrompt.data()!['prompt']);
-    final imformalPrompt =
-        await FirebaseFirestore.instance.collection('prompt').doc('chat').get();
+    final imformalPrompt = await FirebaseFirestore.instance
+        .collection('prompt')
+        .doc('informal')
+        .get();
     _prefs!.setString('imformalTemplate', imformalPrompt.data()!['prompt']);
   }
 }

@@ -1,8 +1,8 @@
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:haru_diary/api/functions.dart';
 import 'package:provider/provider.dart';
 import '/provider/progress_provider.dart';
@@ -30,9 +30,7 @@ class _NewMessageState extends State<NewMessage> {
       // 여기에서 비동기 작업을 수행
       final conv = await getConversation();
       if (conv.length == 0) {
-        _gptMessage([
-          {'role': 'user', 'content': '반말로 먼저 인사해줘'}
-        ]);
+        _gptMessage('반말로 먼저 인사해줘');
       }
     });
   }
@@ -57,9 +55,8 @@ class _NewMessageState extends State<NewMessage> {
     // pp.setProgress(
     //     true); //  todo: message.dart의 CircularProgressIndicator와 겹침 해결 필요
 
-    final prompt = msg == null ? '먼저 인사해줘' : msg;
     final message = await func.haruChat(
-      prompt,
+      msg,
       widget.date,
       Provider.of<ProgressProvider>(context, listen: false)
           .prefs!
@@ -68,33 +65,33 @@ class _NewMessageState extends State<NewMessage> {
           .prefs!
           .getString('imformalTemplate'),
     );
+    print(message);
 
-    FirebaseFirestore.instance.collection(widget.collectionPath).add({
-      'text': message,
-      'time': Timestamp.now(),
-      'userID': 'gpt-3.5-turbo',
-      'userName': '오하루',
-    });
+    // FirebaseFirestore.instance.collection(widget.collectionPath).add({
+    //   'text': message,
+    //   'time': Timestamp.now(),
+    //   'userID': 'gpt-3.5-turbo',
+    //   'userName': '오하루',
+    // });
     // pp.setProgress(false);
   }
 
   void _sendMessage() async {
+    FocusScope.of(context).unfocus();
+    final user = FirebaseAuth.instance.currentUser;
+    final userData = await FirebaseFirestore.instance
+        .collection('user')
+        .doc(user!.uid)
+        .get();
+    FirebaseFirestore.instance.collection(widget.collectionPath).add({
+      'text': _userEnterMessage,
+      'time': Timestamp.now(),
+      'userID': user.uid,
+      'userName': userData.data()!['userName'],
+      'userImage': userData['picked_image'],
+    });
+    _controller.clear();
     _gptMessage(_userEnterMessage);
-    // FocusScope.of(context).unfocus();
-    // final user = FirebaseAuth.instance.currentUser;
-    // final userData = await FirebaseFirestore.instance
-    //     .collection('user')
-    //     .doc(user!.uid)
-    //     .get();
-    // FirebaseFirestore.instance.collection(widget.collectionPath).add({
-    //   'text': _userEnterMessage,
-    //   'time': Timestamp.now(),
-    //   'userID': user.uid,
-    //   'userName': userData.data()!['userName'],
-    //   'userImage': userData['picked_image'],
-    // });
-    // _controller.clear();
-    // _gptMessage(_userEnterMessage);
   }
 
   @override

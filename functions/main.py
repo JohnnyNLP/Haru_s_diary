@@ -176,7 +176,7 @@ def ChatAI(req: https_fn.CallableRequest):
     # DB로 저장되어야 하는 데이터
     memory_ref = db.collection('user').document(userID).collection('chat').document(date)
     new_history = memory_LLM.load_memory_variables({})['history']
-    memory_ref.update({"memory": new_history})
+    memory_ref.set({"memory": new_history})
     # AI 답변도 DB로 저장
     data = {
         "text":final_AI,
