@@ -28,11 +28,12 @@ class WeeklyList extends StatelessWidget {
             DateTime dateTime = DateTime.parse(chatDocs[index].id);
             String dateForm =
                 '${weekDay[dateTime.weekday]} (${dateTime.year}. ${dateTime.month}. ${dateTime.day})';
+            final doc = chatDocs[index];
             return Bookmarks(
-              chatDocs[index].id,
+              doc.id,
               dateForm,
-              chatDocs[index]['title'],
-              chatDocs[index]['content'],
+              doc.data().containsKey('title') ? doc['title'] : '무제',
+              doc.data().containsKey('content') ? doc['content'] : '',
             );
           },
         );
