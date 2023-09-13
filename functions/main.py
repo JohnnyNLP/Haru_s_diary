@@ -95,12 +95,12 @@ def writeDiary(req: https_fn.CallableRequest):
     
     result = {
         'title' : 'No title',
-        'diary' : diary['text']
+        'diary' : diary['text'],
         'sentiment' : {
-            {"total": int(sent[0]), '기쁨':int(sent[1]), '기대':int(sent[2]),
+            "total": int(sent[0]), '기쁨':int(sent[1]), '기대':int(sent[2]),
             '열정':int(sent[3]), '애정': int(sent[4]), '슬픔':int(sent[5]),
             '분노':int(sent[6]), '우울': int(sent[7]), '혐오':int(sent[8]),
-            '중립':int(sent[9])}
+            '중립':int(sent[9])
         }
     }
     return {'body' : result,  "statusCode": 200}
