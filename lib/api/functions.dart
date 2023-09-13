@@ -8,7 +8,8 @@ class Functions {
   // 싱글턴 패턴을 사용하여 하나의 인스턴스만 생성되게 할 수 있습니다.
   static final Functions _singleton = Functions._internal();
 
-  // late FirebaseFunctions _functionsForEmulator;
+  final useEmul = false;
+
   late FirebaseFunctions _functionsForProd;
 
   factory Functions() {
@@ -16,18 +17,16 @@ class Functions {
   }
 
   Functions._internal() {
-    // _functionsForEmulator = FirebaseFunctions.instanceFor();
-    // _functionsForEmulator.useFunctionsEmulator('localhost', 5001);
-    // instanceFor() 로 새로운 객체 생성하려 해도 기존 객체 리턴하므로 생성자 뜯어고칠 거 아니면
-    // useFunctionsEmulator 사용 후엔 재기동이 맘 편함.
     _functionsForProd = FirebaseFunctions.instanceFor();
-    _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
+    if (useEmul)
+      _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
   }
 
   Future<String> haruChat(
       prompt, date, chat_template, informal_template) async {
     try {
-      _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
+      if (useEmul)
+        _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
       print([prompt, date, chat_template, informal_template]);
       HttpsCallable callable = _functionsForProd.httpsCallable('ChatAI');
       final response = await callable.call(<String, dynamic>{
@@ -53,7 +52,8 @@ class Functions {
 
   Future<String> callFunctions(functionName, keyValue) async {
     try {
-      _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
+      if (useEmul)
+        _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
       HttpsCallable callable = _functionsForProd.httpsCallable(functionName);
 
       final request = {
@@ -82,7 +82,8 @@ class Functions {
   // functions 호출용 테스트 함수
   Future<String> testFunction(functionName, keyValue) async {
     try {
-      _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
+      if (useEmul)
+        _functionsForProd.useFunctionsEmulator('localhost', 5001); // 에뮬 사용
       HttpsCallable callable = _functionsForProd.httpsCallable(functionName);
       final fixed = <String, dynamic>{
         'userID': FirebaseAuth.instance.currentUser!.uid,

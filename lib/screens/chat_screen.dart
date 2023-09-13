@@ -2,12 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:haru_diary/screens/diary_screen.dart';
+import 'package:provider/provider.dart';
 // import 'package:provider/provider.dart';
 import '../chat/message.dart';
 import '../custom/custom_app_bar.dart';
 import '../custom/custom_theme.dart';
 import '../custom/custom_top_container.dart';
 // import '../provider/progress_provider.dart';
+import '../provider/progress_provider.dart';
 import '/chat/new_message.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:intl/intl.dart';
@@ -61,6 +63,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<ProgressProvider>(context, listen: false).setUserPrefs();
     return Scaffold(
         appBar: CustomAppBar(text: '오하루'),
         body: ModalProgressHUD(
