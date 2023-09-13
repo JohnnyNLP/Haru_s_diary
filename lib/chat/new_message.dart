@@ -22,6 +22,7 @@ class NewMessage extends StatefulWidget {
 class _NewMessageState extends State<NewMessage> {
   final _controller = TextEditingController();
   var _userEnterMessage = '';
+  late final chatModel;
 
   @override
   void initState() {
@@ -33,6 +34,7 @@ class _NewMessageState extends State<NewMessage> {
         _gptMessage('안녕');
       }
     });
+    chatModel = Provider.of<ProgressProvider>(context, listen: false);
   }
 
   Future<List<Map<String, String>>> getConversation() async {
@@ -51,9 +53,7 @@ class _NewMessageState extends State<NewMessage> {
   }
 
   void _gptMessage(msg) async {
-    // final pp = Provider.of<ProgressProvider>(context, listen: false);
-    // pp.setProgress(
-    //     true); //  todo: message.dart의 CircularProgressIndicator와 겹침 해결 필요
+    _setFakeChat(isLoading: true);
 
     final message = await func.haruChat(
       msg,
@@ -66,7 +66,8 @@ class _NewMessageState extends State<NewMessage> {
           .getString('imformalTemplate'),
     );
     print(message);
-    // pp.setProgress(false);
+
+    _setFakeChat(isLoading: false);
   }
 
   void _sendMessage() async {
@@ -85,6 +86,23 @@ class _NewMessageState extends State<NewMessage> {
     });
     _controller.clear();
     _gptMessage(_userEnterMessage);
+  }
+
+  void _setFakeChat({isLoading}) {
+    if (isLoading == null) {
+      isLoading = false;
+    }
+    Map<String, dynamic> fakeChatMap = {
+      'userName': '오하루',
+      'text': '(입력중..)',
+      'userID': '가상의UserID',
+      // 'userImage': '가상의UserImageURL'
+    };
+    if (isLoading) {
+      chatModel.addFakeMessage(fakeChatMap); // 가상 메시지 추가
+    } else {
+      chatModel.removeFakeMessage(); // 가상 메시지 제거
+    }
   }
 
   @override
