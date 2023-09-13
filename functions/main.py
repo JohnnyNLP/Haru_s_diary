@@ -1,3 +1,4 @@
+# 서버 관련
 from firebase_functions import https_fn, options
 from firebase_admin import initialize_app, auth, credentials, firestore
 from flask import Flask, request
@@ -8,6 +9,9 @@ from google.cloud.firestore import SERVER_TIMESTAMP
 # 환경 변수
 from dotenv import load_dotenv
 import os
+
+# 내장 함수
+import re
 
 # LLM 관련
 import openai
@@ -37,11 +41,6 @@ def writeDiary(req: https_fn.CallableRequest):
     # 중첩된 컬렉션과 문서에 접근
     log_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').order_by('time', direction=firestore.Query.ASCENDING)
 
-    # 일기 작성용 프롬프트 작성
-    diary_prompt_ref = db.collection('prompt').document('diary')
-    diary_prompt = diary_prompt_ref.get().to_dict()['prompt']
-    #print(diary_prompt)
-
     # 일기 작성 위한 로그 수집
     log = ''
     docs = log_ref.stream()
@@ -51,6 +50,11 @@ def writeDiary(req: https_fn.CallableRequest):
         else :
             log += 'assistant : '+doc.to_dict()['text']+'\n'
     #print(log)
+
+    # 일기 작성용 프롬프트 작성
+    diary_prompt_ref = db.collection('prompt').document('diary')
+    diary_prompt = diary_prompt_ref.get().to_dict()['prompt']
+    #print(diary_prompt)
 
     # Langchain으로 일기 작성
     llm = ChatOpenAI(temperature=1, openai_api_key=OPENAI_API_KEY, model_name='gpt-4', max_tokens=1024)
@@ -65,30 +69,10 @@ def writeDiary(req: https_fn.CallableRequest):
     diary_ref = db.collection('user').document(userID).collection('diary').document(date)
     diary_ref.set({"content": diary['text'], "time":SERVER_TIMESTAMP, 'userID': userID, 'title':'No title'})
 
-@https_fn.on_call()
-def sentAnal(req: https_fn.CallableRequest):
-    OPENAI_API_KEY=req.data["OPENAI_API_KEY"]
-    userID = req.data["userID"] 
-    date = req.data["date"] 
-    db = firestore.Client()
-
-    # 중첩된 컬렉션과 문서에 접근
-    log_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').order_by('time', direction=firestore.Query.ASCENDING)
-
     # 감정 분석용 프롬프트 작성
     sent_prompt_ref = db.collection('prompt').document('sentiment')
     sent_prompt = sent_prompt_ref.get().to_dict()['prompt']
     # print(sent_prompt)
-
-    # 감정 분석 위한 로그 수집
-    log = ''
-    docs = log_ref.stream()
-    for doc in docs:
-        if doc.to_dict()['userName'] == 'you':
-            log += 'user : '+doc.to_dict()['text']+'\n'
-        else :
-            log += 'assistant : '+doc.to_dict()['text']+'\n'
-    # print(log)
 
     # Langchain으로 감정 분석
     llm = ChatOpenAI(temperature=0, openai_api_key=OPENAI_API_KEY, model_name='gpt-4', max_tokens=1024)
@@ -96,12 +80,68 @@ def sentAnal(req: https_fn.CallableRequest):
         llm = llm,
         prompt = PromptTemplate.from_template(sent_prompt)
     )
-    sent = llm_chain(log)
-    # print(sent['text'])
+    sent_raw = llm_chain(log)
+    # print(sent_raw['text'])
 
-    # 일기 작성 함수 호출 => diary_prompt+log
+    # 감정 작성 함수 호출 => diary_prompt+log
     sent_ref = db.collection('user').document(userID).collection('sentiment').document(date)
-    sent_ref.set({"content": sent['text'], "time":SERVER_TIMESTAMP, 'userID': userID})
+    sent = re.findall(r'\d+', sent_raw['text'])
+    sent_ref.set({"total": int(sent[0]), '기쁨':int(sent[1]), '기대':int(sent[2]),
+                  '열정':int(sent[3]), '애정': int(sent[4]), '슬픔':int(sent[5]),
+                  '분노':int(sent[6]), '우울': int(sent[7]), '혐오':int(sent[8]),
+                  '중립':int(sent[9])})
+    
+    #dict 형태로 제목 / 일기 내용 / 감정
+    
+    result = {
+        'title' : 'No title',
+        'diary' : diary['text']
+        'sentiment' : {
+            {"total": int(sent[0]), '기쁨':int(sent[1]), '기대':int(sent[2]),
+            '열정':int(sent[3]), '애정': int(sent[4]), '슬픔':int(sent[5]),
+            '분노':int(sent[6]), '우울': int(sent[7]), '혐오':int(sent[8]),
+            '중립':int(sent[9])}
+        }
+    }
+    return {'body' : result,  "statusCode": 200}
+
+# @https_fn.on_call()
+# def sentAnal(req: https_fn.CallableRequest):
+#     OPENAI_API_KEY=req.data["OPENAI_API_KEY"]
+#     userID = req.data["userID"] 
+#     date = req.data["date"] 
+#     db = firestore.Client()
+
+#     # 중첩된 컬렉션과 문서에 접근
+#     log_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').order_by('time', direction=firestore.Query.ASCENDING)
+
+#     # 감정 분석 위한 로그 수집
+#     log = ''
+#     docs = log_ref.stream()
+#     for doc in docs:
+#         if doc.to_dict()['userName'] == 'you':
+#             log += 'user : '+doc.to_dict()['text']+'\n'
+#         else :
+#             log += 'assistant : '+doc.to_dict()['text']+'\n'
+#     # print(log)
+
+#     # 감정 분석용 프롬프트 작성
+#     sent_prompt_ref = db.collection('prompt').document('sentiment')
+#     sent_prompt = sent_prompt_ref.get().to_dict()['prompt']
+#     # print(sent_prompt)
+
+#     # Langchain으로 감정 분석
+#     llm = ChatOpenAI(temperature=0, openai_api_key=OPENAI_API_KEY, model_name='gpt-4', max_tokens=1024)
+#     llm_chain = LLMChain(
+#         llm = llm,
+#         prompt = PromptTemplate.from_template(sent_prompt)
+#     )
+#     sent = llm_chain(log)
+#     # print(sent['text'])
+
+#     # 감정 작성 함수 호출 => diary_prompt+log
+#     sent_ref = db.collection('user').document(userID).collection('sentiment').document(date)
+#     sent_ref.set({"content": sent['text'], "time":SERVER_TIMESTAMP, 'userID': userID})
 
 ### Client 에서 받아야할 data
 # userID = 'Puv6AjEOLTV5TsxTtVkCLCq961D3'
