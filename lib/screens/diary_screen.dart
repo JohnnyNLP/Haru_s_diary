@@ -39,16 +39,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
     _fetchDiary();
   }
 
-  // void loading(Function target) async {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-  //   await target();
-  //   setState(() {
-  //     _isLoading = false;
-  //   });
-  // }
-
 // 로딩 상태를 토글하는 메서드
   void _toggleLoading() {
     setState(() {
@@ -78,18 +68,17 @@ class _DiaryScreenState extends State<DiaryScreen> {
   }
 
   Future<void> _fetchDiary() async {
-    print(widget._write);
-    if (widget._write) {
+    DocumentSnapshot documentSnapshot = await diaryRef!.get();
+    if (documentSnapshot.data() == null && widget._write) {
       _toggleLoading();
 
       var returnValue =
           await func.callFunctions('writeDiary', {'date': widget._date});
       print(returnValue);
+      documentSnapshot = await diaryRef!.get();
 
       _toggleLoading();
     }
-    DocumentSnapshot documentSnapshot = await diaryRef!.get();
-    print(!documentSnapshot.exists);
     if (documentSnapshot.data() != null) {
       Map<String, dynamic> diary =
           documentSnapshot.data() as Map<String, dynamic>;
