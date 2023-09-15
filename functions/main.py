@@ -67,11 +67,14 @@ def writeDiary(req: https_fn.CallableRequest):
 
     # 일기 작성 함수 호출 => diary_prompt+log
     diary_ref = db.collection('user').document(userID).collection('diary').document(date)
-
     diary_text = diary['text']
-    diary_title = diary_text[:diary_text.find('[')]
-    diary_body = diary_text[diary_text.find('['):diary_text.find('하루의 한마디')]
-    diary_advice = diary_text[diary_text.find('하루의 한마디'):]
+
+    matches = re.findall(r'\[container\]([^\n]*)', diary_text)
+
+    diary_title = matches[0].strip()
+    diary_body = matches[1].strip()
+    diary_advice = matches[2].strip()
+    
     diary_ref.set({
         'title' : diary_title,
         "content" : diary_body,
