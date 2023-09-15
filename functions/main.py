@@ -67,7 +67,17 @@ def writeDiary(req: https_fn.CallableRequest):
 
     # 일기 작성 함수 호출 => diary_prompt+log
     diary_ref = db.collection('user').document(userID).collection('diary').document(date)
-    diary_ref.set({"content": diary['text'], "time":SERVER_TIMESTAMP, 'userID': userID, 'title':'No title'})
+
+    diary_text = diary['text']
+    diary_title = diary_text[:diary_text.find('[')]
+    diary_body = diary_text[diary_text.find('['):diary_text.find('하루의 한마디')]
+    diary_advice = diary_text[diary_text.find('하루의 한마디'):]
+    diary_ref.set({
+        'title' : diary_title,
+        "content" : diary_body,
+        'advice' : diary_advice,
+        "time" : SERVER_TIMESTAMP,
+        'userID': userID,})
 
     # 감정 분석용 프롬프트 작성
     sent_prompt_ref = db.collection('prompt').document('sentiment')
