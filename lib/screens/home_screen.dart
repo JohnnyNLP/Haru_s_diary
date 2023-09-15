@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/progress_provider.dart';
+import '../provider/common_provider.dart';
 import '/custom/custom_top_container.dart';
 import '/custom/custom_icon_button.dart';
 import '/custom/custom_theme.dart';
@@ -17,14 +17,14 @@ import 'chat_screen.dart';
 import 'diary_screen.dart';
 import 'weekly_diary_screen.dart';
 
-class HomeScreen2 extends StatefulWidget {
-  const HomeScreen2({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  _HomeScreen2State createState() => _HomeScreen2State();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreen2State extends State<HomeScreen2> {
+class _HomeScreenState extends State<HomeScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _authentication = FirebaseAuth.instance;
 
@@ -35,7 +35,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<ProgressProvider>(context, listen: false).setUserPrefs();
+    Provider.of<CommonProvider>(context, listen: false).setUserPrefs();
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:haru_diary/api/functions.dart';
 import 'package:provider/provider.dart';
-import '/provider/progress_provider.dart';
+import '../provider/common_provider.dart';
 
 class NewMessage extends StatefulWidget {
   const NewMessage(this.collectionPath, this.userChatStream, this.date,
@@ -34,7 +34,7 @@ class _NewMessageState extends State<NewMessage> {
         _gptMessage('안녕');
       }
     });
-    chatModel = Provider.of<ProgressProvider>(context, listen: false);
+    chatModel = Provider.of<CommonProvider>(context, listen: false);
   }
 
   Future<List<Map<String, String>>> getConversation() async {
@@ -55,17 +55,16 @@ class _NewMessageState extends State<NewMessage> {
   void _gptMessage(msg) async {
     _setFakeChat(isLoading: true);
 
-    final message = await func.haruChat(
-      msg,
-      widget.date,
-      Provider.of<ProgressProvider>(context, listen: false)
+    await func.callFunctions('ChatAI', {
+      'prompt': msg,
+      'date': widget.date,
+      'chat_template': Provider.of<CommonProvider>(context, listen: false)
           .prefs!
           .getString('chatTemplate'),
-      Provider.of<ProgressProvider>(context, listen: false)
+      'informal_template': Provider.of<CommonProvider>(context, listen: false)
           .prefs!
           .getString('imformalTemplate'),
-    );
-    print(message);
+    });
 
     _setFakeChat(isLoading: false);
   }

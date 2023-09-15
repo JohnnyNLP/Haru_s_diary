@@ -22,6 +22,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _titleController = TextEditingController();
   TextEditingController _contentController = TextEditingController();
+  TextEditingController _adviceController = TextEditingController();
+
   // String? _diaryId;
   final emotion = false;
   final _authentication = FirebaseAuth.instance; //Firebase 인증 객체 생성
@@ -39,14 +41,14 @@ class _DiaryScreenState extends State<DiaryScreen> {
     _fetchDiary();
   }
 
-// 로딩 상태를 토글하는 메서드
+  // 로딩 상태를 토글하는 메서드
   void _toggleLoading() {
     setState(() {
       _isLoading = !_isLoading;
     });
   }
 
-// 현재 로그인한 사용자 정보를 가져오는 메서드
+  // 현재 로그인한 사용자 정보를 가져오는 메서드
   void _getCurrentUser() {
     final user = _authentication.currentUser;
     try {
@@ -58,7 +60,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
     }
   }
 
-// 일기의 Firestore문서 레퍼런스를 가져오는 메서드
+  // 일기의 Firestore문서 레퍼런스를 가져오는 메서드
   void _getDocumentReference() {
     diaryRef = FirebaseFirestore.instance
         .collection('user')
@@ -74,7 +76,12 @@ class _DiaryScreenState extends State<DiaryScreen> {
 
       var returnValue =
           await func.callFunctions('writeDiary', {'date': widget._date});
-      print(returnValue);
+
+      // _titleController.text = returnValue['title'];
+      // _contentController.text = returnValue['diary'].toString().trim();
+      // _adviceController.text = returnValue['advice'] ?? '';
+      // print(returnValue['sentiment']);
+
       documentSnapshot = await diaryRef!.get();
 
       _toggleLoading();
@@ -83,11 +90,14 @@ class _DiaryScreenState extends State<DiaryScreen> {
       Map<String, dynamic> diary =
           documentSnapshot.data() as Map<String, dynamic>;
       _titleController.text = diary['title'] ?? 'No title';
-      _contentController.text = diary['content'] ?? 'No content';
+      _contentController.text = diary['content'] != null
+          ? diary['content'].toString().trim()
+          : 'No content';
+      _adviceController.text = diary['advice'] ?? 'No advice';
     }
   }
 
-// 일기를 Firestore에 업데이트 하는 메서드
+  // 일기를 Firestore에 업데이트 하는 메서드
   Future<void> _updateDiary({String? title, String? content}) async {
     await diaryRef!.set({
       'title': title ?? _titleController.text,
@@ -96,7 +106,44 @@ class _DiaryScreenState extends State<DiaryScreen> {
     });
   }
 
-// UI를 빌드하는 메서드
+  Widget _buildListView(List<String> items) {
+    return ListView.builder(
+      itemCount: items.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+          title: Text(items[index]),
+        );
+      },
+    );
+  }
+
+  Widget createButton(text, color) {
+    return FFButtonWidget(
+      onPressed: () {
+        print('Button pressed ...');
+      },
+      text: text,
+      options: FFButtonOptions(
+        height: 33,
+        padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+        iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+        color: color,
+        textStyle: CustomTheme.of(context).titleSmall.override(
+              fontFamily: 'Readex Pro',
+              color: Colors.white,
+              fontSize: 8,
+            ),
+        elevation: 3,
+        borderSide: BorderSide(
+          color: Colors.transparent,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+
+  // UI를 빌드하는 메서드
   @override
   Widget build(BuildContext context) {
     return ModalProgressHUD(
@@ -157,7 +204,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         SelectionArea(
                             child: Text(
@@ -170,59 +217,25 @@ class _DiaryScreenState extends State<DiaryScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                         )),
-                        FFButtonWidget(
-                          onPressed: () {
-                            print('Button pressed ...');
-                          },
-                          text: '긍정',
-                          options: FFButtonOptions(
-                            height: 33,
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                            iconPadding:
-                                EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                            color: Color(0xB1009D36),
-                            textStyle:
-                                CustomTheme.of(context).titleSmall.override(
-                                      fontFamily: 'Readex Pro',
-                                      color: Colors.white,
-                                      fontSize: 8,
-                                    ),
-                            elevation: 3,
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
+                        // _buildListView(['긍정']),
+                        SizedBox(
+                          height: 35, // 높이 지정
+                          width:
+                              MediaQuery.of(context).size.width - 110, // 너비 지정
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              createButton('긍정', Color(0xB1009D36)),
+                              SizedBox(width: 8),
+                              createButton('우울', Color(0xA2151AB4)),
+                            ],
                           ),
                         ),
-                        SizedBox(width: 8),
-                        FFButtonWidget(
-                          onPressed: () {
-                            print('Button pressed ...');
-                          },
-                          text: '우울',
-                          options: FFButtonOptions(
-                            height: 33,
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                            iconPadding:
-                                EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                            color: Color(0xA2151AB4),
-                            textStyle:
-                                CustomTheme.of(context).titleSmall.override(
-                                      fontFamily: 'Readex Pro',
-                                      color: Colors.white,
-                                      fontSize: 8,
-                                    ),
-                            elevation: 3,
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
+                        // createButton('긍정', Color(0xB1009D36)),
+                        // SizedBox(width: 8),
+                        // createButton('우울', Color(0xA2151AB4)),
+                        // SizedBox(width: 8),
+                        // createButton('분노', Color(0xA2151AB4)),
                       ],
                     ),
                     Padding(
@@ -237,13 +250,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: CustomTheme.of(context).secondaryBackground,
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 4,
-                              color: Color(0x33000000),
-                              offset: Offset(0, 2),
-                            )
-                          ],
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //     blurRadius: 4,
+                          //     color: Color(0x33000000),
+                          //     offset: Offset(0, 2),
+                          //   )
+                          // ],
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
@@ -273,7 +286,53 @@ class _DiaryScreenState extends State<DiaryScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     TextField(
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                      ),
                                       controller: _contentController,
+                                      maxLines: null,
+                                      style: CustomTheme.of(context)
+                                          .headlineSmall
+                                          .override(
+                                            fontFamily: 'Outfit',
+                                            color: Colors.black,
+                                            fontSize: 15,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 14,
+                            ),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Color.fromARGB(255, 246, 233, 204),
+                                boxShadow: [
+                                  BoxShadow(
+                                    blurRadius: 4,
+                                    color: Color(0x33000000),
+                                    offset: Offset(0, 2),
+                                  )
+                                ],
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              alignment: AlignmentDirectional(0, 0),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    16, 16, 16, 16),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextField(
+                                      readOnly: true,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                      ),
+                                      controller: _adviceController,
                                       maxLines: null,
                                       style: CustomTheme.of(context)
                                           .headlineSmall

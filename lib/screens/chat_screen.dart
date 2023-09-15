@@ -9,7 +9,7 @@ import '../custom/custom_app_bar.dart';
 import '../custom/custom_theme.dart';
 import '../custom/custom_top_container.dart';
 // import '../provider/progress_provider.dart';
-import '../provider/progress_provider.dart';
+import '../provider/common_provider.dart';
 import '/chat/new_message.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:intl/intl.dart';
@@ -63,12 +63,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<ProgressProvider>(context, listen: false).setUserPrefs();
+    Provider.of<CommonProvider>(context, listen: false).setUserPrefs();
     return Scaffold(
         appBar: CustomAppBar(text: '오하루'),
         body: ModalProgressHUD(
           inAsyncCall:
-              false, // Provider.of<ProgressProvider>(context).isProgress!,
+              false, // Provider.of<CommonProvider>(context).isProgress!,
           child: Padding(
             padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
             child: Column(
@@ -87,7 +87,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     var conv =
                         await _firestore.collection(collectionPath!).get();
                     var len = conv.docs.length;
-                    if (len < 5) {
+                    if (len < 1) {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {

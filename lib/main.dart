@@ -6,7 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
-import 'package:haru_diary/provider/progress_provider.dart';
+import 'package:haru_diary/provider/common_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'screens/home_screen.dart';
@@ -28,19 +28,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: Size(360, 780),
+      // 기기마다 화면 사이즈 달라도 비슷하게 보일 수 있게 screenUtil 사용
+      designSize: Size(360, 780), // 화면크기 초기값
       builder: (context, child) => ChangeNotifierProvider(
-        create: (context) => ProgressProvider(false),
+        // provider 사용하기위해 최상위 위젯에서 감쌈
+        create: (context) => CommonProvider(false),
         child: MaterialApp(
           title: 'haru_diary',
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
           home: StreamBuilder(
+            // 로그인 여부에 따라서 홈 화면으로 갈지 로그인 화면으로 갈지 변경
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return HomeScreen2();
+                return HomeScreen();
               }
               return LoginSignupScreen();
             },

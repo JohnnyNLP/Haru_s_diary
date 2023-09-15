@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import '/provider/progress_provider.dart';
+import '../provider/common_provider.dart';
 import '/chat/chat_bubble.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -14,7 +14,7 @@ class Messages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final chatModel = Provider.of<ProgressProvider>(context);
+    final chatModel = Provider.of<CommonProvider>(context);
 
     return StreamBuilder(
       stream: userChatStream,
