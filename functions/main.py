@@ -108,7 +108,7 @@ def writeDiary(req: https_fn.CallableRequest):
     for tag, val in sortedSent:
         if val == max_val:
             temp.append(tag)
-    # print(result)
+    # print(temp)
 
     # 만약 그 결과가 2개 초과라면 2개 임의 추출
     if len(temp)>2 :
@@ -123,7 +123,7 @@ def writeDiary(req: https_fn.CallableRequest):
             if val == max_val:
                 temp.append(tag)
         if len(temp)>2:
-            diary_tags = [sortedSent[0][0], random.sample(result[1:], 1)[0]]
+            diary_tags = [sortedSent[0][0], random.sample(temp[1:], 1)[0]]
 
     # [출력부]
     # DB에 일기 작성
