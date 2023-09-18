@@ -12,6 +12,7 @@ import os
 
 # 내장 함수
 import re
+import random
 
 # LLM 관련
 import openai
@@ -40,8 +41,6 @@ def writeDiary(req: https_fn.CallableRequest):
 
     # 중첩된 컬렉션과 문서에 접근
     log_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').order_by('time', direction=firestore.Query.ASCENDING)
-
-    # 일기 작성 위한 로그 수집
     log = ''
     docs = log_ref.stream()
     for doc in docs:
@@ -51,6 +50,7 @@ def writeDiary(req: https_fn.CallableRequest):
             log += 'assistant : '+doc.to_dict()['text']+'\n'
     #print(log)
 
+    # [일기 작성 관련 부분]
     # 일기 작성용 프롬프트 작성
     diary_prompt_ref = db.collection('prompt').document('diary')
     diary_prompt = diary_prompt_ref.get().to_dict()['prompt']
@@ -63,11 +63,8 @@ def writeDiary(req: https_fn.CallableRequest):
         prompt = PromptTemplate.from_template(diary_prompt)
     )
     diary = llm_chain(log)
-    #print(diary['text'])
-
-    # 일기 작성 함수 호출 => diary_prompt+log
-    diary_ref = db.collection('user').document(userID).collection('diary').document(date)
     diary_text = diary['text']
+    #print(diary['text'])
 
     # 챗봇 응답 나누기
     lines = diary_text.strip().split('\n')
@@ -81,6 +78,7 @@ def writeDiary(req: https_fn.CallableRequest):
     diary_body =  sections['내용']
     diary_advice = sections['조언']
 
+    # [감정 분석 관련 부분]
     # 감정 분석용 프롬프트 작성
     sent_prompt_ref = db.collection('prompt').document('sentiment')
     sent_prompt = sent_prompt_ref.get().to_dict()['prompt']
@@ -94,15 +92,42 @@ def writeDiary(req: https_fn.CallableRequest):
     )
     sent_raw = llm_chain(log)
     sent = re.findall(r'\d+', sent_raw['text'])
-    print(sent)
+    # print(sent)
 
-    #감정 태그 추출    
+    # 감정 태그 추출    
     tags = ['total', '기쁨', '기대', '열정', '애정', '슬픔', '분노', '우울', '혐오', '중립']
     sent_dict = dict((tags[i], sent[i]) for i in range(1, 10))
     sortedSent = sorted(sent_dict.items(), key=lambda x: x[1], reverse=True)
-    diary_tags = [sortedSent[i][0] for i in range(2)]
 
+    # 최빈 태그 2개만 추출하는 코드
+    max_val = sortedSent[0][1]
+    temp = []
+    diary_tags = []
+
+    # 1차적으로 태그 추출
+    for tag, val in sortedSent:
+        if val == max_val:
+            temp.append(tag)
+    # print(result)
+
+    # 만약 그 결과가 2개 초과라면 2개 임의 추출
+    if len(temp)>2 :
+        diary_tags = random.sample(temp, 2)
+    # 만약 그 결과가 2개라면 그대로 반환
+    elif len(temp) == 2:
+        diary_tags = temp
+    # 나머지의 경우, 최빈 태그가 1개만 나왔다는 의미이다.
+    else :
+        max_val = sortedSent[1][1]
+        for tag, val in sortedSent[1:]:
+            if val == max_val:
+                temp.append(tag)
+        if len(temp)>2:
+            diary_tags = [sortedSent[0][0], random.sample(result[1:], 1)[0]]
+
+    # [출력부]
     # DB에 일기 작성
+    diary_ref = db.collection('user').document(userID).collection('diary').document(date)
     diary_ref.set({
         'title' : diary_title,
         "content" : diary_body,
@@ -123,10 +148,10 @@ def writeDiary(req: https_fn.CallableRequest):
 
     # Client에 넘겨줄 내용 정리
     result = {
-        'title' : diary_title,
-        'diary' : diary_body,
-        'advice' : diary_advice,
-        'sentiment' : diary_tags
+        'title' : diary_title, # String
+        'diary' : diary_body, #'String
+        'advice' : diary_advice, # String
+        'sentiment' : diary_tags # list - ['최빈 태그 1', '최빈 태그 2']
     }
     return {'body' : result,  "statusCode": 200}
 
