@@ -69,18 +69,17 @@ def writeDiary(req: https_fn.CallableRequest):
     diary_ref = db.collection('user').document(userID).collection('diary').document(date)
     diary_text = diary['text']
 
-    matches = re.findall(r'\[container\]([^\n]*)', diary_text)
+    # 챗봇 응답 나누기
+    lines = diary_text.strip().split('\n')
+    sections = {}
+    for line in lines:
+        key, value = line.split(']', 1)
+        key = key[1:]  # Remove the opening '['
+        sections[key] = value.strip()
 
-    diary_title = matches[0].strip()
-    diary_body = matches[1].strip()
-    diary_advice = matches[2].strip()
-    
-    diary_ref.set({
-        'title' : diary_title,
-        "content" : diary_body,
-        'advice' : diary_advice,
-        "time" : SERVER_TIMESTAMP,
-        'userID': userID,})
+    diary_title = sections['제목']
+    diary_body =  sections['내용']
+    diary_advice = sections['조언']
 
     # 감정 분석용 프롬프트 작성
     sent_prompt_ref = db.collection('prompt').document('sentiment')
@@ -94,27 +93,40 @@ def writeDiary(req: https_fn.CallableRequest):
         prompt = PromptTemplate.from_template(sent_prompt)
     )
     sent_raw = llm_chain(log)
-    # print(sent_raw['text'])
-
-    # 감정 작성 함수 호출 => diary_prompt+log
-    sent_ref = db.collection('user').document(userID).collection('sentiment').document(date)
     sent = re.findall(r'\d+', sent_raw['text'])
+    print(sent)
+
+    #감정 태그 추출    
+    tags = ['total', '기쁨', '기대', '열정', '애정', '슬픔', '분노', '우울', '혐오', '중립']
+    sent_dict = dict((tags[i], sent[i]) for i in range(1, 10))
+    sortedSent = sorted(sent_dict.items(), key=lambda x: x[1], reverse=True)
+    diary_tags = [sortedSent[i][0] for i in range(2)]
+
+    # DB에 일기 작성
+    diary_ref.set({
+        'title' : diary_title,
+        "content" : diary_body,
+        'advice' : diary_advice,
+        "time" : SERVER_TIMESTAMP,
+        "sentiment" : {
+            'first' : diary_tags[0],
+            'second' : diary_tags[1]
+        },
+        'userID': userID,})
+    
+    # DB에 감정 분석 기록
+    sent_ref = db.collection('user').document(userID).collection('sentiment').document(date)
     sent_ref.set({"total": int(sent[0]), '기쁨':int(sent[1]), '기대':int(sent[2]),
                   '열정':int(sent[3]), '애정': int(sent[4]), '슬픔':int(sent[5]),
                   '분노':int(sent[6]), '우울': int(sent[7]), '혐오':int(sent[8]),
                   '중립':int(sent[9])})
-    
-    #dict 형태로 제목 / 일기 내용 / 감정
-    
+
+    # Client에 넘겨줄 내용 정리
     result = {
-        'title' : 'No title',
-        'diary' : diary['text'],
-        'sentiment' : {
-            "total": int(sent[0]), '기쁨':int(sent[1]), '기대':int(sent[2]),
-            '열정':int(sent[3]), '애정': int(sent[4]), '슬픔':int(sent[5]),
-            '분노':int(sent[6]), '우울': int(sent[7]), '혐오':int(sent[8]),
-            '중립':int(sent[9])
-        }
+        'title' : diary_title,
+        'diary' : diary_body,
+        'advice' : diary_advice,
+        'sentiment' : diary_tags
     }
     return {'body' : result,  "statusCode": 200}
 
