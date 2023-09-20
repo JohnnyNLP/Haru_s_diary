@@ -16,6 +16,7 @@ import '/custom/custom_widgets.dart';
 import 'chat_screen.dart';
 import 'diary_screen.dart';
 import 'weekly_diary_screen.dart';
+import 'home_screen_navi.dart';// 홈 setting버튼 누르면 N_home_screen 테스트 해보기 위해 추가
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -255,19 +256,27 @@ class _HomeScreenState extends State<HomeScreen> {
                               size: 40.h,
                             ),
                             onPressed: () async {
-                              // 호출하려는 main.py의 함수명 적으면 됨
-                              var functionName = 'ChatAI';
-                              // 아래와같이 테스트 시 필요한 값 키밸류쌍으로 하드코딩해서 호출
-                              // 현재는 아무렇게나 값 넣어서 정상호출 안 됨
-                              var keyValue = <String, dynamic>{
-                                'date': '20230911',
-                                'prompt': '하이',
-                              };
-                              var returnValue = await func.testFunction(
-                                  functionName, keyValue);
-                              print(returnValue);
-                            },
-                          ),
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => HomeScreenNavi(),   // <- 여기를 수정했습니다.
+                            ));
+                          },
+                        ),
+
+                              //원래 코드(셋팅 버튼 누르면 홈 하단 앱바 화면 테스트 하려고 잠시 주석 처리함)
+                          //   onPressed: () async {
+                          //     // 호출하려는 main.py의 함수명 적으면 됨
+                          //     var functionName = 'ChatAI';
+                          //     // 아래와같이 테스트 시 필요한 값 키밸류쌍으로 하드코딩해서 호출
+                          //     // 현재는 아무렇게나 값 넣어서 정상호출 안 됨
+                          //     var keyValue = <String, dynamic>{
+                          //       'date': '20230911',
+                          //       'prompt': '하이',
+                          //     };
+                          //     var returnValue = await func.testFunction(
+                          //         functionName, keyValue);
+                          //     print(returnValue);
+                          //   },
+                          // ),
                           Padding(
                             padding: EdgeInsets.only(
                                 left: 6), // 하단 Setting 글자 위치 이동(심기섭 수정)
