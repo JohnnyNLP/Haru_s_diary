@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'collection_choice_screen.dart'; // Assuming the import is necessary for your overall code
 
 class HomeScreenNavi extends StatefulWidget {
   @override
@@ -17,19 +18,18 @@ class _HomeScreenNaviState extends State<HomeScreenNavi> with SingleTickerProvid
     _tabController.addListener(() {
       setState(() {
         _selectedIndex = _tabController.index;
-        // 배경색을 선택된 탭에 따라 변경
         switch (_selectedIndex) {
           case 0:
-            backgroundColor = Colors.indigo;
+            backgroundColor = const Color.fromARGB(255, 255, 255, 255);
             break;
           case 1:
-            backgroundColor = const Color.fromARGB(255, 170, 140, 70);
+            backgroundColor = const Color.fromARGB(255, 255, 255, 255);
             break;
           case 2:
-            backgroundColor = Colors.blueGrey;
+            backgroundColor = const Color.fromARGB(255, 255, 255, 255);
             break;
           case 3:
-            backgroundColor = Colors.blueGrey;
+            backgroundColor = const Color.fromARGB(255, 255, 255, 255);
             break;
         }
       });
@@ -51,16 +51,16 @@ class _HomeScreenNaviState extends State<HomeScreenNavi> with SingleTickerProvid
       bottomNavigationBar: SizedBox(
         height: 80,
         child: Container(
-          color: backgroundColor, // TabBar의 배경색
+          color: backgroundColor,
           child: TabBar(
             indicatorColor: Colors.transparent,
             labelColor: Colors.black,
             controller: _tabController,
             tabs: <Widget>[
-              Tab(icon: Icon(_selectedIndex == 0 ? Icons.person : Icons.person_outlined)),
-              Tab(icon: Icon(_selectedIndex == 1 ? Icons.chat : Icons.chat_outlined)),
-              Tab(icon: Icon(_selectedIndex == 2 ? Icons.book : Icons.book_outlined)),
-              Tab(icon: Icon(_selectedIndex == 3 ? Icons.settings : Icons.settings_outlined)),
+              Tab(icon: _selectedIndex == 0 ? Icon(Icons.person) : Icon(Icons.person_outlined)),
+              Tab(icon: _selectedIndex == 1 ? Icon(Icons.chat) : Icon(Icons.chat_outlined)),
+              Tab(icon: _selectedIndex == 2 ? Icon(Icons.book) : Icon(Icons.book_outlined)),
+              Tab(icon: _selectedIndex == 3 ? Icon(Icons.settings) : Icon(Icons.settings_outlined)),
             ],
           ),
         ),
@@ -69,7 +69,9 @@ class _HomeScreenNaviState extends State<HomeScreenNavi> with SingleTickerProvid
           ? tabContainer(context, Colors.indigo, "Friends Tab")
           : _selectedIndex == 1
               ? tabContainer(context, const Color.fromARGB(255, 170, 140, 70), "Chats Tab")
-              : tabContainer(context, Colors.blueGrey, "Settings Tab"),
+              : _selectedIndex == 2
+                  ? CollectionChoiceScreen() // 수정된 부분
+                  : tabContainer(context, Colors.blueGrey, "Settings Tab"),
     );
   }
 
