@@ -189,8 +189,13 @@ def ChatAI(req: https_fn.CallableRequest):
 
     # 이전 대화 내용
     memory = db.collection('user').document(userID).collection('chat').document(date).get()
-    history = memory.to_dict()['memory'] if memory.exists else [{'role':'system', 'content':chat_template}]
+    memory_ref = db.collection('user').document(userID).collection('chat').document(date)
+
     
+    history = memory.to_dict().get('memory', [])
+    if len(history)==0:
+        history.append({'role':'system', 'content':chat_template})
+
     history.append({"role": "user", "content": user_message})
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -198,9 +203,9 @@ def ChatAI(req: https_fn.CallableRequest):
         temperature=1
     )
     final_AI = response.choices[0].message["content"]
-    
+    history.append({"role": "assistant", "content": final_AI})
     memory_ref = db.collection('user').document(userID).collection('chat').document(date)
-    memory_ref.set({'memory': firestore.ArrayUnion([{'user': user_message, '오하루': final_AI}])}, merge=True)
+    memory_ref.set({'memory': history}, merge=True)
     # AI 답변도 DB로 저장
     data = {
         "text":final_AI,
