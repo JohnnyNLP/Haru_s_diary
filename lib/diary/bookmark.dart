@@ -17,9 +17,11 @@ class Bookmarks extends StatelessWidget {
     return Stack(
       children: [
         Padding(
-          padding: EdgeInsets.all(4.w),
+          // 패딩 값을 줄였습니다.
+          padding: EdgeInsets.all(0), 
           child: Container(
-            padding: EdgeInsetsDirectional.fromSTEB(24.w, 12.h, 24.w, 12.h),
+            // 여기도 패딩 값을 줄였습니다.
+            padding: EdgeInsetsDirectional.fromSTEB(12.w, 12.h, 12.w, 12.h),
             width: double.infinity,
             decoration: BoxDecoration(
               color: CustomTheme.of(context).secondaryBackground,
@@ -63,16 +65,19 @@ class Bookmarks extends StatelessWidget {
                     ],
                   ),
                 ),
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_forward_outlined,
-                    color: Color(0xFFEE8B60),
-                    size: 24,
+                Padding(
+                  padding: const EdgeInsets.only(left: 1.0),  // 원하는 패딩 값을 설정
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.arrow_forward_outlined,
+                      color: Color(0xFFEE8B60),
+                      size: 24,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => DiaryScreen(date, false)));
+                    },
                   ),
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => DiaryScreen(date, false)));
-                  },
                 ),
               ],
             ),
@@ -82,3 +87,4 @@ class Bookmarks extends StatelessWidget {
     );
   }
 }
+

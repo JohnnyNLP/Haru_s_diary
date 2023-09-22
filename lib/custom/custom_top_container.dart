@@ -27,19 +27,21 @@ class CustomTopContainer extends StatelessWidget {
       width: 100.w,
       height: 40.h,
       decoration: BoxDecoration(
-        color: Color(0xFFFAFAFA),
+        color: Color.fromARGB(255, 255, 255, 255),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(children: [
+          Padding(  // <-- 왼쪽 패딩 추가
+          padding: EdgeInsets.only(left: 30), // 원하는 간격으로 조절
+          child : Row(children: [
             if (sIcon != null)
               CustomIconButton(
                 borderColor: Colors.transparent,
                 borderRadius: 20,
                 buttonSize: 40.h,
-                fillColor: Color(0xFFFAFAFA),
+                fillColor: Color.fromARGB(255, 255, 255, 255),
                 icon: Icon(
                   sIcon,
                   color: CustomTheme.of(context).tertiary,
@@ -58,6 +60,7 @@ class CustomTopContainer extends StatelessWidget {
                     ),
               ),
           ]),
+          ),
           Row(
             children: [
               if (eText != null)
@@ -75,7 +78,7 @@ class CustomTopContainer extends StatelessWidget {
                   borderColor: Colors.transparent,
                   borderRadius: 20,
                   buttonSize: 40.h,
-                  fillColor: Color(0xFFFAFAFA),
+                  fillColor: Color.fromARGB(255, 255, 255, 255),
                   icon: Icon(
                     eIcon,
                     color: CustomTheme.of(context).tertiary,

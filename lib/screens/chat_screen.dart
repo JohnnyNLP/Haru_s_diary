@@ -65,7 +65,8 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     Provider.of<CommonProvider>(context, listen: false).setUserPrefs();
     return Scaffold(
-        appBar: CustomAppBar(text: '오하루'),
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),  // 배경색을 하늘색으로 설정
+        appBar: CustomAppBar(text: '오하루',alignment: MainAxisAlignment.center),
         body: ModalProgressHUD(
           inAsyncCall:
               false, // Provider.of<CommonProvider>(context).isProgress!,
@@ -76,12 +77,12 @@ class _ChatScreenState extends State<ChatScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 CustomTopContainer(
-                  sText: 'Back',
+                  sText: '챗 종료',
                   sIcon: Icons.chevron_left_outlined,
                   sOnPressed: () {
                     Navigator.pop(context);
                   },
-                  eText: '하루의 일기쓰기',
+                  eText: '일기 만들기',
                   eIcon: Icons.create_outlined,
                   eOnPressed: () async {
                     var conv =
@@ -117,13 +118,17 @@ class _ChatScreenState extends State<ChatScreen> {
                   thickness: 2,
                   color: CustomTheme.of(context).alternate,
                 ),
+                // Container(
+                //     height: 2,  // 높이 조절
+                //     color: Colors.blue,  // 원하는 색상으로 설정
+                //   ),
                 Expanded(
                   child: Container(
-                      margin: EdgeInsets.only(top: 6),
+                      margin: EdgeInsets.only(top: 0),
                       padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
                       decoration: BoxDecoration(
-                        color: Color(0xFFF0E3E3),
-                        borderRadius: BorderRadius.circular(15),
+                      color: Color.fromARGB(128, 217, 149, 81),
+                        // borderRadius: BorderRadius.circular(15),
                       ),
                       child: Messages(collectionPath!, userChatStream!)),
                 ),

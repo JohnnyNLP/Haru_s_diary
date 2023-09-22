@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Color(0xFFFAFAFA),
-        appBar: CustomAppBar(text: 'Home'),
+        // appBar: CustomAppBar(text: 'Home'),
         body: SafeArea(
           top: true,
           child: Padding(

@@ -103,12 +103,12 @@ Widget build(BuildContext context) {
       onWillPop: () async => false,
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFFAFAFA),
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
         appBar: CustomAppBar(text: 'Collection'),
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.all(16.h),
+            padding: EdgeInsets.symmetric(vertical: 12.0),
             child: Column(
               children: [
                 Row(  // 이 부분이 수정되었습니다.
@@ -128,9 +128,12 @@ Widget build(BuildContext context) {
                     ),
                   ],
                 ),
-                Divider(
-                  thickness: 2,
-                  color: CustomTheme.of(context).alternate,
+                Container(
+                  margin: EdgeInsets.only(top: 0.0),
+                  child: Divider(
+                    thickness: 2,
+                    color: CustomTheme.of(context).alternate,
+                  ),
                 ),
                 Expanded(
                   child: CollectionList(
@@ -145,7 +148,15 @@ Widget build(BuildContext context) {
                     // Logic to handle selected documents in `selectedDocs`
                     // 예) 새 컬렉션을 생성하는 코드
                   },
-                  child: Text('collection 생성'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 248, 178, 47), // 버튼의 배경색
+                    onPrimary: Colors.white, // 버튼의 텍스트 색상
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15), // 버튼의 패딩
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30), // 버튼의 모서리 둥글게
+                    ),
+                  ),
+                  child: Text('일기장 만들기'),
                 ),
               ],
             ),

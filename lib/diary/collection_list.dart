@@ -41,21 +41,48 @@ class _CollectionListState extends State<CollectionList> {
             String dateForm =
                 '${weekDay[dateTime.weekday]} (${dateTime.year}. ${dateTime.month}. ${dateTime.day})';
 
-            return CheckboxListTile(
-              value: isChecked[index],
-              onChanged: (bool? value) {
-                setState(() {
-                  isChecked[index] = value!;
-                });
-                widget.onSelectedItems(isChecked, chatDocs);
-              },
-              title: Bookmarks(
-                doc.id,
-                dateForm,
-                doc.data().containsKey('title') ? doc['title'] : '무제',
-                doc.data().containsKey('content') ? doc['content'] : '',
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),  // 여기는 원하는 대로 조절하세요
+          child: Row(
+            children: [
+              // 체크박스
+              Checkbox(
+                value: isChecked[index],
+                onChanged: (bool? value) {
+                  setState(() {
+                    isChecked[index] = value!;
+                  });
+                  widget.onSelectedItems(isChecked, chatDocs);
+                },
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 이 부분을 추가
               ),
-            );
+
+              // 체크박스와 Bookmarks 사이의 간격 (원하는 만큼 조절하세요)
+              SizedBox(width: 5.0), 
+
+              // Bookmarks 위젯
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      isChecked[index] = !isChecked[index];
+                    });
+                    widget.onSelectedItems(isChecked, chatDocs);
+                  },
+                   child: Padding(
+                    padding: const EdgeInsets.only(right: 20.0),  // 원하는 패딩 값을 설정
+                    child: Bookmarks(
+                      doc.id,
+                      dateForm,
+                      doc.data().containsKey('title') ? doc['title'] : '무제',
+                      doc.data().containsKey('content') ? doc['content'] : '',
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
           },
         );
       },
