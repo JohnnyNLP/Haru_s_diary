@@ -32,7 +32,7 @@ initialize_app(cred)
 app = Flask(__name__)
 CORS(app)
 
-@https_fn.on_call()
+@https_fn.on_call(timeout_sec=180, memory=options.MemoryOption.MB_512)
 def writeDiary(req: https_fn.CallableRequest):
     OPENAI_API_KEY=req.data["OPENAI_API_KEY"]
     userID = req.data["userID"] 
@@ -155,44 +155,6 @@ def writeDiary(req: https_fn.CallableRequest):
     }
     return {'body' : result,  "statusCode": 200}
 
-# @https_fn.on_call()
-# def sentAnal(req: https_fn.CallableRequest):
-#     OPENAI_API_KEY=req.data["OPENAI_API_KEY"]
-#     userID = req.data["userID"] 
-#     date = req.data["date"] 
-#     db = firestore.Client()
-
-#     # 중첩된 컬렉션과 문서에 접근
-#     log_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').order_by('time', direction=firestore.Query.ASCENDING)
-
-#     # 감정 분석 위한 로그 수집
-#     log = ''
-#     docs = log_ref.stream()
-#     for doc in docs:
-#         if doc.to_dict()['userName'] == 'you':
-#             log += 'user : '+doc.to_dict()['text']+'\n'
-#         else :
-#             log += 'assistant : '+doc.to_dict()['text']+'\n'
-#     # print(log)
-
-#     # 감정 분석용 프롬프트 작성
-#     sent_prompt_ref = db.collection('prompt').document('sentiment')
-#     sent_prompt = sent_prompt_ref.get().to_dict()['prompt']
-#     # print(sent_prompt)
-
-#     # Langchain으로 감정 분석
-#     llm = ChatOpenAI(temperature=0, openai_api_key=OPENAI_API_KEY, model_name='gpt-4', max_tokens=1024)
-#     llm_chain = LLMChain(
-#         llm = llm,
-#         prompt = PromptTemplate.from_template(sent_prompt)
-#     )
-#     sent = llm_chain(log)
-#     # print(sent['text'])
-
-#     # 감정 작성 함수 호출 => diary_prompt+log
-#     sent_ref = db.collection('user').document(userID).collection('sentiment').document(date)
-#     sent_ref.set({"content": sent['text'], "time":SERVER_TIMESTAMP, 'userID': userID})
-
 ### Client 에서 받아야할 data
 # userID = 'Puv6AjEOLTV5TsxTtVkCLCq961D3'
 # date = '20230909'
@@ -201,7 +163,7 @@ def writeDiary(req: https_fn.CallableRequest):
 # #user_message = req.data['prompt']
 # history = db.collection('user').document(userID).collection('chat').document(date)['memory']
 # cf) db = firestore.client()
-@https_fn.on_call()
+@https_fn.on_call(timeout_sec=180, memory=options.MemoryOption.MB_512)
 def ChatAI(req: https_fn.CallableRequest):
 
     # ID 토큰 가져오기 및 검증 추가
@@ -219,54 +181,26 @@ def ChatAI(req: https_fn.CallableRequest):
     date = req.data["date"] 
     user_message = req.data["prompt"] # 사용자 입력값
 
+    openai.api_key = OPENAI_API_KEY
+    
     # prompt_content(all)
     chat_template = req.data["chat_template"] 
     informal_template = req.data['informal_template'] 
 
-    # memory
+    # 이전 대화 내용
     memory = db.collection('user').document(userID).collection('chat').document(date).get()
-    # memory 데이터 필드 null 체크 추가
-    history = memory.to_dict()['memory'] if memory.exists else ''
-
-    # LLM
-    chat = ChatOpenAI(
-    openai_api_key=OPENAI_API_KEY,
-    temperature=1,
-    model='gpt-3.5-turbo'
-    )
-    informal_korean = ChatOpenAI(
-    openai_api_key=OPENAI_API_KEY,
-    temperature=1,
-    model='gpt-3.5-turbo'
-    )
-    memory_LLM = ConversationSummaryBufferMemory(llm=chat, max_token_limit=40)
-
-    # Prompt
-    PROMPT_chat = PromptTemplate(input_variables=['history', 'input'], template=chat_template)
-    PROMPT_informal = PromptTemplate(input_variables=['AIoutput'], template=informal_template)
-
-    # Chain
-    conversation = ConversationChain(
-    prompt=PROMPT_chat,
-    llm = chat,
-    memory = memory_LLM,
-    output_key="AIoutput",
-    verbose=True
-    )
-    informal_output = LLMChain(
-        prompt=PROMPT_informal,
-        llm = informal_korean,
-        output_key="final_output",
-        verbose=True
-    )   
-
-    # AI 답변 생성
-    final_AI = informal_output.run(conversation.run({'input': history + "Human:" + user_message})) 
+    history = memory.to_dict()['memory'] if memory.exists else [{'role':'system', 'content':chat_template}]
     
-    # DB로 저장되어야 하는 데이터
+    history.append({"role": "user", "content": user_message})
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=history,
+        temperature=1
+    )
+    final_AI = response.choices[0].message["content"]
+    
     memory_ref = db.collection('user').document(userID).collection('chat').document(date)
-    new_history = memory_LLM.load_memory_variables({})['history']
-    memory_ref.set({"memory": new_history})
+    memory_ref.set({'memory': firestore.ArrayUnion([{'user': user_message, '오하루': final_AI}])}, merge=True)
     # AI 답변도 DB로 저장
     data = {
         "text":final_AI,
@@ -277,3 +211,10 @@ def ChatAI(req: https_fn.CallableRequest):
     conversation_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').add(data)
 
     return {'body' : final_AI,  "statusCode": 200}
+    
+    
+    
+    
+
+
+    
