@@ -16,7 +16,8 @@ import '/custom/custom_widgets.dart';
 
 import 'diary_screen.dart';
 import 'weekly_diary_screen.dart';
-import 'home_screen_navi.dart'; // 홈 setting버튼 누르면 N_home_screen 테스트 해보기 위해 추가
+import 'home_screen_navi.dart';// 홈 setting버튼 누르면 home_screen_navi 테스트 해보기 위해 추가
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -42,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Color(0xFFFAFAFA),
-        appBar: CustomAppBar(text: 'Home'),
+        // appBar: CustomAppBar(text: 'Home'),
         body: SafeArea(
           top: true,
           child: Padding(
@@ -257,12 +258,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               size: 40.h,
                             ),
                             onPressed: () async {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    HomeScreenNavi(), // <- 여기를 수정했습니다.
-                              ));
-                            },
-                          ),
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => HomeScreenNavi(),   // 기존 홈스크린에서 셋팅 버튼 누르면 홈스크린네비화면으로 전환되도록함. 
+                            ));
+                          },
+                        ),
+
 
                           //원래 코드(셋팅 버튼 누르면 홈 하단 앱바 화면 테스트 하려고 잠시 주석 처리함)
                           //   onPressed: () async {
