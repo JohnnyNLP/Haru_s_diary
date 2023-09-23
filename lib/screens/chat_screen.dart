@@ -72,67 +72,67 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<CommonProvider>(context, listen: false).setUserPrefs();
-    return Scaffold(
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),  // 배경색을 하늘색으로 설정
-        appBar: CustomAppBar(text: '오하루',alignment: MainAxisAlignment.center),
-        body: ModalProgressHUD(
-          inAsyncCall:
-              false, // Provider.of<CommonProvider>(context).isProgress!,
-          child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                CustomTopContainer(
-                  sText: '챗 종료',
-                  sIcon: Icons.chevron_left_outlined,
-                  sOnPressed: () {
-                    Navigator.pop(context);
-                  },
-                  eText: '일기 만들기',
-                  eIcon: Icons.create_outlined,
-                  eOnPressed: () async {
-                    var conv =
-                        await _firestore.collection(collectionPath!).get();
-                    var len = conv.docs.length;
-                    if (len < 1) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('알림'),
-                            content: Text(
-                                '대화가 충분히 이루어지면, 하루가 대신 일기를 작성해줍니다.\n대화를 조금만 더 진행해주세요.\n\n하루와 한 대화: ${len}마디'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('확인'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(); // 다이얼로그를 닫습니다.
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              DiaryScreen(date!, conv.docs.length > 0)));
-                    }
-                  },
-                ),
-                Divider(
-                  thickness: 2,
-                  color: CustomTheme.of(context).alternate,
-                ),
-                // Container(
-                //     height: 2,  // 높이 조절
-                //     color: Colors.blue,  // 원하는 색상으로 설정
-                //   ),
-                Expanded(
-                  child: Container(
+    if (userChatStream == null) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    } else {
+      Provider.of<CommonProvider>(context, listen: false).setUserPrefs();
+      return Scaffold(
+          appBar: CustomAppBar(text: '오하루'),
+          body: ModalProgressHUD(
+            inAsyncCall:
+                false, // Provider.of<CommonProvider>(context).isProgress!,
+            child: Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  CustomTopContainer(
+                    sText: 'Back',
+                    sIcon: Icons.chevron_left_outlined,
+                    sOnPressed: () {
+                      Navigator.pop(context);
+                    },
+                    eText: '하루의 일기쓰기',
+                    eIcon: Icons.create_outlined,
+                    eOnPressed: () async {
+                      var conv =
+                          await _firestore.collection(collectionPath!).get();
+                      var len = conv.docs.length;
+                      if (len < 1) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('알림'),
+                              content: Text(
+                                  '대화가 충분히 이루어지면, 하루가 대신 일기를 작성해줍니다.\n대화를 조금만 더 진행해주세요.\n\n하루와 한 대화: ${len}마디'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('확인'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(); // 다이얼로그를 닫습니다.
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => DiaryScreen(
+                                widget.docId!, conv.docs.length > 0)));
+                      }
+                    },
+                  ),
+                  Divider(
+                    thickness: 2,
+                    color: CustomTheme.of(context).alternate,
+                  ),
+                  Expanded(
+                    child: Container(
                       margin: EdgeInsets.only(top: 0),
                       padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
                       decoration: BoxDecoration(
