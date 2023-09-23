@@ -191,7 +191,7 @@ def ChatAI(req: https_fn.CallableRequest):
     memory = db.collection('user').document(userID).collection('chat').document(docId).get()
     memory_ref = db.collection('user').document(userID).collection('chat').document(docId)
 
-    history = memory.to_dict().get('memory', [{'role':'system', 'content':chat_template}])
+    history = memory.to_dict()['memory'] if memory.exists else [{'role':'system', 'content':chat_template}]
 
     history.append({"role": "user", "content": user_message})
     response = openai.ChatCompletion.create(
