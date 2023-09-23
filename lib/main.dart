@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:haru_diary/screens/home_screen.dart';
+import 'package:haru_diary/screens/home_screen.dart';
 import 'package:haru_diary/screens/login_signup_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,8 +8,6 @@ import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:haru_diary/provider/common_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-import 'screens/home_screen.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env');

@@ -74,8 +74,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
     if (documentSnapshot.data() == null && widget._write) {
       _toggleLoading();
 
-      var returnValue =
-          await func.callFunctions('writeDiary', {'date': widget._date});
+      // var returnValue =
+      await func.callFunctions('writeDiary', {'date': widget._date});
 
       // _titleController.text = returnValue['title'];
       // _contentController.text = returnValue['diary'].toString().trim();
@@ -98,24 +98,29 @@ class _DiaryScreenState extends State<DiaryScreen> {
   }
 
   // 일기를 Firestore에 업데이트 하는 메서드
-  Future<void> _updateDiary({String? title, String? content}) async {
-    await diaryRef!.set({
-      'title': title ?? _titleController.text,
-      'content': content ?? _contentController.text,
-      'time': Timestamp.now(),
-    });
-  }
-
-  Widget _buildListView(List<String> items) {
-    return ListView.builder(
-      itemCount: items.length,
-      itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          title: Text(items[index]),
-        );
+  Future<void> _updateDiary(
+      {String? title, String? content, String? advice}) async {
+    await diaryRef!.set(
+      {
+        'title': title ?? _titleController.text,
+        'content': content ?? _contentController.text,
+        'advice': advice ?? _adviceController.text,
+        'time': Timestamp.now(),
       },
+      SetOptions(merge: true),
     );
   }
+
+  // Widget _buildListView(List<String> items) {
+  //   return ListView.builder(
+  //     itemCount: items.length,
+  //     itemBuilder: (BuildContext context, int index) {
+  //       return ListTile(
+  //         title: Text(items[index]),
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget createButton(text, color) {
     return FFButtonWidget(

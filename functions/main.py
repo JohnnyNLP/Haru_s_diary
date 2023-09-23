@@ -178,7 +178,7 @@ def ChatAI(req: https_fn.CallableRequest):
     OPENAI_API_KEY=req.data["OPENAI_API_KEY"]
     db = firestore.Client()
     userID = req.data["userID"] 
-    date = req.data["date"] 
+    docId = req.data["docId"] 
     user_message = req.data["prompt"] # 사용자 입력값
 
     openai.api_key = OPENAI_API_KEY
@@ -188,13 +188,10 @@ def ChatAI(req: https_fn.CallableRequest):
     informal_template = req.data['informal_template'] 
 
     # 이전 대화 내용
-    memory = db.collection('user').document(userID).collection('chat').document(date).get()
-    memory_ref = db.collection('user').document(userID).collection('chat').document(date)
+    memory = db.collection('user').document(userID).collection('chat').document(docId).get()
+    memory_ref = db.collection('user').document(userID).collection('chat').document(docId)
 
-    
-    history = memory.to_dict().get('memory', [])
-    if len(history)==0:
-        history.append({'role':'system', 'content':chat_template})
+    history = memory.to_dict().get('memory', [{'role':'system', 'content':chat_template}])
 
     history.append({"role": "user", "content": user_message})
     response = openai.ChatCompletion.create(
@@ -204,7 +201,7 @@ def ChatAI(req: https_fn.CallableRequest):
     )
     final_AI = response.choices[0].message["content"]
     history.append({"role": "assistant", "content": final_AI})
-    memory_ref = db.collection('user').document(userID).collection('chat').document(date)
+    memory_ref = db.collection('user').document(userID).collection('chat').document(docId)
     memory_ref.set({'memory': history}, merge=True)
     # AI 답변도 DB로 저장
     data = {
@@ -213,7 +210,7 @@ def ChatAI(req: https_fn.CallableRequest):
         'userID': "gpt-3.5-turbo",
         "userName": "오하루"
         }
-    conversation_ref = db.collection('user').document(userID).collection('chat').document(date).collection('conversation').add(data)
+    conversation_ref = db.collection('user').document(userID).collection('chat').document(docId).collection('conversation').add(data)
 
     return {'body' : final_AI,  "statusCode": 200}
     

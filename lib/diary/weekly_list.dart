@@ -25,7 +25,8 @@ class WeeklyList extends StatelessWidget {
           itemCount: chatDocs.length,
           itemBuilder: (context, index) {
             // DateTime dateTime = (chatDocs[index]['time'] as Timestamp).toDate();
-            DateTime dateTime = DateTime.parse(chatDocs[index].id);
+            // DateTime dateTime = DateTime.parse(chatDocs[index].id);
+            DateTime dateTime = DateTime.parse(chatDocs[index]['date']);
             String dateForm =
                 '${weekDay[dateTime.weekday]} (${dateTime.year}. ${dateTime.month}. ${dateTime.day})';
             final doc = chatDocs[index];

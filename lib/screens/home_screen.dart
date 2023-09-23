@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haru_diary/api/functions.dart';
+// import 'package:haru_diary/api/functions.dart';
 import 'package:haru_diary/custom/custom_app_bar.dart';
 import 'package:haru_diary/screens/calendar_screen.dart';
+import 'package:haru_diary/screens/chat_list_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,10 +14,9 @@ import '/custom/custom_icon_button.dart';
 import '/custom/custom_theme.dart';
 import '/custom/custom_widgets.dart';
 
-import 'chat_screen.dart';
 import 'diary_screen.dart';
 import 'weekly_diary_screen.dart';
-import 'home_screen_navi.dart';// 홈 setting버튼 누르면 N_home_screen 테스트 해보기 위해 추가
+import 'home_screen_navi.dart'; // 홈 setting버튼 누르면 N_home_screen 테스트 해보기 위해 추가
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -109,7 +109,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: FFButtonWidget(
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const ChatScreen(),
+                                // builder: (context) => const ChatScreen(),
+                                builder: (context) => const ChatListScreen(),
                               ));
                             },
                             text: '대화 하기',
@@ -256,13 +257,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               size: 40.h,
                             ),
                             onPressed: () async {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => HomeScreenNavi(),   // <- 여기를 수정했습니다.
-                            ));
-                          },
-                        ),
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    HomeScreenNavi(), // <- 여기를 수정했습니다.
+                              ));
+                            },
+                          ),
 
-                              //원래 코드(셋팅 버튼 누르면 홈 하단 앱바 화면 테스트 하려고 잠시 주석 처리함)
+                          //원래 코드(셋팅 버튼 누르면 홈 하단 앱바 화면 테스트 하려고 잠시 주석 처리함)
                           //   onPressed: () async {
                           //     // 호출하려는 main.py의 함수명 적으면 됨
                           //     var functionName = 'ChatAI';
