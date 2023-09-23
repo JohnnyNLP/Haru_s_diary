@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haru_diary/diary/weekly_list.dart';
+import 'package:haru_diary/chat/chat_list.dart';
+import 'package:haru_diary/screens/chat_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../custom/custom_app_bar.dart';
@@ -9,20 +10,22 @@ import '../custom/custom_top_container.dart';
 import '/custom/custom_theme.dart';
 import 'package:flutter/material.dart';
 
-class WeeklyDiaryScreen extends StatefulWidget {
-  const WeeklyDiaryScreen({Key? key}) : super(key: key);
+class ChatListScreen extends StatefulWidget {
+  const ChatListScreen({Key? key}) : super(key: key);
 
   @override
-  _WeeklyDiaryScreenState createState() => _WeeklyDiaryScreenState();
+  _ChatListScreenState createState() => _ChatListScreenState();
 }
 
-class _WeeklyDiaryScreenState extends State<WeeklyDiaryScreen> {
+class _ChatListScreenState extends State<ChatListScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   final _authentication = FirebaseAuth.instance;
   User? loggedUser;
   String? _collectionPath;
   Stream<QuerySnapshot<Map<String, dynamic>>>? _docStream;
+
+  Set<String> selectedIds = Set<String>();
 
   @override
   void initState() {
@@ -44,20 +47,18 @@ class _WeeklyDiaryScreenState extends State<WeeklyDiaryScreen> {
   }
 
   void getCollectionPath() {
-    _collectionPath = '/user/${loggedUser!.uid}/diary';
+    _collectionPath = '/user/${loggedUser!.uid}/chat';
   }
 
   void getDocStream() {
     DateTime now = DateTime.now();
-    DateTime lastSunday = now.subtract(Duration(days: now.weekday));
-    print(lastSunday);
-    String formattedDate = DateFormat('yyyyMMdd').format(lastSunday);
-    // formattedDate = '20230911';
-    // print(formattedDate);
+    // DateTime lastDay = now.subtract(Duration(days: now.weekday));
+    DateTime lastDay = now.subtract(Duration(days: 1));
+    String formattedDate = DateFormat('yyyyMMdd').format(lastDay);
     final Stream<QuerySnapshot<Map<String, dynamic>>> chatStream =
         FirebaseFirestore.instance
             .collection(_collectionPath!)
-            .orderBy('date', descending: false)
+            // .orderBy(FieldPath.documentId, descending: true)
             .where('date', isGreaterThan: formattedDate)
             .snapshots();
     _docStream = chatStream;
@@ -72,7 +73,7 @@ class _WeeklyDiaryScreenState extends State<WeeklyDiaryScreen> {
         child: Scaffold(
           key: scaffoldKey,
           backgroundColor: Color(0xFFFAFAFA),
-          appBar: CustomAppBar(text: 'Weekly'),
+          appBar: CustomAppBar(text: '대화목록'),
           body: SafeArea(
             top: true,
             child: Padding(
@@ -90,6 +91,18 @@ class _WeeklyDiaryScreenState extends State<WeeklyDiaryScreen> {
                       },
                       eText: '삭제하기',
                       eIcon: Icons.delete_sweep,
+                      eOnPressed: () async {
+                        for (String id in selectedIds) {
+                          await FirebaseFirestore.instance
+                              .collection(_collectionPath!)
+                              .doc(id)
+                              .delete();
+                        }
+
+                        setState(() {
+                          selectedIds.clear();
+                        });
+                      },
                     ),
                     Divider(
                       thickness: 2,
@@ -115,8 +128,16 @@ class _WeeklyDiaryScreenState extends State<WeeklyDiaryScreen> {
                             child: Column(
                               children: [
                                 Expanded(
-                                  child: WeeklyList(_docStream!),
+                                  child: ChatList(_docStream!, selectedIds),
                                 ),
+                                IconButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ChatScreen()));
+                                    },
+                                    icon: Icon(Icons.add_circle))
                               ],
                             ),
                           ),

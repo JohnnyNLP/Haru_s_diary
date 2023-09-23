@@ -2,20 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:haru_diary/screens/diary_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-// import 'package:provider/provider.dart';
 import '../chat/message.dart';
 import '../custom/custom_app_bar.dart';
 import '../custom/custom_theme.dart';
 import '../custom/custom_top_container.dart';
-// import '../provider/progress_provider.dart';
 import '../provider/common_provider.dart';
 import '/chat/new_message.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:intl/intl.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key}) : super(key: key);
+  const ChatScreen({this.docId, super.key});
+  final String? docId;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -27,14 +26,17 @@ class _ChatScreenState extends State<ChatScreen> {
   User? loggedUser;
   String? collectionPath;
   Stream<QuerySnapshot<Map<String, dynamic>>>? userChatStream;
-  String? date;
+  String? docId;
 
   @override
   void initState() {
     super.initState();
     getCurrentUser();
-    setCollectionPath();
-    setChatStream();
+
+    Future.delayed(Duration.zero, () async {
+      await setCollectionPath();
+      setState(setChatStream);
+    });
   }
 
   void getCurrentUser() {
@@ -56,9 +58,16 @@ class _ChatScreenState extends State<ChatScreen> {
     userChatStream = chatStream;
   }
 
-  void setCollectionPath() {
-    date = DateFormat('yyyyMMdd').format(DateTime.now());
-    collectionPath = '/user/${loggedUser!.uid}/chat/${date}/conversation';
+  Future setCollectionPath() async {
+    docId = widget.docId;
+    if (docId == null) {
+      await _firestore.collection('/user/${loggedUser!.uid}/chat').add({
+        'date': DateFormat('yyyyMMdd').format(DateTime.now()),
+      }).then((DocumentReference document) {
+        docId = document.id;
+      });
+    }
+    collectionPath = '/user/${loggedUser!.uid}/chat/${docId}/conversation';
   }
 
   @override
@@ -130,12 +139,15 @@ class _ChatScreenState extends State<ChatScreen> {
                       color: Color.fromARGB(128, 217, 149, 81),
                         // borderRadius: BorderRadius.circular(15),
                       ),
-                      child: Messages(collectionPath!, userChatStream!)),
-                ),
-                NewMessage(collectionPath!, userChatStream!, date!),
-              ],
+                      child: Messages(collectionPath!, userChatStream!),
+                      // child: null,
+                    ),
+                  ),
+                  NewMessage(collectionPath!, userChatStream!, docId!),
+                ],
+              ),
             ),
-          ),
-        ));
+          ));
+    }
   }
 }

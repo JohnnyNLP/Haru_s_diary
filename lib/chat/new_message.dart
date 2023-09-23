@@ -8,12 +8,12 @@ import 'package:provider/provider.dart';
 import '../provider/common_provider.dart';
 
 class NewMessage extends StatefulWidget {
-  const NewMessage(this.collectionPath, this.userChatStream, this.date,
+  const NewMessage(this.collectionPath, this.userChatStream, this.docId,
       {super.key});
 
   final String collectionPath;
   final Stream<QuerySnapshot<Map<String, dynamic>>> userChatStream;
-  final String date;
+  final String docId;
 
   @override
   State<NewMessage> createState() => _NewMessageState();
@@ -57,7 +57,7 @@ class _NewMessageState extends State<NewMessage> {
 
     await func.callFunctions('ChatAI', {
       'prompt': msg,
-      'date': widget.date,
+      'docId': widget.docId,
       'chat_template': Provider.of<CommonProvider>(context, listen: false)
           .prefs!
           .getString('chatTemplate'),
@@ -106,6 +106,7 @@ class _NewMessageState extends State<NewMessage> {
 
   @override
   Widget build(BuildContext context) {
+    print('widget.collectionPath: ${widget.collectionPath}');
     return Container(
       decoration: BoxDecoration(
         color: Color(0x2957636C),
