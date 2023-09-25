@@ -46,6 +46,8 @@ dependencies:
   firebase_storage: ^11.2.6 # 이미지 저장
   cloud_functions: ^4.4.0 # FirebaseFunctions 사용
   flutter_screenutil: ^5.9.0  # 일관된 UI 관리
+  quiver: ^3.1.0
+  basics: ^0.9.0
 
   google_fonts: ^5.1.0
   shared_preferences: ^2.2.1
