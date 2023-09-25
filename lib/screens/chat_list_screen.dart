@@ -112,7 +112,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       padding: EdgeInsetsDirectional.fromSTEB(0, 8.h, 0, 0),
                       child: Container(
                         width: 338.w,
-                        height: 582.h,
+                        height: 550.h,
                         decoration: BoxDecoration(
                           color: CustomTheme.of(context).secondaryBackground,
                         ),
@@ -137,7 +137,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                               builder: (context) =>
                                                   ChatScreen()));
                                     },
-                                    icon: Icon(Icons.add_circle))
+                                    icon: Icon(Icons.add_circle,size: 30.0))
                               ],
                             ),
                           ),

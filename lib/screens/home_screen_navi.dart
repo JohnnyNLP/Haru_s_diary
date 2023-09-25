@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'collection_choice_screen.dart'; // Assuming the import is necessary for your overall code
 import 'chat_screen.dart';
 import 'chat_start_page.dart';
+import 'chat_list_screen.dart';
 
 class HomeScreenNavi extends StatefulWidget {
   @override
@@ -71,7 +72,7 @@ class _HomeScreenNaviState extends State<HomeScreenNavi> with SingleTickerProvid
         controller: _tabController,
         children: [
           tabContainer(context, Color.fromARGB(255, 255, 255, 255), "Friends Tab"),
-          StartChatPage(),
+          ChatListScreen(),
           CollectionChoiceScreen(),
           tabContainer(context, const Color.fromARGB(255, 255, 255, 255), "Settings Tab"),
         ],
