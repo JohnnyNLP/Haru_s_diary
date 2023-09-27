@@ -95,7 +95,8 @@ class _NewMessageState extends State<NewMessage> {
       'userName': '오하루',
       'text': '(입력중..)',
       'userID': '가상의UserID',
-      // 'userImage': '가상의UserImageURL'
+      'userImage': // 테스트 위해 하드코딩
+          'https://firebasestorage.googleapis.com/v0/b/haru-s-diary.appspot.com/o/picked_image%2Fgpt-3.5-turbo.png?alt=media&token=684e0b0e-3bc0-41c9-b6e1-412a7b02d1ed',
     };
     if (isLoading) {
       chatModel.addFakeMessage(fakeChatMap); // 가상 메시지 추가

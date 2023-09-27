@@ -5,7 +5,8 @@ import 'chart_model.dart';
 final tableDecoration = BoxDecoration(
   color: Color.fromARGB(255, 241, 243, 241), // 범례 table배경색
   borderRadius: BorderRadius.circular(6),
-  border: Border.all(color: Color.fromARGB(255, 255, 255, 255), width: 1), //범례 table border색
+  border: Border.all(
+      color: Color.fromARGB(255, 255, 255, 255), width: 1), //범례 table border색
 );
 
 class CategoriesTable extends StatelessWidget {
@@ -22,8 +23,9 @@ class CategoriesTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final decoration = tableDecoration; // darkTableDecoration를 삭제하고 tableDecoration 사용
+    // final theme = Theme.of(context);
+    final decoration =
+        tableDecoration; // darkTableDecoration를 삭제하고 tableDecoration 사용
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Table(
@@ -51,20 +53,25 @@ class CategoriesTable extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12.0),
-            child: Text(category.title, 
-                    style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), // 범례 감정 글자 색상으로 변경('기쁨' 또는 '슬픔'과 같은 텍스트)
+            child: Text(
+              category.title,
+              style: TextStyle(
+                color: const Color.fromARGB(
+                    255, 0, 0, 0), // 범례 감정 글자 색상으로 변경('기쁨' 또는 '슬픔'과 같은 텍스트)
               ),
             ),
           ),
-          Text('${category.total.toStringAsFixed(2)}%', //차트 화면의 각 섹션의 값들의 단위 변경
-              style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), // 범례 값들 색상 변경
+          Text(
+            '${category.total.toStringAsFixed(2)}%', //차트 화면의 각 섹션의 값들의 단위 변경
+            style: TextStyle(
+              color: const Color.fromARGB(255, 0, 0, 0), // 범례 값들 색상 변경
             ),
-          ),  
+          ),
           if (selectable)
             IconButton(
               onPressed: () => onSelection(category),
               hoverColor: Colors.cyan.shade100,
-              color: Colors.cyan.shade700,   // 돋보기 색깔 변경
+              color: Colors.cyan.shade700, // 돋보기 색깔 변경
               padding: const EdgeInsets.all(10),
               splashRadius: 18,
               icon: const Icon(Icons.zoom_in),
@@ -81,9 +88,10 @@ class SubCategoriesTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    // final theme = Theme.of(context);
 
-    final decoration = tableDecoration; // darkTableDecoration를 삭제하고 tableDecoration 사용
+    final decoration =
+        tableDecoration; // darkTableDecoration를 삭제하고 tableDecoration 사용
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Table(
@@ -111,15 +119,20 @@ class SubCategoriesTable extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Container(color: subCategory.color, height: 24),
           ),
-          Text(subCategory.title, 
-            style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), // 차트의 각 섹션 클릭시, '하위 값들의 글자 색상' 변경
+          Text(
+            subCategory.title,
+            style: TextStyle(
+              color: const Color.fromARGB(
+                  255, 0, 0, 0), // 차트의 각 섹션 클릭시, '하위 값들의 글자 색상' 변경
             ),
           ),
-          Text('${subCategory.total.toStringAsFixed(2)}%', // 차트 화면의 각 섹션을 '클릭'했을 때의 하위 값들의 단위 변경
+          Text(
+            '${subCategory.total.toStringAsFixed(2)}%', // 차트 화면의 각 섹션을 '클릭'했을 때의 하위 값들의 단위 변경
             style: TextStyle(
-              color: const Color.fromARGB(255, 0, 0, 0), // 차트의 각 섹션 클릭시, '하위 값'들의 색상 변경
-              ),
-            ) 
+              color: const Color.fromARGB(
+                  255, 0, 0, 0), // 차트의 각 섹션 클릭시, '하위 값'들의 색상 변경
+            ),
+          )
         ],
       );
 }

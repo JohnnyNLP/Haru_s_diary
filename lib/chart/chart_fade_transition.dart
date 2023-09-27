@@ -19,7 +19,7 @@ Widget fadeTransitionBuilder(context, animation, secondaryAnimation, child) {
     children: <Widget>[
       FadeTransition(
         opacity: fadeOut,
-        child: Container(color: theme.backgroundColor),
+        child: Container(color: theme.colorScheme.background),
       ),
       FadeTransition(opacity: fadeIn, child: child)
     ],

@@ -1,10 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:haru_diary/api/functions.dart';
-import 'package:haru_diary/custom/custom_app_bar.dart';
+// import 'package:haru_diary/custom/custom_app_bar.dart';
 import 'package:haru_diary/screens/calendar_screen.dart';
 import 'package:haru_diary/screens/chat_list_screen.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,10 +13,8 @@ import '/custom/custom_icon_button.dart';
 import '/custom/custom_theme.dart';
 import '/custom/custom_widgets.dart';
 
-import 'diary_screen.dart';
-import 'weekly_diary_screen.dart';
-import 'home_screen_navi.dart';// 홈 setting버튼 누르면 home_screen_navi 테스트 해보기 위해 추가
-
+import 'diary_list_screen.dart';
+import 'home_screen_navi.dart'; // 홈 setting버튼 누르면 home_screen_navi 테스트 해보기 위해 추가
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -145,11 +142,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             onPressed: () {
                               print('Button pressed ...');
 
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => DiaryScreen(
-                                      DateFormat('yyyyMMdd')
-                                          .format(DateTime.now()),
-                                      false)));
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) => DiaryScreen(
+                              //         DateFormat('yyyyMMdd')
+                              //             .format(DateTime.now()),
+                              //         false)));
                             },
                             text: '오늘의 일기',
                             options: FFButtonOptions(
@@ -203,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const WeeklyDiaryScreen(),
+                                builder: (context) => const DiaryListScreen(),
                               ));
                             },
                           ),
@@ -258,12 +255,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               size: 40.h,
                             ),
                             onPressed: () async {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => HomeScreenNavi(),   // 기존 홈스크린에서 셋팅 버튼 누르면 홈스크린네비화면으로 전환되도록함. 
-                            ));
-                          },
-                        ),
-
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    HomeScreenNavi(), // 기존 홈스크린에서 셋팅 버튼 누르면 홈스크린네비화면으로 전환되도록함.
+                              ));
+                            },
+                          ),
 
                           //원래 코드(셋팅 버튼 누르면 홈 하단 앱바 화면 테스트 하려고 잠시 주석 처리함)
                           //   onPressed: () async {

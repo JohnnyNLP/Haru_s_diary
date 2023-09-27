@@ -13,8 +13,9 @@ import '/chat/new_message.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({this.docId, super.key});
+  const ChatScreen({this.docId, this.date, super.key});
   final String? docId;
+  final String? date;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -27,6 +28,7 @@ class _ChatScreenState extends State<ChatScreen> {
   String? collectionPath;
   Stream<QuerySnapshot<Map<String, dynamic>>>? userChatStream;
   String? docId;
+  String? date;
 
   @override
   void initState() {
@@ -60,9 +62,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future setCollectionPath() async {
     docId = widget.docId;
+    date = widget.date;
     if (docId == null) {
+      date = DateFormat('yyyyMMdd').format(DateTime.now());
       await _firestore.collection('/user/${loggedUser!.uid}/chat').add({
-        'date': DateFormat('yyyyMMdd').format(DateTime.now()),
+        'date': date,
       }).then((DocumentReference document) {
         docId = document.id;
       });
@@ -90,7 +94,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   CustomTopContainer(
-                    sText: 'Back',
+                    // sText: 'Back',
                     sIcon: Icons.chevron_left_outlined,
                     sOnPressed: () {
                       Navigator.pop(context);
@@ -101,7 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       var conv =
                           await _firestore.collection(collectionPath!).get();
                       var len = conv.docs.length;
-                      if (len < 1) {
+                      if (len < 5) {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -121,9 +125,11 @@ class _ChatScreenState extends State<ChatScreen> {
                           },
                         );
                       } else {
+                        print(widget.docId);
+                        print(date);
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => DiaryScreen(
-                                widget.docId!, conv.docs.length > 0)));
+                            builder: (context) =>
+                                DiaryScreen(widget.docId!, date!)));
                       }
                     },
                   ),
@@ -136,7 +142,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       margin: EdgeInsets.only(top: 0),
                       padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
                       decoration: BoxDecoration(
-                      color: Color.fromARGB(128, 217, 149, 81),
+                        color: Color.fromARGB(128, 217, 149, 81),
                         // borderRadius: BorderRadius.circular(15),
                       ),
                       child: Messages(collectionPath!, userChatStream!),

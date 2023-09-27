@@ -18,15 +18,17 @@ class CategoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    // final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: ListView(
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 16, top: 20, right: 60), // 텍스트 위치 조절
+            padding: const EdgeInsets.only(
+                left: 16, top: 20, right: 60), // 텍스트 위치 조절
             child: Row(
               children: [
-                const BackButton(color: Color.fromARGB(255, 83, 78, 78)), // back 버튼 색
+                const BackButton(
+                    color: Color.fromARGB(255, 83, 78, 78)), // back 버튼 색
                 Spacer(), // 버튼과 텍스트 사이 공간을 차지함
                 Text(
                   '감정분석',

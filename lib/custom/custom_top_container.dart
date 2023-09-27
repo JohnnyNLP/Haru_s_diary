@@ -12,6 +12,9 @@ class CustomTopContainer extends StatelessWidget {
     this.eIcon,
     this.sOnPressed,
     this.eOnPressed,
+    this.sBtns,
+    this.eBtns,
+    this.popupItems,
   }) : super(key: key);
 
   final IconData? sIcon;
@@ -20,10 +23,14 @@ class CustomTopContainer extends StatelessWidget {
   final IconData? eIcon;
   final VoidCallback? sOnPressed;
   final VoidCallback? eOnPressed;
+  final List<Map>? sBtns;
+  final List<Map>? eBtns;
+  final List<Map>? popupItems;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.fromLTRB(0.h, 0, 10.h, 0),
       width: 100.w,
       height: 40.h,
       decoration: BoxDecoration(
@@ -33,9 +40,21 @@ class CustomTopContainer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Padding(  // <-- 왼쪽 패딩 추가
-          padding: EdgeInsets.only(left: 30), // 원하는 간격으로 조절
-          child : Row(children: [
+          Row(children: [
+            if (sBtns != null)
+              for (var btn in sBtns!)
+                CustomIconButton(
+                  borderColor: Colors.transparent,
+                  borderRadius: 20,
+                  buttonSize: 40.h,
+                  fillColor: Color.fromARGB(255, 255, 255, 255),
+                  icon: Icon(
+                    btn['icon'] ?? null,
+                    color: CustomTheme.of(context).tertiary,
+                    size: 30.h,
+                  ),
+                  onPressed: btn['onPressed'] ?? () {},
+                ),
             if (sIcon != null)
               CustomIconButton(
                 borderColor: Colors.transparent,
@@ -60,9 +79,22 @@ class CustomTopContainer extends StatelessWidget {
                     ),
               ),
           ]),
-          ),
           Row(
             children: [
+              if (eBtns != null)
+                for (var btn in eBtns!)
+                  CustomIconButton(
+                    borderColor: Colors.transparent,
+                    borderRadius: 20,
+                    buttonSize: 40.h,
+                    fillColor: Color.fromARGB(255, 255, 255, 255),
+                    icon: Icon(
+                      btn['icon'] ?? null,
+                      color: CustomTheme.of(context).tertiary,
+                      size: 30.h,
+                    ),
+                    onPressed: btn['onPressed'] ?? () {},
+                  ),
               if (eText != null)
                 Text(
                   eText!,
@@ -86,6 +118,24 @@ class CustomTopContainer extends StatelessWidget {
                   ),
                   onPressed: eOnPressed ?? () {},
                 ),
+              if (popupItems != null)
+                PopupMenuButton<int>(
+                  offset: Offset(0, 50.h),
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: CustomTheme.of(context).tertiary,
+                    size: 30.h,
+                  ),
+                  itemBuilder: (context) => [
+                    for (var item in popupItems!)
+                      PopupMenuItem(
+                        child: ListTile(
+                          title: Text(item['title']),
+                          onTap: item['onTap'],
+                        ),
+                      )
+                  ],
+                )
             ],
           ),
         ],

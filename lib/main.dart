@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haru_diary/screens/home_screen.dart';
+import 'package:haru_diary/screens/home_screen_navi.dart';
 import 'package:haru_diary/screens/login_signup_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return HomeScreen();
+                return HomeScreenNavi();
               }
               return LoginSignupScreen();
             },

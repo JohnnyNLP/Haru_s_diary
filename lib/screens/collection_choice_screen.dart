@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haru_diary/diary/collection_list.dart';  // Make sure to import your CollectionList
+// import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:haru_diary/diary/collection_list.dart'; // Make sure to import your CollectionList
 import 'package:intl/intl.dart';
 
 import '../custom/custom_app_bar.dart';
-import '../custom/custom_top_container.dart';
+// import '../custom/custom_top_container.dart';
 import '/custom/custom_theme.dart';
 
 class CollectionChoiceScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class CollectionChoiceScreen extends StatefulWidget {
 
 class _CollectionChoiceScreenState extends State<CollectionChoiceScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  
+
   final _authentication = FirebaseAuth.instance;
   User? loggedUser;
   String? _collectionPath;
@@ -42,7 +42,7 @@ class _CollectionChoiceScreenState extends State<CollectionChoiceScreen> {
     }
   }
 
-   // 원본: getCurrentUser()코드
+  // 원본: getCurrentUser()코드
 //   void getCurrentUser() {
 //   final user = _authentication.currentUser;
 //   try {
@@ -52,12 +52,11 @@ class _CollectionChoiceScreenState extends State<CollectionChoiceScreen> {
 //   } catch (e) {
 //     print(e);
 //   }
-// } 
+// }
 
   void getCollectionPath() {
     _collectionPath = '/user/${loggedUser!.uid}/diary';
   }
-
 
   void getDocStream() {
     DateTime now = DateTime.now();
@@ -70,7 +69,7 @@ class _CollectionChoiceScreenState extends State<CollectionChoiceScreen> {
         .where(FieldPath.documentId, isGreaterThan: formattedDate)
         .snapshots();
   }
-    //원본: void getDocStream() 코드
+  //원본: void getDocStream() 코드
   //   void getDocStream() {
   //   DateTime now = DateTime.now();
   //   DateTime lastSunday = now.subtract(Duration(days: now.weekday));
@@ -96,11 +95,9 @@ class _CollectionChoiceScreenState extends State<CollectionChoiceScreen> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return GestureDetector(
-    onTap: () => FocusScope.of(context).unfocus(),
-    child: WillPopScope(
-      onWillPop: () async => false,
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Color.fromARGB(255, 255, 255, 255),
@@ -111,8 +108,9 @@ Widget build(BuildContext context) {
             padding: EdgeInsets.symmetric(vertical: 12.0),
             child: Column(
               children: [
-                Row(  // 이 부분이 수정되었습니다.
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,  
+                Row(
+                  // 이 부분이 수정되었습니다.
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       icon: Icon(Icons.chevron_left_outlined),
@@ -137,8 +135,8 @@ Widget build(BuildContext context) {
                 ),
                 Expanded(
                   child: CollectionList(
-                    _docStream!,  
-                    onSelectedItems: (isChecked, docs) {  
+                    _docStream!,
+                    onSelectedItems: (isChecked, docs) {
                       collectSelectedDocs(isChecked, docs);
                     },
                   ),
@@ -149,9 +147,11 @@ Widget build(BuildContext context) {
                     // 예) 새 컬렉션을 생성하는 코드
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 248, 178, 47), // 버튼의 배경색
-                    onPrimary: Colors.white, // 버튼의 텍스트 색상
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15), // 버튼의 패딩
+                    foregroundColor: Colors.white,
+                    backgroundColor:
+                        Color.fromARGB(255, 248, 178, 47), // 버튼의 텍스트 색상
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15), // 버튼의 패딩
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30), // 버튼의 모서리 둥글게
                     ),
@@ -163,7 +163,6 @@ Widget build(BuildContext context) {
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

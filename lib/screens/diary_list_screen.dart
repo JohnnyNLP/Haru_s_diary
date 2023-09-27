@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haru_diary/chat/chat_list.dart';
-import 'package:haru_diary/screens/chat_screen.dart';
-// import 'package:http/http.dart';
+import 'package:haru_diary/diary/diary_list.dart';
 import 'package:intl/intl.dart';
 
 import '../custom/custom_app_bar.dart';
@@ -11,14 +9,16 @@ import '../custom/custom_top_container.dart';
 import '/custom/custom_theme.dart';
 import 'package:flutter/material.dart';
 
-class ChatListScreen extends StatefulWidget {
-  const ChatListScreen({Key? key}) : super(key: key);
+class DiaryListScreen extends StatefulWidget {
+  const DiaryListScreen({this.date, Key? key}) : super(key: key);
+
+  final String? date;
 
   @override
-  _ChatListScreenState createState() => _ChatListScreenState();
+  DiaryListScreenState createState() => DiaryListScreenState();
 }
 
-class _ChatListScreenState extends State<ChatListScreen> {
+class DiaryListScreenState extends State<DiaryListScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   final _authentication = FirebaseAuth.instance;
@@ -44,7 +44,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
       builder: (context) {
         return AlertDialog(
           title: Text('확인'),
-          content: Text('${selectedIds.length}개의 대화가 선택되었습니다.\n정말로 삭제하시겠습니까?'),
+          content: Text('${selectedIds.length}개의 일기가 선택되었습니다.\n정말로 삭제하시겠습니까?'),
           actions: <Widget>[
             TextButton(
               child: Text('예'),
@@ -88,32 +88,47 @@ class _ChatListScreenState extends State<ChatListScreen> {
   }
 
   void getCollectionPath() {
-    _collectionPath = '/user/${loggedUser!.uid}/chat';
+    _collectionPath = '/user/${loggedUser!.uid}/diary';
   }
 
   void getDocStream() {
+    // print('aaaaa${widget.date}');
     DateTime now = DateTime.now();
-    // DateTime lastDay = now.subtract(Duration(days: now.weekday));
-    DateTime lastDay = now.subtract(Duration(days: 1));
-    String formattedDate = DateFormat('yyyyMMdd').format(lastDay);
-    // formattedDate = '20230101'; // 테스트 위해 하드코딩
-    final Stream<QuerySnapshot<Map<String, dynamic>>> chatStream =
-        FirebaseFirestore.instance
-            .collection(_collectionPath!)
-            .where('date', isGreaterThan: formattedDate)
-            .orderBy('date', descending: true)
-            .snapshots();
+    DateTime lastSunday = now.subtract(Duration(days: now.weekday));
+    String formattedDate = DateFormat('yyyyMMdd').format(lastSunday);
+    formattedDate = '20230101'; // 테스트 위해 하드코딩
+    final Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
+    if (widget.date == null) {
+      chatStream = FirebaseFirestore.instance
+          .collection(_collectionPath!)
+          .where('date', isGreaterThan: formattedDate)
+          .orderBy('date', descending: true)
+          .snapshots();
+    } else {
+      chatStream = FirebaseFirestore.instance
+          .collection(_collectionPath!)
+          .where('date', isEqualTo: widget.date)
+          .snapshots();
+    }
     _docStream = chatStream;
   }
 
   @override
   Widget build(BuildContext context) {
+    String? dateForm;
+    if (widget.date != null) {
+      final weekDay = ['', '월', '화', '수', '목', '금', '토', '일'];
+      var dateTime = DateTime.parse(widget.date!);
+      dateForm =
+          '${weekDay[dateTime.weekday]} (${dateTime.year}. ${dateTime.month}. ${dateTime.day})';
+    }
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Color(0xFFFAFAFA),
-        appBar: CustomAppBar(text: '오늘의 대화'),
+        appBar: CustomAppBar(text: dateForm ?? 'Diary'),
         body: SafeArea(
           top: true,
           child: Padding(
@@ -125,12 +140,12 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 children: [
                   CustomTopContainer(
                     sBtns: [
-                      // {
-                      //   'icon': Icons.chevron_left_outlined,
-                      //   'onPressed': () {
-                      //     Navigator.of(context).pop();
-                      //   },
-                      // },
+                      {
+                        'icon': Icons.chevron_left_outlined,
+                        'onPressed': () {
+                          Navigator.of(context).pop();
+                        },
+                      },
                     ],
                     eBtns: [
                       {
@@ -158,12 +173,12 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     padding: EdgeInsetsDirectional.fromSTEB(0, 8.h, 0, 0),
                     child: Container(
                       width: 338.w,
-                      height: 590.h,
+                      height: 582.h,
                       decoration: BoxDecoration(
                         color: CustomTheme.of(context).secondaryBackground,
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 12.h),
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 24.h),
                         child: Container(
                           width: 100.w,
                           decoration: BoxDecoration(
@@ -173,19 +188,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
                           child: Column(
                             children: [
                               Expanded(
-                                child: ChatList(
+                                child: DiaryList(
                                     _docStream!, selectedIds, showCheckbox),
+                                // child: DiaryListHorizontal(_docStream!),
                               ),
-                              IconButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ChatScreen()));
-                                  },
-                                  icon: Icon(Icons.add_circle_outline,
-                                      color: CustomTheme.of(context).tertiary,
-                                      size: 30.0.h))
                             ],
                           ),
                         ),

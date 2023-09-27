@@ -47,6 +47,8 @@ abstract class CustomTheme {
   late Color white70;
   late Color tertiary;
 
+  late Map<String, Color> sentimentColor;
+
   TextStyle get title1 => GoogleFonts.getFont(
         'Poppins',
         color: primaryText,
@@ -158,6 +160,18 @@ class LightModeTheme extends CustomTheme {
   late Color primaryButtonText = const Color(0xFFFFFFFF);
   late Color primary = const Color(0xFF012A4A);
   late Color tertiary = Color(0XFFEE8B60);
+
+  late Map<String, Color> sentimentColor = {
+    '기쁨': Color.fromARGB(255, 248, 234, 110),
+    '기대': Color.fromARGB(255, 73, 178, 223),
+    '애정': Color.fromARGB(255, 247, 124, 124),
+    '열정': Color.fromARGB(255, 247, 158, 42),
+    '슬픔': Color.fromARGB(255, 57, 105, 138),
+    '분노': Color.fromARGB(255, 245, 96, 70),
+    '우울': Color.fromARGB(255, 194, 61, 194),
+    '혐오': Color.fromARGB(255, 216, 74, 74), // 스트레스?
+    '중립': Color.fromARGB(255, 171, 167, 167),
+  };
 }
 
 class DarkModeTheme extends CustomTheme {
@@ -179,6 +193,18 @@ class DarkModeTheme extends CustomTheme {
   late Color primaryButtonText = const Color(0xFFFFFFFF);
   late Color primary = const Color(0xFF012A4A);
   late Color tertiary = Color(0XFFEE8B60);
+
+  late Map<String, Color> sentimentColor = {
+    '기쁨': Color.fromARGB(255, 248, 234, 110),
+    '기대': Color.fromARGB(255, 73, 178, 223),
+    '애정': Color.fromARGB(255, 247, 124, 124),
+    '열정': Color.fromARGB(255, 247, 158, 42),
+    '슬픔': Color.fromARGB(255, 57, 105, 138),
+    '분노': Color.fromARGB(255, 245, 96, 70),
+    '우울': Color.fromARGB(255, 194, 61, 194),
+    '혐오': Color.fromARGB(255, 216, 74, 74), // 스트레스?
+    '중립': Color.fromARGB(255, 171, 167, 167),
+  };
 }
 
 extension TextStyleHelper on TextStyle {

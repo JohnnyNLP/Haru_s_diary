@@ -1,8 +1,9 @@
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../api/functions.dart';
 import '../custom/custom_app_bar.dart';
 import '../custom/custom_theme.dart';
 import '../custom/custom_top_container.dart';
-import '../custom/custom_widgets.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,9 +11,9 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DiaryScreen extends StatefulWidget {
-  const DiaryScreen(this._date, this._write, {Key? key}) : super(key: key);
+  const DiaryScreen(this._docId, this._date, {Key? key}) : super(key: key);
+  final String _docId;
   final String _date;
-  final bool _write;
 
   @override
   _DiaryScreenState createState() => _DiaryScreenState();
@@ -24,14 +25,26 @@ class _DiaryScreenState extends State<DiaryScreen> {
   TextEditingController _contentController = TextEditingController();
   TextEditingController _adviceController = TextEditingController();
 
-  // String? _diaryId;
   final emotion = false;
   final _authentication = FirebaseAuth.instance; //Firebase 인증 객체 생성
   User? loggedUser;
   DocumentReference? diaryRef;
-  // todo: 현재 하루에 대화 하나 일기 하나 구조로 만들어둠.
-  // 이후에 여러개 할 수 있게 수정해야함. 시간 없어서 일단 ㄱㄱ
   bool _isLoading = false; // 로딩 상태를 나타내는 변수
+  bool _isEdit = false;
+
+  Map sentiment = {'most': []};
+  List origin = []; // 서버에서 불러온 최초 최빈 감정값 저장
+  final tags = [
+    '기쁨',
+    '기대',
+    '열정',
+    '애정',
+    '슬픔',
+    '분노',
+    '우울',
+    '혐오',
+    '중립'
+  ]; // 사용되는 모든 감정태그들
 
   @override // 아래 void initState()는 초기 상태 설정 메서드. 사용자 정보, 문서 레퍼런스, 일기 내용을 불러옴
   void initState() {
@@ -66,23 +79,27 @@ class _DiaryScreenState extends State<DiaryScreen> {
         .collection('user')
         .doc(loggedUser!.uid)
         .collection('diary')
-        .doc(widget._date);
+        .doc(widget._docId);
   }
 
   Future<void> _fetchDiary() async {
     DocumentSnapshot documentSnapshot = await diaryRef!.get();
-    if (documentSnapshot.data() == null && widget._write) {
+    // if (true) {
+    if (documentSnapshot.data() == null) {
       _toggleLoading();
 
-      // var returnValue =
-      await func.callFunctions('writeDiary', {'date': widget._date});
+      var diary = await func.callFunctions(
+          'writeDiary', {'docId': widget._docId, 'date': widget._date});
 
-      // _titleController.text = returnValue['title'];
-      // _contentController.text = returnValue['diary'].toString().trim();
-      // _adviceController.text = returnValue['advice'] ?? '';
-      // print(returnValue['sentiment']);
-
-      documentSnapshot = await diaryRef!.get();
+      _titleController.text = diary['title'] ?? 'No title';
+      _contentController.text = diary['content'] != null
+          ? diary['content'].toString().trim()
+          : 'No content';
+      _adviceController.text = diary['advice'] ?? 'No advice';
+      setState(() {
+        sentiment = diary['sentiment'];
+        origin = List.from(sentiment['most']);
+      });
 
       _toggleLoading();
     }
@@ -94,57 +111,91 @@ class _DiaryScreenState extends State<DiaryScreen> {
           ? diary['content'].toString().trim()
           : 'No content';
       _adviceController.text = diary['advice'] ?? 'No advice';
+      setState(() {
+        sentiment = diary['sentiment'];
+        origin = List.from(sentiment['most']);
+      });
     }
   }
 
   // 일기를 Firestore에 업데이트 하는 메서드
   Future<void> _updateDiary(
       {String? title, String? content, String? advice}) async {
+    var temp;
+    if (origin[0] != sentiment['most'][0]) {
+      temp = sentiment[origin[0]];
+      sentiment[origin[0]] = sentiment[sentiment['most'][0]];
+      sentiment[sentiment['most'][0]] = temp;
+      if (origin.length > 1 && origin[1] == sentiment['most'][0])
+        origin[1] = origin[0];
+      origin[0] = sentiment['most'][0];
+    }
+    if (origin.length > 1 && origin[1] != sentiment['most'][1]) {
+      temp = sentiment[origin[1]];
+      sentiment[origin[1]] = sentiment[sentiment['most'][1]];
+      sentiment[sentiment['most'][1]] = temp;
+      origin[1] = sentiment['most'][1];
+    }
     await diaryRef!.set(
       {
         'title': title ?? _titleController.text,
         'content': content ?? _contentController.text,
         'advice': advice ?? _adviceController.text,
+        'sentiment': sentiment,
         'time': Timestamp.now(),
       },
       SetOptions(merge: true),
     );
   }
 
-  // Widget _buildListView(List<String> items) {
-  //   return ListView.builder(
-  //     itemCount: items.length,
-  //     itemBuilder: (BuildContext context, int index) {
-  //       return ListTile(
-  //         title: Text(items[index]),
-  //       );
-  //     },
-  //   );
-  // }
-
-  Widget createButton(text, color) {
-    return FFButtonWidget(
-      onPressed: () {
-        print('Button pressed ...');
+  Widget buttonListView(List<dynamic> items) {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: items.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Padding(
+          padding: EdgeInsets.only(right: 4.w),
+          child: popupMenuBtns(index, items[index]),
+        );
       },
-      text: text,
-      options: FFButtonOptions(
-        height: 33,
-        padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-        iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-        color: color,
-        textStyle: CustomTheme.of(context).titleSmall.override(
-              fontFamily: 'Readex Pro',
-              color: Colors.white,
-              fontSize: 8,
-            ),
-        elevation: 3,
-        borderSide: BorderSide(
-          color: Colors.transparent,
-          width: 1,
+    );
+  }
+
+  Widget popupMenuBtns(idx, text) {
+    // 현재 선택되어있는 감정을 제외한 감정태그들을 팝업으로 보여줌
+    List<String> remain =
+        tags.where((tag) => !sentiment['most'].contains(tag)).toList();
+    return PopupMenuButton<int>(
+      enabled: _isEdit,
+      offset: Offset(0, 40), // 버튼 아래로 40 픽셀만큼 오프셋
+      child: Container(
+        width: 65.w,
+        padding: EdgeInsets.all(6.0.h),
+        decoration: BoxDecoration(
+          color: CustomTheme.of(context).sentimentColor[text], // 원하는 배경색으로 변경
+          borderRadius: BorderRadius.circular(6.0), // 모서리 둥글게
         ),
-        borderRadius: BorderRadius.circular(8),
+        child: Text(
+          text,
+          style: TextStyle(color: Colors.white), // 원하는 텍스트 스타일로 변경
+          textAlign: TextAlign.center,
+        ),
       ),
+      itemBuilder: (context) => [
+        for (var tag in remain)
+          PopupMenuItem(
+            value: idx,
+            child: ListTile(
+              title: Text(tag),
+              onTap: () {
+                setState(() {
+                  sentiment['most'][idx] = tag;
+                });
+                Navigator.pop(context);
+              },
+            ),
+          )
+      ],
     );
   }
 
@@ -170,19 +221,86 @@ class _DiaryScreenState extends State<DiaryScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     CustomTopContainer(
-                      sText: 'Back',
-                      sIcon: Icons.chevron_left_outlined,
-                      sOnPressed: () {
-                        Navigator.pop(context);
-                      },
-                      eText: '수정하기',
-                      eIcon: Icons.create_outlined,
-                      eOnPressed: () async {
-                        _toggleLoading();
-                        await _updateDiary();
-                        _toggleLoading();
-                        FocusScope.of(context).unfocus();
-                      },
+                      sBtns: [
+                        {
+                          'icon': Icons.chevron_left_outlined,
+                          'onPressed': () {
+                            Navigator.pop(context);
+                          },
+                        },
+                      ],
+                      eBtns: [
+                        if (_isEdit)
+                          {
+                            'icon': Icons.check,
+                            'onPressed': () async {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text('확인'),
+                                    content: Text('수정하신 내용을 저장하시겠습니까?'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text('예'),
+                                        onPressed: () async {
+                                          _toggleLoading();
+                                          await _updateDiary();
+                                          _toggleLoading();
+                                          FocusScope.of(context).unfocus();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text('아니오'),
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(); // 다이얼로그 닫기
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          },
+                      ],
+                      popupItems: [
+                        {'title': '대화보기', 'onTap': () async {}},
+                        {
+                          'title': _isEdit ? '수정취소' : '수정하기',
+                          'onTap': () {
+                            setState(() {
+                              _isEdit = !_isEdit;
+                            });
+                            _fetchDiary();
+                            Navigator.pop(context);
+                          },
+                        },
+                        {
+                          'title': '일기장 재작성',
+                          'onTap': () async {
+                            Navigator.pop(context);
+                            _toggleLoading();
+
+                            var diary = await func.callFunctions('writeDiary',
+                                {'docId': widget._docId, 'date': widget._date});
+
+                            _titleController.text =
+                                diary['title'] ?? 'No title';
+                            _contentController.text = diary['content'] != null
+                                ? diary['content'].toString().trim()
+                                : 'No content';
+                            _adviceController.text =
+                                diary['advice'] ?? 'No advice';
+                            setState(() {
+                              sentiment = diary['sentiment'];
+                              origin = List.from(sentiment['most']);
+                            });
+
+                            _toggleLoading();
+                          },
+                        },
+                      ],
                     ),
                     Divider(
                       thickness: 2,
@@ -191,8 +309,9 @@ class _DiaryScreenState extends State<DiaryScreen> {
                     Align(
                       alignment: AlignmentDirectional(0, 0),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 20),
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
                         child: TextField(
+                          readOnly: !_isEdit,
                           controller: _titleController,
                           decoration: InputDecoration(
                             hintText: '제목',
@@ -222,46 +341,26 @@ class _DiaryScreenState extends State<DiaryScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                         )),
-                        // _buildListView(['긍정']),
                         SizedBox(
                           height: 35, // 높이 지정
                           width:
                               MediaQuery.of(context).size.width - 110, // 너비 지정
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              createButton('긍정', Color(0xB1009D36)),
-                              SizedBox(width: 8),
-                              createButton('우울', Color(0xA2151AB4)),
-                            ],
-                          ),
+                          child: buttonListView(sentiment['most']),
                         ),
-                        // createButton('긍정', Color(0xB1009D36)),
-                        // SizedBox(width: 8),
-                        // createButton('우울', Color(0xA2151AB4)),
-                        // SizedBox(width: 8),
-                        // createButton('분노', Color(0xA2151AB4)),
                       ],
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 8),
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                       child: Container(
                         decoration: BoxDecoration(),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: CustomTheme.of(context).secondaryBackground,
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //     blurRadius: 4,
-                          //     color: Color(0x33000000),
-                          //     offset: Offset(0, 2),
-                          //   )
-                          // ],
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
@@ -291,6 +390,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     TextField(
+                                      readOnly: !_isEdit,
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                       ),
@@ -309,7 +409,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                               ),
                             ),
                             SizedBox(
-                              height: 14,
+                              height: 16,
                             ),
                             Container(
                               width: double.infinity,

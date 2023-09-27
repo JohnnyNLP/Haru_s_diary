@@ -4,20 +4,21 @@ import 'package:haru_diary/screens/chat_screen.dart';
 import '../custom/custom_theme.dart';
 
 class ChatRoom extends StatelessWidget {
-  const ChatRoom(this.docId, this.dateForm, this.text, {super.key});
+  const ChatRoom(this.docId, this.dateForm, this.text, this.date, {super.key});
 
   final String docId;
   final String dateForm;
   final String text;
+  final String date;
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Padding(
-          padding: EdgeInsets.all(4.w),
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 4.h),
           child: Container(
-            padding: EdgeInsetsDirectional.fromSTEB(24.w, 12.h, 24.w, 12.h),
+            padding: EdgeInsetsDirectional.fromSTEB(12.w, 12.h, 12.w, 12.h),
             width: double.infinity,
             decoration: BoxDecoration(
               color: CustomTheme.of(context).secondaryBackground,
@@ -69,7 +70,10 @@ class ChatRoom extends StatelessWidget {
                   ),
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ChatScreen(docId: docId)));
+                        builder: (context) => ChatScreen(
+                              docId: docId,
+                              date: date,
+                            )));
                   },
                 ),
               ],

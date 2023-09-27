@@ -4,9 +4,11 @@ import '../custom/custom_theme.dart';
 import '../screens/diary_screen.dart';
 
 class Bookmarks extends StatelessWidget {
-  const Bookmarks(this.date, this.dateForm, this.title, this.content,
+  const Bookmarks(
+      this.docId, this.date, this.dateForm, this.title, this.content,
       {super.key});
 
+  final String docId;
   final String date;
   final String dateForm;
   final String title;
@@ -18,7 +20,7 @@ class Bookmarks extends StatelessWidget {
       children: [
         Padding(
           // 패딩 값을 줄였습니다.
-          padding: EdgeInsets.all(0), 
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 4.h),
           child: Container(
             // 여기도 패딩 값을 줄였습니다.
             padding: EdgeInsetsDirectional.fromSTEB(12.w, 12.h, 12.w, 12.h),
@@ -66,7 +68,7 @@ class Bookmarks extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 1.0),  // 원하는 패딩 값을 설정
+                  padding: const EdgeInsets.only(left: 1.0), // 원하는 패딩 값을 설정
                   child: IconButton(
                     icon: Icon(
                       Icons.arrow_forward_outlined,
@@ -75,7 +77,7 @@ class Bookmarks extends StatelessWidget {
                     ),
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => DiaryScreen(date, false)));
+                          builder: (context) => DiaryScreen(docId, date)));
                     },
                   ),
                 ),
@@ -87,4 +89,3 @@ class Bookmarks extends StatelessWidget {
     );
   }
 }
-
