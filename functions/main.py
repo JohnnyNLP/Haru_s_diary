@@ -99,8 +99,8 @@ def writeDiary(req: https_fn.CallableRequest):
     sent = re.findall(r'\d+', sent_raw['text'])
     # print(sent)
 
-    # 감정 태그 추출
-    tags = ['total', '기쁨', '기대', '열정', '애정', '슬픔', '분노', '우울', '혐오']
+    # 감정 태그 추출    
+    tags = ['total', '기쁨', '기대', '열정', '애정', '슬픔', '분노', '우울', '불쾌']
     sent_dict = dict((tags[i], sent[i]) for i in range(1, 10))
     sortedSent = sorted(sent_dict.items(), key=lambda x: x[1], reverse=True)
 
@@ -163,12 +163,10 @@ def writeDiary(req: https_fn.CallableRequest):
     })
 
     # DB에 감정 분석 기록
-    # sent_ref = db.collection('user').document(
-    #     userID).collection('sentiment').document(docId)
-    # sent_ref.set({"total": int(sent[0]), '기쁨': int(sent[1]), '기대': int(sent[2]),
-    #               '열정': int(sent[3]), '애정': int(sent[4]), '슬픔': int(sent[5]),
-    #               '분노': int(sent[6]), '우울': int(sent[7]), '혐오': int(sent[8]),
-    #               '중립': int(sent[9])})
+    sent_ref = db.collection('user').document(userID).collection('sentiment').document(date)
+    sent_ref.set({"total": int(sent[0]), '기쁨':int(sent[1]), '기대':int(sent[2]),
+                  '열정':int(sent[3]), '애정': int(sent[4]), '슬픔':int(sent[5]),
+                  '분노':int(sent[6]), '우울': int(sent[7]), '불쾌':int(sent[8])})
 
     # Client에 넘겨줄 내용 정리
     result = {
