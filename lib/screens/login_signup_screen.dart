@@ -591,25 +591,25 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               //   ),
               // ),
 // APPbar 밑에 Sign Up 텍스트 스타일을 변경하는 부분
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center, // 수직 방향으로 중앙 정렬
-                  children: [
-                    Text(
-                      'Sign Up', // 원하는 텍스트로 변경
-                      style: TextStyle(
-                        fontSize: 40, // 텍스트 크기를 조정하세요
-                        color: Color.fromARGB(255, 68, 67, 67), // 텍스트 색상을 조정하세요
-                        fontWeight: FontWeight.bold, // 텍스트 굵기를 조정하세요
-                        fontFamily: 'YourFontFamily', // 폰트 패밀리를 지정하세요
-                        fontStyle: FontStyle.normal, // 이탤릭체를 사용할 경우 활성화하세요
-                        // letterSpacing: 2.0, // 글자 간격을 조정할 경우 활성화하세요
-                      ),
-                    ),
-                    SizedBox(height: 390), // 원하는 수직 간격을 조정하세요
-                  ],
-                ),
-              ),
+              // Center(
+              //   child: Column(
+              //     mainAxisAlignment: MainAxisAlignment.center, // 수직 방향으로 중앙 정렬
+              //     children: [
+              //       Text(
+              //         'Sign Up', // 원하는 텍스트로 변경
+              //         style: TextStyle(
+              //           fontSize: 40, // 텍스트 크기를 조정하세요
+              //           color: Color.fromARGB(255, 68, 67, 67), // 텍스트 색상을 조정하세요
+              //           fontWeight: FontWeight.bold, // 텍스트 굵기를 조정하세요
+              //           fontFamily: 'YourFontFamily', // 폰트 패밀리를 지정하세요
+              //           fontStyle: FontStyle.normal, // 이탤릭체를 사용할 경우 활성화하세요
+              //           // letterSpacing: 2.0, // 글자 간격을 조정할 경우 활성화하세요
+              //         ),
+              //       ),
+              //       SizedBox(height: 390), // 원하는 수직 간격을 조정하세요
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ),

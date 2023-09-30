@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haru_diary/screens/diary_home_screen.dart';
+import 'package:haru_diary/screens/setting_screen.dart';
 import 'package:haru_diary/screens/tab_navigator.dart';
 // import 'collection_choice_screen.dart'; // Assuming the import is necessary for your overall code
 import 'chat_list_screen.dart';
@@ -24,7 +25,7 @@ class _HomeScreenNaviState extends State<HomeScreenNavi>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
       setState(() {
         _selectedIndex = _tabController.index;
@@ -35,9 +36,9 @@ class _HomeScreenNaviState extends State<HomeScreenNavi>
           case 1:
             backgroundColor = const Color.fromARGB(255, 255, 255, 255);
             break;
-          case 2:
-            backgroundColor = const Color.fromARGB(255, 255, 255, 255);
-            break;
+          // case 2:
+          //   backgroundColor = const Color.fromARGB(255, 255, 255, 255);
+          //   break;
           case 3:
             backgroundColor = const Color.fromARGB(255, 255, 255, 255);
             break;
@@ -72,10 +73,10 @@ class _HomeScreenNaviState extends State<HomeScreenNavi>
                   icon: _selectedIndex == 1
                       ? Icon(Icons.chat_bubble)
                       : Icon(Icons.chat_bubble_outline)),
-              Tab(
-                  icon: _selectedIndex == 2
-                      ? Icon(Icons.book)
-                      : Icon(Icons.book_outlined)),
+              // Tab(
+              //     icon: _selectedIndex == 2
+              //         ? Icon(Icons.book)
+              //         : Icon(Icons.book_outlined)),
               Tab(
                   icon: _selectedIndex == 3
                       ? Icon(Icons.settings)
@@ -89,14 +90,11 @@ class _HomeScreenNaviState extends State<HomeScreenNavi>
         children: [
           TabNavigator(navigatorKey: _diaryTabNavKey, child: DiaryHomeScreen()),
           TabNavigator(navigatorKey: _chatTabNavKey, child: ChatListScreen()),
-          TabNavigator(
-              navigatorKey: _collectionTabNavKey,
-              child: tabContainer(
-                  context, const Color.fromARGB(0, 0, 0, 0), "Collection Tab")),
-          TabNavigator(
-              navigatorKey: _settingTabNavKey,
-              child: tabContainer(
-                  context, const Color.fromARGB(0, 0, 0, 0), "Settings Tab")),
+          // TabNavigator(
+          //     navigatorKey: _collectionTabNavKey,
+          //     child: tabContainer(
+          //         context, const Color.fromARGB(0, 0, 0, 0), "Collection Tab")),
+          TabNavigator(navigatorKey: _settingTabNavKey, child: SettingScreen()),
         ],
       ),
     );
