@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haru_diary/chart/chart_main.dart';
 import 'package:haru_diary/screens/diary_home_screen.dart';
 import 'package:haru_diary/screens/tab_navigator.dart';
 // import 'collection_choice_screen.dart'; // Assuming the import is necessary for your overall code
@@ -90,7 +89,10 @@ class _HomeScreenNaviState extends State<HomeScreenNavi>
         children: [
           TabNavigator(navigatorKey: _diaryTabNavKey, child: DiaryHomeScreen()),
           TabNavigator(navigatorKey: _chatTabNavKey, child: ChatListScreen()),
-          TabNavigator(navigatorKey: _collectionTabNavKey, child: ChartMain()),
+          TabNavigator(
+              navigatorKey: _collectionTabNavKey,
+              child: tabContainer(
+                  context, const Color.fromARGB(0, 0, 0, 0), "Collection Tab")),
           TabNavigator(
               navigatorKey: _settingTabNavKey,
               child: tabContainer(

@@ -21,28 +21,8 @@ class CategoryScreen extends StatelessWidget {
     // final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: ListView(
+        physics: NeverScrollableScrollPhysics(),
         children: [
-          Padding(
-            padding: const EdgeInsets.only(
-                left: 16, top: 20, right: 60), // 텍스트 위치 조절
-            child: Row(
-              children: [
-                const BackButton(
-                    color: Color.fromARGB(255, 83, 78, 78)), // back 버튼 색
-                Spacer(), // 버튼과 텍스트 사이 공간을 차지함
-                Text(
-                  '감정분석',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 47, 47, 48), // 차트 화면의 앱바 글자 색상
-                    fontSize: 40, // 차트 화면의 앱바 글자 크기 변경
-                    fontWeight: FontWeight.bold, // 글자 굵기 조절
-                    // 다른 스타일 속성 설정
-                  ),
-                ),
-                Spacer(), // 텍스트와 오른쪽 여백 사이 공간을 차지함
-              ],
-            ),
-          ),
           ValueListenableBuilder<int?>(
             valueListenable: selectedCategoryIndex,
             builder: (context, categoryIndex, _) => CategoryDonutHero(
@@ -111,8 +91,8 @@ class _CategoryDonutHeroState extends State<CategoryDonutHero>
 
   @override
   void dispose() {
-    super.dispose();
     anim.dispose();
+    super.dispose();
   }
 
   @override

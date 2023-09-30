@@ -44,17 +44,35 @@ class Bookmarks extends StatelessWidget {
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        dateForm,
-                        style: CustomTheme.of(context).bodySmall.override(
-                              fontFamily: 'Readex Pro',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: CustomTheme.of(context).bodySmall.override(
+                                    fontFamily: 'Readex Pro',
+                                    // color: Color(0xFFF46060),
+                                    fontSize: 15,
+                                    // fontWeight: FontWeight.w500,
+                                  ),
                             ),
+                          ),
+                          Text(
+                            dateForm,
+                            style: CustomTheme.of(context).bodySmall.override(
+                                  fontFamily: 'Readex Pro',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 4.h),
                       Text(
-                        title,
+                        content,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: CustomTheme.of(context).bodySmall.override(

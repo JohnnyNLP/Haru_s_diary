@@ -1,4 +1,5 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:haru_diary/screens/chat_screen.dart';
 
 import '../api/functions.dart';
 import '../custom/custom_app_bar.dart';
@@ -42,8 +43,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
     '슬픔',
     '분노',
     '우울',
-    '혐오',
-    '중립'
+    '불쾌',
   ]; // 사용되는 모든 감정태그들
 
   @override // 아래 void initState()는 초기 상태 설정 메서드. 사용자 정보, 문서 레퍼런스, 일기 내용을 불러옴
@@ -265,7 +265,15 @@ class _DiaryScreenState extends State<DiaryScreen> {
                           },
                       ],
                       popupItems: [
-                        {'title': '대화보기', 'onTap': () async {}},
+                        {
+                          'title': '대화보기',
+                          'onTap': () async {
+                            Navigator.pop(context);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ChatScreen(
+                                    docId: widget._docId, date: widget._date)));
+                          }
+                        },
                         {
                           'title': _isEdit ? '수정취소' : '수정하기',
                           'onTap': () {

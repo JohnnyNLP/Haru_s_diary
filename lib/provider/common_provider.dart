@@ -1,12 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CommonProvider with ChangeNotifier {
-  CommonProvider(this._isProgress);
+  CommonProvider();
+
+  // 로그인 유저 ID 관리
+  final _authentication = FirebaseAuth.instance; //Firebase 인증 객체 생성
+  User getCurrentUser() {
+    User? _loggedUser;
+    final user = _authentication.currentUser;
+    try {
+      if (user != null) {
+        _loggedUser = user;
+      }
+    } catch (e) {
+      print(e);
+    }
+    return _loggedUser!;
+  }
 
   // 로딩 인디케이터 관리
-  bool? _isProgress;
+  bool _isProgress = false;
   bool? get isProgress => _isProgress;
   void setProgress(bool value) {
     print('CommonProvider.setProgress: $value');

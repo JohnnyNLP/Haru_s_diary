@@ -76,13 +76,24 @@ class _NewMessageState extends State<NewMessage> {
         .collection('user')
         .doc(user!.uid)
         .get();
+    Timestamp now = Timestamp.now();
     FirebaseFirestore.instance.collection(widget.collectionPath).add({
       'text': _userEnterMessage,
-      'time': Timestamp.now(),
+      'time': now,
       'userID': user.uid,
       'userName': userData.data()!['userName'],
       'userImage': userData['picked_image'],
     });
+
+    FirebaseFirestore.instance
+        .doc(widget.collectionPath.replaceAll('/conversation', ''))
+        .set(
+      {
+        'lastTime': now,
+      },
+      SetOptions(merge: true),
+    );
+
     _controller.clear();
     _gptMessage(_userEnterMessage);
   }
@@ -107,7 +118,7 @@ class _NewMessageState extends State<NewMessage> {
 
   @override
   Widget build(BuildContext context) {
-    print('widget.collectionPath: ${widget.collectionPath}');
+    // print('widget.collectionPath: ${widget.collectionPath}');
     return Container(
       decoration: BoxDecoration(
         color: Color(0x2957636C),

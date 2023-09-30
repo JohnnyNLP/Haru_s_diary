@@ -97,20 +97,20 @@ class DiaryListScreenState extends State<DiaryListScreen> {
     DateTime lastSunday = now.subtract(Duration(days: now.weekday));
     String formattedDate = DateFormat('yyyyMMdd').format(lastSunday);
     formattedDate = '20230101'; // 테스트 위해 하드코딩
-    final Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
+    final Stream<QuerySnapshot<Map<String, dynamic>>> diaryStream;
     if (widget.date == null) {
-      chatStream = FirebaseFirestore.instance
+      diaryStream = FirebaseFirestore.instance
           .collection(_collectionPath!)
           .where('date', isGreaterThan: formattedDate)
           .orderBy('date', descending: true)
           .snapshots();
     } else {
-      chatStream = FirebaseFirestore.instance
+      diaryStream = FirebaseFirestore.instance
           .collection(_collectionPath!)
           .where('date', isEqualTo: widget.date)
           .snapshots();
     }
-    _docStream = chatStream;
+    _docStream = diaryStream;
   }
 
   @override

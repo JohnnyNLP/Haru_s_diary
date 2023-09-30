@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haru_diary/screens/diary_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +30,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Stream<QuerySnapshot<Map<String, dynamic>>>? userChatStream;
   String? docId;
   String? date;
+  bool? readOnly;
 
   @override
   void initState() {
@@ -38,6 +40,14 @@ class _ChatScreenState extends State<ChatScreen> {
     Future.delayed(Duration.zero, () async {
       await setCollectionPath();
       setState(setChatStream);
+    });
+  }
+
+  void checkDocumentExistence(String path) async {
+    DocumentReference documentReference = _firestore.doc(path);
+    DocumentSnapshot documentSnapshot = await documentReference.get();
+    setState(() {
+      readOnly = documentSnapshot.exists;
     });
   }
 
@@ -72,6 +82,7 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     }
     collectionPath = '/user/${loggedUser!.uid}/chat/${docId}/conversation';
+    checkDocumentExistence('/user/${loggedUser!.uid}/diary/${docId}');
   }
 
   @override
@@ -99,8 +110,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     sOnPressed: () {
                       Navigator.pop(context);
                     },
-                    eText: '하루의 일기쓰기',
-                    eIcon: Icons.create_outlined,
+                    eText: readOnly == false ? '하루의 일기쓰기' : '일기 읽어보기',
+                    eIcon: readOnly == false
+                        ? Icons.create_outlined
+                        : Icons.chrome_reader_mode_rounded,
                     eOnPressed: () async {
                       var conv =
                           await _firestore.collection(collectionPath!).get();
@@ -125,8 +138,6 @@ class _ChatScreenState extends State<ChatScreen> {
                           },
                         );
                       } else {
-                        print(widget.docId);
-                        print(date);
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) =>
                                 DiaryScreen(widget.docId!, date!)));
@@ -149,7 +160,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       // child: null,
                     ),
                   ),
-                  NewMessage(collectionPath!, userChatStream!, docId!),
+                  readOnly == true
+                      ? SizedBox(height: 7.h)
+                      : NewMessage(collectionPath!, userChatStream!, docId!),
                 ],
               ),
             ),

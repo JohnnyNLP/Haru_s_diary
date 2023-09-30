@@ -67,15 +67,16 @@ class CategoriesTable extends StatelessWidget {
               color: const Color.fromARGB(255, 0, 0, 0), // 범례 값들 색상 변경
             ),
           ),
-          if (selectable)
-            IconButton(
-              onPressed: () => onSelection(category),
-              hoverColor: Colors.cyan.shade100,
-              color: Colors.cyan.shade700, // 돋보기 색깔 변경
-              padding: const EdgeInsets.all(10),
-              splashRadius: 18,
-              icon: const Icon(Icons.zoom_in),
-            ),
+          (selectable && category.title == '기타')
+              ? IconButton(
+                  onPressed: () => onSelection(category),
+                  hoverColor: Colors.cyan.shade100,
+                  color: Colors.cyan.shade700, // 돋보기 색깔 변경
+                  padding: const EdgeInsets.all(10),
+                  splashRadius: 18,
+                  icon: const Icon(Icons.zoom_in),
+                )
+              : Container(),
         ],
       );
 }

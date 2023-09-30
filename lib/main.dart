@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       designSize: Size(360, 780), // 화면크기 초기값
       builder: (context, child) => ChangeNotifierProvider(
         // provider 사용하기위해 최상위 위젯에서 감쌈
-        create: (context) => CommonProvider(false),
+        create: (context) => CommonProvider(),
         child: MaterialApp(
           title: 'haru_diary',
           theme: ThemeData(

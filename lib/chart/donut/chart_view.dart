@@ -48,12 +48,12 @@ class ChartView extends StatelessWidget {
       //   animation: animation,
       //   builder: (context, _) => Transform.scale(
       //   scale: 0.8, // 원하는 크기로 조절할 수 있는 scale 값을 설정
-      //   child: Stack( 
+      //   child: Stack(
 
       child: AnimatedBuilder(
         animation: animation,
         builder: (context, _) => FittedBox(
-          fit: BoxFit.fill , //차트 크기 조절시 수정해 볼 수 있는 코드: BoxFit.contain 
+          fit: BoxFit.fill, //차트 크기 조절시 수정해 볼 수 있는 코드: BoxFit.contain
           child: Stack(
             clipBehavior: Clip.none,
             children: <Widget>[
@@ -70,7 +70,10 @@ class ChartView extends StatelessWidget {
                       progress: intervals[segment.index].value,
                       transitionProgress:
                           segment.index == selectedIndex ? 1 : 0,
-                      onSelection: () => onSelection(segment.index),
+                      onSelection: () {
+                        if (segment.value.title == '기타')
+                          onSelection(segment.index);
+                      },
                     ),
                   );
                 },
@@ -140,15 +143,19 @@ class _SegmentTooltip extends StatelessWidget {
                   end: Alignment.bottomCenter,
                 ),
                 boxShadow: const [
-                  BoxShadow( //각 차트 section클릭시 잠깐 뜨는 Box color
-                      blurRadius: 2, spreadRadius: 0.2, color: Color.fromARGB(115, 49, 170, 144))
+                  BoxShadow(
+                      //각 차트 section클릭시 잠깐 뜨는 Box color
+                      blurRadius: 2,
+                      spreadRadius: 0.2,
+                      color: Color.fromARGB(115, 49, 170, 144))
                 ],
                 borderRadius: BorderRadius.circular(6)),
             padding: const EdgeInsets.all(8),
             child: Text.rich(
               TextSpan(
                 children: [
-                  TextSpan( //각 차트 section클릭시 잠깐 뜨는 감정이름 color 및 값 color
+                  TextSpan(
+                    //각 차트 section클릭시 잠깐 뜨는 감정이름 color 및 값 color
                     text: '$title\n',
                     style: const TextStyle(color: Colors.white),
                   ),

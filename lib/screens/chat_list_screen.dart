@@ -102,6 +102,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
             .collection(_collectionPath!)
             .where('date', isGreaterThan: formattedDate)
             .orderBy('date', descending: true)
+            .orderBy('lastTime', descending: true)
             .snapshots();
     _docStream = chatStream;
   }

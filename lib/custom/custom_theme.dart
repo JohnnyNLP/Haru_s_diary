@@ -169,8 +169,7 @@ class LightModeTheme extends CustomTheme {
     '슬픔': Color.fromARGB(255, 57, 105, 138),
     '분노': Color.fromARGB(255, 245, 96, 70),
     '우울': Color.fromARGB(255, 194, 61, 194),
-    '혐오': Color.fromARGB(255, 216, 74, 74), // 스트레스?
-    '중립': Color.fromARGB(255, 171, 167, 167),
+    '불쾌': Color.fromARGB(255, 216, 74, 74),
   };
 }
 
@@ -202,8 +201,7 @@ class DarkModeTheme extends CustomTheme {
     '슬픔': Color.fromARGB(255, 57, 105, 138),
     '분노': Color.fromARGB(255, 245, 96, 70),
     '우울': Color.fromARGB(255, 194, 61, 194),
-    '혐오': Color.fromARGB(255, 216, 74, 74), // 스트레스?
-    '중립': Color.fromARGB(255, 171, 167, 167),
+    '불쾌': Color.fromARGB(255, 216, 74, 74),
   };
 }
 

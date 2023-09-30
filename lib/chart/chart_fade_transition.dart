@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 Widget fadeTransitionBuilder(context, animation, secondaryAnimation, child) {
-  final theme = Theme.of(context);
+  // final theme = Theme.of(context);
 
   var fadeIn = Tween<double>(begin: 0, end: 1).animate(
     CurvedAnimation(
@@ -19,7 +19,7 @@ Widget fadeTransitionBuilder(context, animation, secondaryAnimation, child) {
     children: <Widget>[
       FadeTransition(
         opacity: fadeOut,
-        child: Container(color: theme.colorScheme.background),
+        child: Container(color: Color.fromARGB(200, 243, 199, 134)),
       ),
       FadeTransition(opacity: fadeIn, child: child)
     ],

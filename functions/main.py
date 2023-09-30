@@ -216,15 +216,19 @@ def ChatAI(req: https_fn.CallableRequest):
         messages=history,
         temperature=1
     )
+
+    timestamp = SERVER_TIMESTAMP    # 마지막 메세지 시간 chat 문서에 기록
+
     final_AI = response.choices[0].message["content"]
     history.append({"role": "assistant", "content": final_AI})
     memory_ref = db.collection('user').document(
         userID).collection('chat').document(docId)
-    memory_ref.set({'memory': history}, merge=True)
+    memory_ref.set({'memory': history, 'lastTime': timestamp}, merge=True)
+
     # AI 답변도 DB로 저장
     data = {
         "text": final_AI,
-        "time": SERVER_TIMESTAMP,
+        "time": timestamp,
         'userID': "gpt-3.5-turbo",
         "userName": "오하루",
         "userImage": "https://firebasestorage.googleapis.com/v0/b/haru-s-diary.appspot.com/o/picked_image%2Fgpt-3.5-turbo.png?alt=media&token=684e0b0e-3bc0-41c9-b6e1-412a7b02d1ed",    # 테스트 위해 하드코딩
