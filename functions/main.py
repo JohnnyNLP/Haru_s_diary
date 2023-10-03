@@ -6,6 +6,12 @@ from flask_cors import CORS
 from google.cloud import firestore
 from google.cloud.firestore import SERVER_TIMESTAMP
 
+# AWS 호출 관련
+import boto3
+import sagemaker
+from sagemaker import Session
+import json
+
 # 환경 변수
 from dotenv import load_dotenv
 import os
@@ -31,7 +37,7 @@ cred = credentials.Certificate(
 initialize_app(cred)
 app = Flask(__name__)
 CORS(app)
-
+sent_endpoint = 'pytorch-inference-2023-10-03-11-00-58-994'
 
 @https_fn.on_call(timeout_sec=180, memory=options.MemoryOption.MB_512)
 def writeDiary(req: https_fn.CallableRequest):
@@ -97,7 +103,33 @@ def writeDiary(req: https_fn.CallableRequest):
     )
     sent_raw = llm_chain(log)
     sent = re.findall(r'\d+', sent_raw['text'])
-    # print(sent)
+    print(sent)
+
+    # KoBERT로 감정 분석
+    # sagemaker_session = Session()
+    # endpoint_name = sent_endpoint
+    # runtime_client = boto3.client('sagemaker-runtime')
+
+    # sample_data = {
+    #     "conversations": [
+    #         {"userName": "user1", "text": "안녕, 오늘은 아침 일찍부터 회의가 잡혔어."},
+    #         {"userName": "오하루", "text": "앗, 일찍부터 회의라니 힘들었겠다. 회의는 잘 진행됐어?"},
+    #         {"userName": "user1", "text": "지금 멘토님한테 결과물을 확인받고 있어."},
+    #         {"userName": "오하루", "text": "멘토님한테 결과물을 확인받는 건 항상 긴장되지 않아? 어떤 피드백을 받았는지 궁금해!"},
+    #         {"userName": "user1", "text": "뭔가 긴장되네 잘 됐으면 좋겠다."},
+    #         {"userName": "오하루", "text": "긴장되는 건 당연한 일이야. 그럴 때는 좀 더 마음을 편하게 해줄 수 있는 것이 있을까? 예를 들면, 좋아하는 음악을 들으며 조금 쉬어가는 것이 어때?"},
+    #         {"userName": "user1", "text": "오늘 아침에 내가 뭐했다고 했지?"},
+    #         {"userName": "오하루", "text": "아침에 일찍 회의가 잡혀있어서 많이 바쁘고 힘들었지? 그래서 피곤한 마음이야. 좀 더 편안한 마음을 갖을 수 있는 시간을 가져보는 건 어때?"},
+    #     ]
+    # }
+
+    # response = runtime_client.invoke_endpoint(
+    #     EndpointName=endpoint_name,
+    #     ContentType="application/json",
+    #     Body=json.dumps(sample_data),
+    # )
+    # result = response['Body'].read().decode('utf-8')
+    # sent = re.findall(r'\d+', result)
 
     # 감정 태그 추출
     tags = ['total', '기쁨', '기대', '열정', '애정', '슬픔', '분노', '우울', '불쾌']
