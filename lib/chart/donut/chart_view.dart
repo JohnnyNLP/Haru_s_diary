@@ -1,5 +1,6 @@
 import 'package:basics/int_basics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quiver/iterables.dart';
 
 import '../chart_model.dart';
@@ -50,55 +51,59 @@ class ChartView extends StatelessWidget {
       //   scale: 0.8, // 원하는 크기로 조절할 수 있는 scale 값을 설정
       //   child: Stack(
 
-      child: AnimatedBuilder(
-        animation: animation,
-        builder: (context, _) => FittedBox(
-          fit: BoxFit.fill, //차트 크기 조절시 수정해 볼 수 있는 코드: BoxFit.contain
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: <Widget>[
-              ...enumerate(segments).map(
-                (segment) {
-                  final opacity = segment.index == selectedIndex
-                      ? 0.0
-                      : 1 - transitionProgress;
-                  return Opacity(
-                    opacity: opacity,
-                    child: DonutSegment(
-                      key: const Key('donut'),
-                      data: segment.value,
-                      progress: intervals[segment.index].value,
-                      transitionProgress:
-                          segment.index == selectedIndex ? 1 : 0,
-                      onSelection: () {
-                        if (segment.value.title == '기타')
-                          onSelection(segment.index);
-                      },
-                    ),
-                  );
-                },
-              ).toList(),
-              // si une category est sélectionnée
-              // on n'affiche que le segment sélectionné
-              if (selectedIndex != null) //
-                DonutSegment(
-                  key: const Key('donut-solo'),
-                  data: segments.length > selectedIndex!
-                      ? segments[selectedIndex!]
-                      : segments.first,
-                  transitionProgress: transitionProgress,
-                  progress: intervals.length > selectedIndex!
-                      ? intervals[selectedIndex!].value
-                      : intervals.first.value,
-                  onSelection: () {},
-                ),
-              ValueListenableBuilder<ShowTooltip?>(
-                valueListenable: tooltipData,
-                builder: (context, value, _) => value != null && !value.isEmpty
-                    ? _SegmentTooltip(key: ValueKey(value), value)
-                    : const SizedBox.shrink(),
-              )
-            ],
+      child: Container(
+        height: 300.h,
+        child: AnimatedBuilder(
+          animation: animation,
+          builder: (context, _) => FittedBox(
+            fit: BoxFit.fill, //차트 크기 조절시 수정해 볼 수 있는 코드: BoxFit.contain
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: <Widget>[
+                ...enumerate(segments).map(
+                  (segment) {
+                    final opacity = segment.index == selectedIndex
+                        ? 0.0
+                        : 1 - transitionProgress;
+                    return Opacity(
+                      opacity: opacity,
+                      child: DonutSegment(
+                        key: const Key('donut'),
+                        data: segment.value,
+                        progress: intervals[segment.index].value,
+                        transitionProgress:
+                            segment.index == selectedIndex ? 1 : 0,
+                        onSelection: () {
+                          if (segment.value.title == '기타')
+                            onSelection(segment.index);
+                        },
+                      ),
+                    );
+                  },
+                ).toList(),
+                // si une category est sélectionnée
+                // on n'affiche que le segment sélectionné
+                if (selectedIndex != null) //
+                  DonutSegment(
+                    key: const Key('donut-solo'),
+                    data: segments.length > selectedIndex!
+                        ? segments[selectedIndex!]
+                        : segments.first,
+                    transitionProgress: transitionProgress,
+                    progress: intervals.length > selectedIndex!
+                        ? intervals[selectedIndex!].value
+                        : intervals.first.value,
+                    onSelection: () {},
+                  ),
+                ValueListenableBuilder<ShowTooltip?>(
+                  valueListenable: tooltipData,
+                  builder: (context, value, _) =>
+                      value != null && !value.isEmpty
+                          ? _SegmentTooltip(key: ValueKey(value), value)
+                          : const SizedBox.shrink(),
+                )
+              ],
+            ),
           ),
         ),
       ),
