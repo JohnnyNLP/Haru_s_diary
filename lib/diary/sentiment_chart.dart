@@ -111,7 +111,7 @@ class SentimentChartState extends State<SentimentChart> {
     // 차트에 필요한 자료구조로 변경
     sortedMap.forEach(
       (key, value) {
-        if (value >= 20) {
+        if (value >= 10) {
           categories.add(
             Category(
               title: key,

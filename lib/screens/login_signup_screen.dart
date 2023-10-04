@@ -53,12 +53,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Login', // AppBar의 이름을 "Login"으로 설정
+          '하루의 일기장', // AppBar의 이름을 "Login"으로 설정
           style: TextStyle(
               color: const Color.fromARGB(255, 58, 58, 59), // 텍스트 색상 변경
               fontSize: 30),
         ),
-        backgroundColor: Color(0xFFF9DE7A), // 배경색을 노란색으로 설정
+        backgroundColor:
+            Color.fromARGB(128, 243, 199, 134), //(0xFFF9DE7A), // 배경색을 노란색으로 설정
       ),
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
@@ -523,7 +524,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       child: Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Color(0xFFF9DE7A), Color(0xFFF9DE7A)],
+                            colors: [
+                              Color.fromARGB(128, 243, 199, 134),
+                              Color(0xFFF9DE7A),
+                            ],
+                            // colors: [Color(0xFFF9DE7A), Color(0xFFF9DE7A)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),

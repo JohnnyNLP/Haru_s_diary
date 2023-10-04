@@ -128,9 +128,33 @@ class _DiaryHomeScreenState extends State<DiaryHomeScreen> {
                   SizedBox(height: 24.0.h),
                   _buildSectionHeader('캘린더'),
                   Calendar(key: calendarKey, collectionPath: _collectionPath),
-                  SizedBox(height: 24.0.h),
-                  _buildSectionHeader('감정분석'),
-                  SizedBox(height: 16.0.h),
+                  SizedBox(height: 20.0.h),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        '감정분석',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16.0.sp),
+                      ),
+                      SizedBox(
+                        width: 2.w,
+                      ),
+                      Tooltip(
+                        message:
+                            '사용자의 대화를 기반으로 최대 8가지\n카테고리로 감정 분석을 진행합니다.\n\n8가지 감정은 다음과 같습니다:\n기쁨, 기대, 열정, 애정, 슬픔, 분노, 우울, 불쾌',
+                        child: Icon(Icons.info_outline, size: 20.w),
+                      ),
+                      // IconButton(
+                      //   icon: Icon(Icons.info_outline),
+                      //   iconSize: 20.w,
+                      //   onPressed: () {}, // 필요에 따라 다른 기능 추가
+                      //   tooltip:
+                      //       '사용자의 대화를 기반으로 최대 8가지\n카테고리로 감정 분석을 진행합니다.\n8가지 감정은 다음과 같습니다:\n기쁨, 기대, 열정, 애정, 슬픔, 분노, 우울, 불쾌',
+                      // )
+                    ],
+                  ),
                   SentimentChart(
                       key: sentimentKey, navigatorKey: sentimentNavi),
                 ],
