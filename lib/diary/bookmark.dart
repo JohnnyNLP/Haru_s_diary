@@ -22,8 +22,7 @@ class Bookmarks extends StatelessWidget {
           // 패딩 값을 줄였습니다.
           padding: EdgeInsets.fromLTRB(0, 0, 0, 4.h),
           child: Container(
-            // 여기도 패딩 값을 줄였습니다.
-            padding: EdgeInsetsDirectional.fromSTEB(12.w, 12.h, 12.w, 12.h),
+            padding: EdgeInsetsDirectional.fromSTEB(12.w, 8.h, 12.w, 8.h),
             width: double.infinity,
             decoration: BoxDecoration(
               color: CustomTheme.of(context).secondaryBackground,
@@ -42,7 +41,7 @@ class Bookmarks extends StatelessWidget {
                 Flexible(
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -55,16 +54,19 @@ class Bookmarks extends StatelessWidget {
                               style: CustomTheme.of(context).bodySmall.override(
                                     fontFamily: 'Readex Pro',
                                     // color: Color(0xFFF46060),
-                                    fontSize: 15,
-                                    // fontWeight: FontWeight.w500,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w600,
                                   ),
                             ),
+                          ),
+                          SizedBox(
+                            width: 5.w,
                           ),
                           Text(
                             dateForm,
                             style: CustomTheme.of(context).bodySmall.override(
                                   fontFamily: 'Readex Pro',
-                                  fontSize: 15,
+                                  fontSize: 15.sp,
                                   fontWeight: FontWeight.w600,
                                 ),
                           ),
@@ -78,7 +80,7 @@ class Bookmarks extends StatelessWidget {
                         style: CustomTheme.of(context).bodySmall.override(
                               fontFamily: 'Readex Pro',
                               // color: Color(0xFFF46060),
-                              fontSize: 15,
+                              fontSize: 15.sp,
                               // fontWeight: FontWeight.w500,
                             ),
                       ),

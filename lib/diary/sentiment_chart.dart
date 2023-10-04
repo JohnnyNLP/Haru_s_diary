@@ -9,14 +9,16 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class SentimentChart extends StatefulWidget {
-  const SentimentChart(this.navigatorKey, {super.key});
+  SentimentChart({required this.key, required this.navigatorKey})
+      : super(key: key);
   final GlobalKey<NavigatorState> navigatorKey;
+  final GlobalKey<SentimentChartState> key;
 
   @override
-  State<SentimentChart> createState() => _SentimentChartState();
+  State<SentimentChart> createState() => SentimentChartState();
 }
 
-class _SentimentChartState extends State<SentimentChart> {
+class SentimentChartState extends State<SentimentChart> {
   List<dynamic> sentiments = [];
   List<Category> categories = [];
   List<SubCategory> subCategories = [];
@@ -25,10 +27,18 @@ class _SentimentChartState extends State<SentimentChart> {
   @override
   void initState() {
     super.initState();
-    _getSentiment();
+    getSentiment();
   }
 
-  Future _getSentiment() async {
+  Future getSentiment() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    sentiments.clear();
+    categories.clear();
+    subCategories.clear();
+
     // 현재 날짜와 30일 전의 날짜를 가져옵니다.
     DateTime today = DateTime.now();
     DateTime thirtyDaysAgo = today.subtract(Duration(days: 30));
@@ -143,23 +153,25 @@ class _SentimentChartState extends State<SentimentChart> {
   Widget build(BuildContext context) {
     return isLoading
         ? Container()
-        : Container(
-            height: 530.h,
-            child: WillPopScope(
-              onWillPop: () async {
-                if (widget.navigatorKey.currentState!.canPop()) {
-                  widget.navigatorKey.currentState!.pop();
-                }
-                return false;
-              },
-              child: Navigator(
-                key: widget.navigatorKey,
-                onGenerateRoute: (routeSettings) {
-                  return MaterialPageRoute(
-                    builder: (context) =>
-                        CategoryScreen(categories: categories),
-                  );
+        : SingleChildScrollView(
+            child: Container(
+              height: 580.h,
+              child: WillPopScope(
+                onWillPop: () async {
+                  if (widget.navigatorKey.currentState!.canPop()) {
+                    widget.navigatorKey.currentState!.pop();
+                  }
+                  return false;
                 },
+                child: Navigator(
+                  key: widget.navigatorKey,
+                  onGenerateRoute: (routeSettings) {
+                    return MaterialPageRoute(
+                      builder: (context) =>
+                          CategoryScreen(categories: categories),
+                    );
+                  },
+                ),
               ),
             ),
           );

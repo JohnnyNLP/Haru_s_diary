@@ -11,7 +11,6 @@ import '../custom/custom_theme.dart';
 import '../custom/custom_top_container.dart';
 import '../provider/common_provider.dart';
 import '/chat/new_message.dart';
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({this.docId, this.date, super.key});
@@ -30,7 +29,6 @@ class _ChatScreenState extends State<ChatScreen> {
   Stream<QuerySnapshot<Map<String, dynamic>>>? userChatStream;
   String? docId;
   String? date;
-  bool? readOnly;
 
   @override
   void initState() {
@@ -40,14 +38,6 @@ class _ChatScreenState extends State<ChatScreen> {
     Future.delayed(Duration.zero, () async {
       await setCollectionPath();
       setState(setChatStream);
-    });
-  }
-
-  void checkDocumentExistence(String path) async {
-    DocumentReference documentReference = _firestore.doc(path);
-    DocumentSnapshot documentSnapshot = await documentReference.get();
-    setState(() {
-      readOnly = documentSnapshot.exists;
     });
   }
 
@@ -82,7 +72,6 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     }
     collectionPath = '/user/${loggedUser!.uid}/chat/${docId}/conversation';
-    checkDocumentExistence('/user/${loggedUser!.uid}/diary/${docId}');
   }
 
   @override
@@ -93,80 +82,97 @@ class _ChatScreenState extends State<ChatScreen> {
       );
     } else {
       Provider.of<CommonProvider>(context, listen: false).setUserPrefs();
-      return Scaffold(
-          appBar: CustomAppBar(text: '오하루'),
-          body: ModalProgressHUD(
-            inAsyncCall:
-                false, // Provider.of<CommonProvider>(context).isProgress!,
-            child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  CustomTopContainer(
-                    // sText: 'Back',
-                    sIcon: Icons.chevron_left_outlined,
-                    sOnPressed: () {
-                      Navigator.pop(context);
-                    },
-                    eText: readOnly == false ? '하루의 일기쓰기' : '일기 읽어보기',
-                    eIcon: readOnly == false
-                        ? Icons.create_outlined
-                        : Icons.chrome_reader_mode_rounded,
-                    eOnPressed: () async {
-                      var conv =
-                          await _firestore.collection(collectionPath!).get();
-                      var len = conv.docs.length;
-                      if (len < 5) {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('알림'),
-                              content: Text(
-                                  '대화가 충분히 이루어지면, 하루가 대신 일기를 작성해줍니다.\n대화를 조금만 더 진행해주세요.\n\n하루와 한 대화: ${len}마디'),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text('확인'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop(); // 다이얼로그를 닫습니다.
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      } else {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                DiaryScreen(widget.docId!, date!)));
-                      }
-                    },
-                  ),
-                  Divider(
-                    thickness: 2,
-                    color: CustomTheme.of(context).alternate,
-                  ),
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(top: 0),
-                      padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(128, 217, 149, 81),
-                        // borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Messages(collectionPath!, userChatStream!),
-                      // child: null,
+      return StreamBuilder<DocumentSnapshot>(
+        stream: _firestore
+            .doc('/user/${loggedUser!.uid}/diary/${docId}')
+            .snapshots(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          bool? isReadOnly;
+
+          if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.data?.exists == true) {
+              isReadOnly = true;
+            } else {
+              isReadOnly = false;
+            }
+          } else {
+            isReadOnly = false;
+          }
+          return Scaffold(
+              appBar: CustomAppBar(text: '오하루'),
+              body: Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    CustomTopContainer(
+                      // sText: 'Back',
+                      sIcon: Icons.chevron_left_outlined,
+                      sOnPressed: () {
+                        Navigator.pop(context);
+                      },
+                      eText: isReadOnly == false ? '하루의 일기쓰기' : '일기 읽어보기',
+                      eIcon: isReadOnly == false
+                          ? Icons.create_outlined
+                          : Icons.chrome_reader_mode_rounded,
+                      eOnPressed: () async {
+                        var conv =
+                            await _firestore.collection(collectionPath!).get();
+                        var len = conv.docs.length;
+                        if (len < 5) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('알림'),
+                                content: Text(
+                                    '대화가 충분히 이루어지면, 하루가 대신 일기를 작성해줍니다.\n대화를 조금만 더 진행해주세요.\n\n하루와 한 대화: ${len}마디'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('확인'),
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // 다이얼로그를 닫습니다.
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  DiaryScreen(docId!, date!)));
+                        }
+                      },
                     ),
-                  ),
-                  readOnly == true
-                      ? SizedBox(height: 7.h)
-                      : NewMessage(collectionPath!, userChatStream!, docId!),
-                ],
-              ),
-            ),
-          ));
+                    Divider(
+                      thickness: 2,
+                      color: CustomTheme.of(context).alternate,
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 0),
+                        padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(128, 217, 149, 81),
+                          // borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Messages(collectionPath!, userChatStream!),
+                        // child: null,
+                      ),
+                    ),
+                    isReadOnly == true
+                        ? SizedBox(height: 7.h)
+                        : NewMessage(collectionPath!, userChatStream!, docId!),
+                  ],
+                ),
+              ));
+          // return CircularProgressIndicator();
+        },
+      );
     }
   }
 }

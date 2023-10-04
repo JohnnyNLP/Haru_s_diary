@@ -65,8 +65,10 @@ class _DiaryListHorizontalState extends State<DiaryListHorizontal> {
           itemCount: chatDocs.length,
           itemBuilder: (context, index) {
             DateTime dateTime = DateTime.parse(chatDocs[index]['date']);
+            // String dateForm =
+            //     '${weekDay[dateTime.weekday]} (${dateTime.year}. ${dateTime.month}. ${dateTime.day})';
             String dateForm =
-                '${weekDay[dateTime.weekday]} (${dateTime.year}. ${dateTime.month}. ${dateTime.day})';
+                '${weekDay[dateTime.weekday]} (${dateTime.month}. ${dateTime.day})';
             final doc = chatDocs[index];
 
             // 페이지의 시작과 끝에만 패딩을 적용합니다.

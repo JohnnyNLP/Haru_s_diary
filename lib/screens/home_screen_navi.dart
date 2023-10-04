@@ -19,7 +19,7 @@ class _HomeScreenNaviState extends State<HomeScreenNavi>
 
   final _diaryTabNavKey = GlobalKey<NavigatorState>();
   final _chatTabNavKey = GlobalKey<NavigatorState>();
-  final _collectionTabNavKey = GlobalKey<NavigatorState>();
+  // final _collectionTabNavKey = GlobalKey<NavigatorState>();
   final _settingTabNavKey = GlobalKey<NavigatorState>();
 
   @override
@@ -78,7 +78,7 @@ class _HomeScreenNaviState extends State<HomeScreenNavi>
               //         ? Icon(Icons.book)
               //         : Icon(Icons.book_outlined)),
               Tab(
-                  icon: _selectedIndex == 3
+                  icon: _selectedIndex == 2
                       ? Icon(Icons.settings)
                       : Icon(Icons.settings_outlined)),
             ],

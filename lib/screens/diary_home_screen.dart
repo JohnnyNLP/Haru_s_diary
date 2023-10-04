@@ -25,7 +25,9 @@ class _DiaryHomeScreenState extends State<DiaryHomeScreen> {
 
   final valueNotifier = ValueNotifier<int>(0);
 
+  final calendarKey = GlobalKey<CalendarState>();
   final sentimentNavi = GlobalKey<NavigatorState>();
+  final sentimentKey = GlobalKey<SentimentChartState>();
 
   @override
   void initState() {
@@ -74,8 +76,8 @@ class _DiaryHomeScreenState extends State<DiaryHomeScreen> {
 
   Widget _buildDiaryList() {
     return Container(
-      height: 80.h,
-      padding: EdgeInsets.fromLTRB(0, 0, 0, 4.h),
+      height: 90.h,
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 5.h),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(8.0),
@@ -110,35 +112,27 @@ class _DiaryHomeScreenState extends State<DiaryHomeScreen> {
                     children: [
                       _buildSectionHeader('이번 주 일기'),
                       IconButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
+                          onPressed: () async {
+                            await Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => DiaryListScreen(),
                               ),
                             );
+                            calendarKey.currentState?.getMonthEvent();
+                            sentimentKey.currentState?.getSentiment();
                           },
                           icon: Icon(Icons.list_alt_rounded))
                     ],
                   ),
                   _buildDiaryList(),
-                  SizedBox(height: 24.0),
+                  SizedBox(height: 24.0.h),
                   _buildSectionHeader('캘린더'),
-                  Calendar(_collectionPath),
-                  SizedBox(height: 24.0),
+                  Calendar(key: calendarKey, collectionPath: _collectionPath),
+                  SizedBox(height: 24.0.h),
                   _buildSectionHeader('감정분석'),
-                  SizedBox(height: 16.0),
-                  // _buildListItem(large: true, round: true),
-                  SentimentChart(sentimentNavi),
-                  // Builder(
-                  //   builder: (context) => ValueListenableBuilder<int>(
-                  //     valueListenable: valueNotifier,
-                  //     builder:
-                  //         (BuildContext context, int value, Widget? child) {
-                  //       // 이 빌더는 valueNotifier의 값이 변경될 때만 호출됩니다.
-                  //       return _buildSentiment();
-                  //     },
-                  //   ),
-                  // ),
+                  SizedBox(height: 16.0.h),
+                  SentimentChart(
+                      key: sentimentKey, navigatorKey: sentimentNavi),
                 ],
               ),
             ),

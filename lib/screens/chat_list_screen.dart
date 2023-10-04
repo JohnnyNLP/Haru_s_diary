@@ -41,19 +41,22 @@ class _ChatListScreenState extends State<ChatListScreen> {
     if (selectedIds.length == 0) return;
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: Text('확인'),
           content: Text('${selectedIds.length}개의 대화가 선택되었습니다.\n정말로 삭제하시겠습니까?'),
           actions: <Widget>[
             TextButton(
               child: Text('예'),
-              onPressed: deleteSelectedIds,
+              onPressed: () {
+                deleteSelectedIds();
+                Navigator.of(dialogContext).pop(); // 다이얼로그 닫기
+              },
             ),
             TextButton(
               child: Text('아니오'),
               onPressed: () {
-                Navigator.of(context).pop(); // 다이얼로그 닫기
+                Navigator.of(dialogContext).pop(); // 다이얼로그 닫기
               },
             ),
           ],
@@ -73,7 +76,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
     setState(() {
       selectedIds.clear();
     });
-    Navigator.of(context).pop(); // 다이얼로그 닫기
   }
 
   void getCurrentUser() {
@@ -164,7 +166,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         color: CustomTheme.of(context).secondaryBackground,
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 12.h),
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16.h),
                         child: Container(
                           width: 100.w,
                           decoration: BoxDecoration(

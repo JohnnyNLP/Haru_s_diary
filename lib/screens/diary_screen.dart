@@ -246,7 +246,12 @@ class _DiaryScreenState extends State<DiaryScreen> {
                                         onPressed: () async {
                                           _toggleLoading();
                                           await _updateDiary();
+                                          setState(() {
+                                            _isEdit = !_isEdit;
+                                          });
                                           _toggleLoading();
+                                          Navigator.of(context)
+                                              .pop(); // 다이얼로그 닫기
                                           FocusScope.of(context).unfocus();
                                         },
                                       ),
@@ -417,7 +422,24 @@ class _DiaryScreenState extends State<DiaryScreen> {
                               ),
                             ),
                             SizedBox(
-                              height: 16,
+                              height: 16.h,
+                            ),
+                            SelectionArea(
+                                child: Text(
+                              '하루의 한마디: ',
+                              style: CustomTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    fontFamily: 'Readex Pro',
+                                    color:
+                                        CustomTheme.of(context).secondaryText,
+                                    fontSize: 15,
+                                    letterSpacing: 1,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            )),
+                            SizedBox(
+                              height: 8.h,
                             ),
                             Container(
                               width: double.infinity,

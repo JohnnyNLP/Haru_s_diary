@@ -41,19 +41,22 @@ class DiaryListScreenState extends State<DiaryListScreen> {
     if (selectedIds.length == 0) return;
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: Text('확인'),
           content: Text('${selectedIds.length}개의 일기가 선택되었습니다.\n정말로 삭제하시겠습니까?'),
           actions: <Widget>[
             TextButton(
               child: Text('예'),
-              onPressed: deleteSelectedIds,
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                deleteSelectedIds();
+              },
             ),
             TextButton(
               child: Text('아니오'),
               onPressed: () {
-                Navigator.of(context).pop(); // 다이얼로그 닫기
+                Navigator.of(dialogContext).pop(); // 다이얼로그 닫기
               },
             ),
           ],
@@ -73,7 +76,6 @@ class DiaryListScreenState extends State<DiaryListScreen> {
     setState(() {
       selectedIds.clear();
     });
-    Navigator.of(context).pop(); // 다이얼로그 닫기
   }
 
   void getCurrentUser() {

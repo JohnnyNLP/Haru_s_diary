@@ -21,7 +21,7 @@ class CategoryScreen extends StatelessWidget {
     // final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: ListView(
-        physics: NeverScrollableScrollPhysics(),
+        // physics: NeverScrollableScrollPhysics(),
         children: [
           ValueListenableBuilder<int?>(
             valueListenable: selectedCategoryIndex,
