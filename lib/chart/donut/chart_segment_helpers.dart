@@ -94,7 +94,9 @@ List<Animation> computeArcIntervals({
 
   for (final category in enumerate(categories)) {
     if (category.index == 0) {
-      final end = category.value.total / categories.total;
+      final end = (categories.total == 0)
+          ? 0.0
+          : (category.value.total / categories.total);
       final interval = CurvedAnimation(parent: anim, curve: Interval(0, end));
       intervals.add(interval);
       intervalValues.add([0, end]);
@@ -103,9 +105,10 @@ List<Animation> computeArcIntervals({
 
     final end = category.value.total / categories.total;
     final previousInterval = intervalValues.last;
-    final newEnd = (previousInterval.last + end) > 1.0
+    var newEnd = (previousInterval.last + end) > 1.0
         ? 1.0
         : (previousInterval.last + end);
+    if (newEnd.isNaN) newEnd = 0.0;
     final interval = CurvedAnimation(
       parent: anim,
       curve: Interval(previousInterval.last, newEnd),

@@ -52,7 +52,7 @@ dependencies:
   google_fonts: ^5.1.0
   shared_preferences: ^2.2.1
   intl: ^0.18.1
-  json_path: ^0.6.4
+  json_path: ^0.6.3
   timeago: ^3.5.0
   url_launcher: ^6.1.13
   page_transition: ^2.0.9
@@ -70,6 +70,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "image/diary_icon.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -92,7 +98,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - image/
-    - .env
+    # - .env
     # - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

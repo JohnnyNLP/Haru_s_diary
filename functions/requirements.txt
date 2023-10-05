@@ -21,3 +21,4 @@ openai==0.28.0
 boto3
 sagemaker
 python-dotenv
+pycryptodome

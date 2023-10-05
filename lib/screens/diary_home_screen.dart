@@ -146,13 +146,6 @@ class _DiaryHomeScreenState extends State<DiaryHomeScreen> {
                             '사용자의 대화를 기반으로 최대 8가지\n카테고리로 감정 분석을 진행합니다.\n\n8가지 감정은 다음과 같습니다:\n기쁨, 기대, 열정, 애정, 슬픔, 분노, 우울, 불쾌',
                         child: Icon(Icons.info_outline, size: 20.w),
                       ),
-                      // IconButton(
-                      //   icon: Icon(Icons.info_outline),
-                      //   iconSize: 20.w,
-                      //   onPressed: () {}, // 필요에 따라 다른 기능 추가
-                      //   tooltip:
-                      //       '사용자의 대화를 기반으로 최대 8가지\n카테고리로 감정 분석을 진행합니다.\n8가지 감정은 다음과 같습니다:\n기쁨, 기대, 열정, 애정, 슬픔, 분노, 우울, 불쾌',
-                      // )
                     ],
                   ),
                   SentimentChart(

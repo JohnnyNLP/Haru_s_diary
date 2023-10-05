@@ -151,8 +151,13 @@ class SentimentChartState extends State<SentimentChart> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? Container()
+    return isLoading || sentiments.length == 0
+        ? Container(
+            child: Padding(
+              padding: EdgeInsets.all(8.0.h),
+              child: Text('아직 분석할 일기 내용이 없습니다.'),
+            ),
+          )
         : SingleChildScrollView(
             child: Container(
               height: 580.h,

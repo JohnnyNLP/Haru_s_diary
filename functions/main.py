@@ -7,10 +7,10 @@ from google.cloud import firestore
 from google.cloud.firestore import SERVER_TIMESTAMP
 
 # AWS 호출 관련
-import boto3
-import sagemaker
-from sagemaker import Session
-import json
+# import boto3
+# import sagemaker
+# from sagemaker import Session
+# import json
 
 # 환경 변수
 from dotenv import load_dotenv
@@ -31,6 +31,32 @@ from langchain.chains import LLMChain, ConversationChain
 from langchain.chains.conversation.memory import ConversationSummaryBufferMemory
 from langchain.callbacks import get_openai_callback
 
+# 암호화 키 및 모듈
+from base64 import b64encode, b64decode
+from Crypto.Cipher import AES
+class AESCipher:
+    def __init__(self, key):
+        self.key = key
+
+    def encrypt(self, data):
+        cipher = AES.new(self.key, AES.MODE_EAX)
+        nonce = cipher.nonce
+        ciphertext, tag = cipher.encrypt_and_digest(data.encode())
+        return b64encode(nonce + ciphertext).decode('utf-8')
+
+    def decrypt(self, enc_data):
+        enc_data_bytes = b64decode(enc_data)
+        nonce = enc_data_bytes[:16]
+        ciphertext = enc_data_bytes[16:]
+        cipher = AES.new(self.key, AES.MODE_EAX, nonce=nonce)
+        return cipher.decrypt(ciphertext).decode('utf-8')
+    
+cipher = AESCipher(b64decode('piffLjlaeioC7UmcOhEBTdqnaYih3QPXtgV80Q+iFHE='))
+
+
+db = firestore.Client()
+os.environ['encrypted_api_key'] = db.collection('config').document('gpt_api_key').get().to_dict()["value"]
+
 cred = credentials.Certificate(
     "path/to/haru-s-diary-firebase-adminsdk-jom67-47ca164d79.json"
 )
@@ -41,7 +67,18 @@ sent_endpoint = 'pytorch-inference-2023-10-03-11-00-58-994'
 
 @https_fn.on_call(timeout_sec=180, memory=options.MemoryOption.MB_512)
 def writeDiary(req: https_fn.CallableRequest):
-    OPENAI_API_KEY = req.data["OPENAI_API_KEY"]
+
+    # ID 토큰 가져오기 및 검증 추가
+    id_token = request.headers.get("Authorization").split("Bearer ")[1]
+    try:
+        decoded_token = auth.verify_id_token(id_token)
+        uid = decoded_token["uid"]
+        print(uid)
+    except ValueError:
+        return {"body": "Unauthenticated", "statusCode": 401}
+    
+    # OPENAI_API_KEY = req.data["OPENAI_API_KEY"]
+    OPENAI_API_KEY = cipher.decrypt(os.environ.get('encrypted_api_key'))
     userID = req.data["userID"]
     docId = req.data["docId"]
     date = req.data["date"]
@@ -221,7 +258,8 @@ def ChatAI(req: https_fn.CallableRequest):
     except ValueError:
         return {"body": "Unauthenticated", "statusCode": 401}
 
-    OPENAI_API_KEY = req.data["OPENAI_API_KEY"]
+    # OPENAI_API_KEY = req.data["OPENAI_API_KEY"]
+    OPENAI_API_KEY = cipher.decrypt(os.environ.get('encrypted_api_key'))
     db = firestore.Client()
     userID = req.data["userID"]
     docId = req.data["docId"]

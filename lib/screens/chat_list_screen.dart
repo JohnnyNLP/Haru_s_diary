@@ -98,7 +98,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     // DateTime lastDay = now.subtract(Duration(days: now.weekday));
     DateTime lastDay = now.subtract(Duration(days: 1));
     String formattedDate = DateFormat('yyyyMMdd').format(lastDay);
-    // formattedDate = '20230101'; // 테스트 위해 하드코딩
+    formattedDate = '20230101'; // 테스트 위해 하드코딩
     final Stream<QuerySnapshot<Map<String, dynamic>>> chatStream =
         FirebaseFirestore.instance
             .collection(_collectionPath!)

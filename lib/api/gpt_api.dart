@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class GptApiClass {
@@ -16,7 +16,7 @@ class GptApiClass {
   GptApiClass._internal();
 
   Future<String> sendMessage(messages) async {
-    final _apiKey = dotenv.env['GPT_API_KEY'].toString();
+    // final _apiKey = dotenv.env['GPT_API_KEY'].toString();
     final _model = 'gpt-3.5-turbo';
     final _max_tokens = 1000;
     final initMessage = [
@@ -31,7 +31,7 @@ class GptApiClass {
 
     final headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${_apiKey}',
+      // 'Authorization': 'Bearer ${_apiKey}',
     };
     final body = jsonEncode({
       'model': _model,
@@ -60,7 +60,7 @@ class GptApiClass {
   }
 
   Future<String> makeDiary(messages) async {
-    final _apiKey = dotenv.env['GPT_API_KEY'].toString();
+    // final _apiKey = dotenv.env['GPT_API_KEY'].toString();
     final _model = 'gpt-4';
     final _max_tokens = 1000;
     final initMessage = [
@@ -74,7 +74,7 @@ class GptApiClass {
 
     final headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $_apiKey',
+      // 'Authorization': 'Bearer $_apiKey',
     };
     final body = jsonEncode({
       'model': _model,
