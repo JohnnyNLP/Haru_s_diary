@@ -8,7 +8,7 @@ class Functions {
   // 싱글턴 패턴을 사용하여 하나의 인스턴스만 생성되게 할 수 있습니다.
   static final Functions _singleton = Functions._internal();
 
-  final useEmul = true; // emulators 사용여부
+  final useEmul = false; // emulators 사용여부
 
   late FirebaseFunctions _functionsForProd;
 
