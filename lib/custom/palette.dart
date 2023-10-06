@@ -21,4 +21,8 @@ class Palette {
   // static const Color theme5 = Color(0xFF268663);
   // static const Color theme6 = Color(0xFF006E5E);
   // primaryBackground
+  static const Color first = Color(0xFFEAC8A6);
+  static const Color second = Color(0xFFFFC8A3);
+  static const Color third = Color(0xFFFFC5A9);
+  static const Color fourth = Color(0xFFFFC0B8);
 }

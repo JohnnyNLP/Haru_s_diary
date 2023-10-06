@@ -130,7 +130,7 @@ class _NewMessageState extends State<NewMessage> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0x2957636C),
+        color: Color.fromRGBO(87, 99, 108, 230),
         borderRadius: BorderRadius.circular(12),
       ),
       margin: EdgeInsets.fromLTRB(0, 8.h, 0, 8.h),

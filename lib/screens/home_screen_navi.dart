@@ -5,6 +5,7 @@ import 'package:haru_diary/screens/setting_screen.dart';
 import 'package:haru_diary/screens/tab_navigator.dart';
 // import 'collection_choice_screen.dart'; // Assuming the import is necessary for your overall code
 import 'chat_list_screen.dart';
+import '/custom/palette.dart';
 
 class HomeScreenNavi extends StatefulWidget {
   @override
@@ -59,7 +60,8 @@ class _HomeScreenNaviState extends State<HomeScreenNavi>
       bottomNavigationBar: SizedBox(
         height: 50.h,
         child: Container(
-          color: backgroundColor = Color.fromARGB(128, 217, 149, 81),
+          // color: backgroundColor = Color.fromARGB(128, 217, 149, 81),
+          color: backgroundColor = Palette.first,
           child: TabBar(
             indicatorColor: Colors.transparent,
             labelColor: Colors.black,

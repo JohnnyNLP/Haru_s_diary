@@ -57,7 +57,7 @@ class _DiaryHomeScreenState extends State<DiaryHomeScreen> {
     DateTime lastSunday = now.subtract(Duration(days: now.weekday));
     print(lastSunday);
     String formattedDate = DateFormat('yyyyMMdd').format(lastSunday);
-    formattedDate = '20230101'; // 테스트 위해 하드코딩
+    // formattedDate = '20230101'; // 테스트 위해 하드코딩
     final Stream<QuerySnapshot<Map<String, dynamic>>> chatStream =
         FirebaseFirestore.instance
             .collection(_collectionPath!)

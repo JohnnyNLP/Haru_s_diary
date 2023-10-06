@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:haru_diary/custom/palette.dart';
 import 'custom_theme.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -15,8 +16,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      // backgroundColor: Color.fromARGB(130, 217, 149, 81),
-      backgroundColor: Color.fromARGB(255, 234, 200, 166),
+      // backgroundColor: Color.fromARGB(255, 234, 200, 166),
+      backgroundColor: Palette.first,
       automaticallyImplyLeading: false,
       title: Row(
         mainAxisAlignment: alignment, // 변경됨
@@ -24,7 +25,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Text(
             text,
             style: CustomTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Outfit',
+                  fontFamily: 'Poppins',
                   color: Color(0xFF394249),
                   fontSize: 22.sp,
                   fontWeight: FontWeight.w500,

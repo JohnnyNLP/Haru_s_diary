@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:haru_diary/custom/palette.dart';
 
 class ChatBubbles extends StatelessWidget {
   const ChatBubbles(
@@ -44,7 +45,9 @@ class ChatBubbles extends StatelessWidget {
                         : BubbleType.receiverBubble),
                 alignment: Alignment.topRight,
                 margin: EdgeInsets.only(top: 20),
-                backGroundColor: isMe ? Colors.blue : Color(0xffE7E7ED),
+                backGroundColor: isMe
+                    ? Palette.first //Color.fromRGBO(254, 182, 36, 0.9)
+                    : Colors.blueGrey[50], //Color.fromRGBO(255, 234, 217, 0.9),
                 child: Container(
                   constraints: BoxConstraints(
                     maxWidth: MediaQuery.of(context).size.width * 0.55,
@@ -58,12 +61,12 @@ class ChatBubbles extends StatelessWidget {
                         userName,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: isMe ? Colors.white : Colors.black),
+                            color: isMe ? Colors.black : Colors.black),
                       ),
                       Text(
                         message,
                         style: TextStyle(
-                            color: isMe ? Colors.white : Colors.black),
+                            color: isMe ? Colors.black : Colors.black),
                       ),
                     ],
                   ),

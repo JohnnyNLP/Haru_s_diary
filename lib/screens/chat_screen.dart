@@ -156,7 +156,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: Container(
                         padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 12.h),
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(128, 217, 149, 81),
+                          // color: Color.fromARGB(128, 217, 149, 81),
+                          color: Color.fromARGB(128, 239, 226, 213),
                           // borderRadius: BorderRadius.circular(15),
                         ),
                         child: Messages(collectionPath!, userChatStream!),

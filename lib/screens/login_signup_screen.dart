@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:haru_diary/custom/custom_app_bar.dart';
 import '/add_image/add_image.dart';
 import '../custom/palette.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -51,16 +52,19 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '하루의 일기장', // AppBar의 이름을 "Login"으로 설정
-          style: TextStyle(
-              color: const Color.fromARGB(255, 58, 58, 59), // 텍스트 색상 변경
-              fontSize: 30),
-        ),
-        backgroundColor:
-            Color.fromARGB(128, 243, 199, 134), //(0xFFF9DE7A), // 배경색을 노란색으로 설정
+      appBar: CustomAppBar(
+        text: '하루의 일기장',
       ),
+      // appBar: AppBar(
+      //   title: Text(
+      //     '하루의 일기장', // AppBar의 이름을 "Login"으로 설정
+      //     style: TextStyle(
+      //         color: const Color.fromARGB(255, 58, 58, 59), // 텍스트 색상 변경
+      //         fontSize: 30),
+      //   ),
+      //   backgroundColor:
+      //       Color.fromARGB(128, 243, 199, 134), //(0xFFF9DE7A), // 배경색을 노란색으로 설정
+      // ),
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
         child: GestureDetector(
@@ -525,8 +529,12 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              Color.fromARGB(128, 243, 199, 134),
-                              Color(0xFFF9DE7A),
+                              Palette.first,
+                              Palette.second,
+                              // Palette.third,
+                              // Palette.fourth,
+                              // Color.fromARGB(128, 243, 199, 134),
+                              // Color(0xFFF9DE7A),
                             ],
                             // colors: [Color(0xFFF9DE7A), Color(0xFFF9DE7A)],
                             begin: Alignment.topLeft,
