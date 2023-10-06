@@ -36,6 +36,7 @@ class MainScreen extends StatelessWidget {
         ],
       ),
       body: ListView(
+        physics: NeverScrollableScrollPhysics(),
         children: [
           ListTile(
             contentPadding: EdgeInsets.symmetric(

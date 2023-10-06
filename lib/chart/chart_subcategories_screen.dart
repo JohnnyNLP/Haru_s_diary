@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'donut/chart_view.dart';
 import 'donut/chart_segment_data.dart';
@@ -50,11 +51,13 @@ class _SubCategoryScreenState extends State<SubCategoryScreen>
         leading: BackButton(color: widget.category.color),
       ),
       body: ListView(
+        physics: NeverScrollableScrollPhysics(),
         children: [
           Center(
             child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 24),
+              margin: EdgeInsets.fromLTRB(0, 0, 0, 24.h),
               child: Stack(
+                alignment: Alignment.center,
                 children: [
                   _DonutBackground(
                     widget.category.color,

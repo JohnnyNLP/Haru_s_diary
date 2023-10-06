@@ -1,6 +1,5 @@
 import 'package:basics/int_basics.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quiver/iterables.dart';
 
 import '../chart_model.dart';
@@ -52,11 +51,10 @@ class ChartView extends StatelessWidget {
       //   child: Stack(
 
       child: Container(
-        height: 300.h,
         child: AnimatedBuilder(
           animation: animation,
           builder: (context, _) => FittedBox(
-            fit: BoxFit.fill, //차트 크기 조절시 수정해 볼 수 있는 코드: BoxFit.contain
+            fit: BoxFit.contain, //차트 크기 조절시 수정해 볼 수 있는 코드: BoxFit.contain
             child: Stack(
               clipBehavior: Clip.none,
               children: <Widget>[

@@ -2,11 +2,12 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'chart_notification.dart';
 import 'chart_segment_data.dart';
 
-const graphSize = Size(300, 300);
+var graphSize = Size(300.h, 300.h);
 
 class DonutSegment extends StatelessWidget {
   final ArcData data;
@@ -162,7 +163,8 @@ class DonutSegmentPainter extends CustomPainter {
         ..fillType = PathFillType.evenOdd,
     );
 
-    canvas.drawPath(path, Paint()..color = data.color);//감정분석차트의 4가지 섹션 색상을 한번에 준 코드
+    canvas.drawPath(
+        path, Paint()..color = data.color); //감정분석차트의 4가지 섹션 색상을 한번에 준 코드
 
     // softlight shadow
     canvas.drawPath(path, shadowPaint);
