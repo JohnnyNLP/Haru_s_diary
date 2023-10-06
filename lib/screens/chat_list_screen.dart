@@ -98,7 +98,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     // DateTime lastDay = now.subtract(Duration(days: now.weekday));
     DateTime lastDay = now.subtract(Duration(days: 1));
     String formattedDate = DateFormat('yyyyMMdd').format(lastDay);
-    formattedDate = '20230101'; // 테스트 위해 하드코딩
+    // formattedDate = '20230101'; // 테스트 위해 하드코딩
     final Stream<QuerySnapshot<Map<String, dynamic>>> chatStream =
         FirebaseFirestore.instance
             .collection(_collectionPath!)
@@ -120,7 +120,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.all(16.h),
+            padding: EdgeInsetsDirectional.fromSTEB(16.w, 16.h, 16.w, 16.h),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
@@ -166,7 +166,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         color: CustomTheme.of(context).secondaryBackground,
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16.h),
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 30.h),
                         child: Container(
                           width: 100.w,
                           decoration: BoxDecoration(
@@ -179,16 +179,40 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                 child: ChatList(
                                     _docStream!, selectedIds, showCheckbox),
                               ),
-                              IconButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ChatScreen()));
-                                  },
-                                  icon: Icon(Icons.add_circle_outline,
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ChatScreen(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  '새로운 대화하기',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: CustomTheme.of(context).tertiary,
+                                  ),
+                                ),
+                                style: TextButton.styleFrom(
+                                  side: BorderSide(
                                       color: CustomTheme.of(context).tertiary,
-                                      size: 30.0.h))
+                                      width: 2), // 테두리 설정
+                                  shape: RoundedRectangleBorder(
+                                    // 둥근 모서리 설정
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                ),
+                              ),
+                              // IconButton(
+                              //   onPressed: () {
+                              //     Navigator.of(context).push(MaterialPageRoute(
+                              //         builder: (context) => ChatScreen()));
+                              //   },
+                              //   icon: Icon(Icons.add_circle_outline,
+                              //       color: CustomTheme.of(context).tertiary,
+                              //       size: 30.0.h),
+                              // )
                             ],
                           ),
                         ),

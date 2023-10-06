@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../provider/common_provider.dart';
 import '/chat/chat_bubble.dart';
@@ -37,19 +38,24 @@ class Messages extends StatelessWidget {
           itemCount: chatDocs.length,
           itemBuilder: (context, index) {
             return ChatBubbles(
-              chatDocs[index]['text'],
-              (chatDocs[index].containsKey('userID')
-                      ? chatDocs[index]['userID'].toString()
-                      : '') ==
-                  user!.uid,
-              (chatDocs[index].containsKey('userName')
-                  ? chatDocs[index]['userName'].toString()
-                  : '낯선이'),
-              (chatDocs[index].containsKey('userImage')
-                  ? chatDocs[index]['userImage'].toString()
-                  : ''),
-              key: ValueKey(index),
-            );
+                chatDocs[index]['text'],
+                (chatDocs[index].containsKey('userID')
+                        ? chatDocs[index]['userID'].toString()
+                        : '') ==
+                    user!.uid,
+                (chatDocs[index].containsKey('userName')
+                    ? chatDocs[index]['userName'].toString()
+                    : '낯선이'),
+                (chatDocs[index].containsKey('userImage')
+                    ? chatDocs[index]['userImage'].toString()
+                    : ''),
+                (chatDocs[index].containsKey('time')
+                    ? DateFormat('a h:mm')
+                        .format((chatDocs[index]['time'] as Timestamp).toDate())
+                    : '')
+
+                // key: ValueKey(index),
+                );
           },
         );
       },

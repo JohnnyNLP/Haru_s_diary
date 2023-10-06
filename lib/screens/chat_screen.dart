@@ -102,7 +102,7 @@ class _ChatScreenState extends State<ChatScreen> {
           return Scaffold(
               appBar: CustomAppBar(text: '오하루'),
               body: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+                padding: EdgeInsetsDirectional.fromSTEB(12.w, 12.h, 12.w, 0),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -154,8 +154,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     Expanded(
                       child: Container(
-                        margin: EdgeInsets.only(top: 0),
-                        padding: EdgeInsets.fromLTRB(8, 8, 8, 12),
+                        padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 12.h),
                         decoration: BoxDecoration(
                           color: Color.fromARGB(128, 217, 149, 81),
                           // borderRadius: BorderRadius.circular(15),
