@@ -53,10 +53,6 @@ class AESCipher:
     
 cipher = AESCipher(b64decode('piffLjlaeioC7UmcOhEBTdqnaYih3QPXtgV80Q+iFHE='))
 
-
-db = firestore.Client()
-os.environ['encrypted_api_key'] = db.collection('config').document('gpt_api_key').get().to_dict()["value"]
-
 cred = credentials.Certificate(
     "path/to/haru-s-diary-firebase-adminsdk-jom67-47ca164d79.json"
 )
@@ -64,6 +60,8 @@ initialize_app(cred)
 app = Flask(__name__)
 CORS(app)
 sent_endpoint = 'pytorch-inference-2023-10-03-11-00-58-994'
+
+
 
 @https_fn.on_call(timeout_sec=180, memory=options.MemoryOption.MB_512)
 def writeDiary(req: https_fn.CallableRequest):
@@ -78,11 +76,12 @@ def writeDiary(req: https_fn.CallableRequest):
         return {"body": "Unauthenticated", "statusCode": 401}
     
     # OPENAI_API_KEY = req.data["OPENAI_API_KEY"]
+    db = firestore.Client()
+    os.environ['encrypted_api_key'] = db.collection('config').document('gpt_api_key').get().to_dict()["value"]
     OPENAI_API_KEY = cipher.decrypt(os.environ.get('encrypted_api_key'))
     userID = req.data["userID"]
     docId = req.data["docId"]
     date = req.data["date"]
-    db = firestore.Client()
 
     # 중첩된 컬렉션과 문서에 접근
     log_ref = db.collection('user').document(userID).collection('chat').document(
@@ -259,8 +258,9 @@ def ChatAI(req: https_fn.CallableRequest):
         return {"body": "Unauthenticated", "statusCode": 401}
 
     # OPENAI_API_KEY = req.data["OPENAI_API_KEY"]
-    OPENAI_API_KEY = cipher.decrypt(os.environ.get('encrypted_api_key'))
     db = firestore.Client()
+    os.environ['encrypted_api_key'] = db.collection('config').document('gpt_api_key').get().to_dict()["value"]
+    OPENAI_API_KEY = cipher.decrypt(os.environ.get('encrypted_api_key'))
     userID = req.data["userID"]
     docId = req.data["docId"]
     user_message = req.data["prompt"]  # 사용자 입력값
