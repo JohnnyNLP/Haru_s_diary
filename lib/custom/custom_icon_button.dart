@@ -43,6 +43,7 @@ class CustomIconButton extends StatelessWidget {
             icon: icon,
             onPressed: onPressed,
             splashRadius: buttonSize,
+            padding: EdgeInsets.all(0),
           ),
         ),
       );

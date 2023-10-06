@@ -164,7 +164,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                     isReadOnly == true
-                        ? SizedBox(height: 7.h)
+                        ? SizedBox(height: 10.h)
                         : NewMessage(collectionPath!, userChatStream!, docId!),
                   ],
                 ),

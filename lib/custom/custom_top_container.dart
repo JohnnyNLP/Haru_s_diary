@@ -120,6 +120,7 @@ class CustomTopContainer extends StatelessWidget {
                 ),
               if (popupItems != null)
                 PopupMenuButton<int>(
+                  padding: EdgeInsets.all(0),
                   offset: Offset(0, 50.h),
                   icon: Icon(
                     Icons.more_vert,

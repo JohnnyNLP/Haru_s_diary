@@ -169,6 +169,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       enabled: _isEdit,
       offset: Offset(0, 40), // 버튼 아래로 40 픽셀만큼 오프셋
       child: Container(
+        alignment: Alignment.center, // 수직, 수평 가운데 정렬
         width: 65.w,
         padding: EdgeInsets.all(6.0.h),
         decoration: BoxDecoration(
@@ -178,7 +179,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
         child: Text(
           text,
           style: TextStyle(color: Colors.white), // 원하는 텍스트 스타일로 변경
-          textAlign: TextAlign.center,
         ),
       ),
       itemBuilder: (context) => [
