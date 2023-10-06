@@ -349,15 +349,18 @@ class _DiaryScreenState extends State<DiaryScreen> {
                           style: CustomTheme.of(context).bodyMedium.override(
                                 fontFamily: 'Readex Pro',
                                 color: CustomTheme.of(context).secondaryText,
-                                fontSize: 15,
+                                fontSize: 15.sp,
                                 letterSpacing: 1,
                                 fontWeight: FontWeight.bold,
                               ),
                         )),
+                        // Expanded(
+                        //   child: buttonListView(sentiment['most']),
+                        // ),
                         SizedBox(
-                          height: 35, // 높이 지정
-                          width:
-                              MediaQuery.of(context).size.width - 110, // 너비 지정
+                          height: 35.h, // 높이 지정
+                          width: MediaQuery.of(context).size.width -
+                              (15.sp * 10), // 너비 지정
                           child: buttonListView(sentiment['most']),
                         ),
                       ],

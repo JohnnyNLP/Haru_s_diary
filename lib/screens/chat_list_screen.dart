@@ -190,14 +190,14 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                 child: Text(
                                   '새로운 대화하기',
                                   style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     color: CustomTheme.of(context).tertiary,
                                   ),
                                 ),
                                 style: TextButton.styleFrom(
                                   side: BorderSide(
                                       color: CustomTheme.of(context).tertiary,
-                                      width: 2), // 테두리 설정
+                                      width: 1.7), // 테두리 설정
                                   shape: RoundedRectangleBorder(
                                     // 둥근 모서리 설정
                                     borderRadius: BorderRadius.circular(20.0),

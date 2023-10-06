@@ -553,7 +553,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                         ),
                         child: Center(
                           child: Text(
-                            'Sign up', // 텍스트로 변경
+                            isSignupScreen ? 'Sign up' : 'Login', // 텍스트로 변경
                             style: TextStyle(
                               color: Color.fromARGB(
                                   255, 255, 249, 247), // 텍스트 색상 변경

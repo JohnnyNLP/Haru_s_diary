@@ -129,12 +129,13 @@ class _NewMessageState extends State<NewMessage> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      alignment: Alignment.center,
       decoration: BoxDecoration(
         color: Color.fromRGBO(87, 99, 108, 230),
         borderRadius: BorderRadius.circular(12),
       ),
       margin: EdgeInsets.fromLTRB(0, 8.h, 0, 8.h),
-      padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 10.h),
+      padding: EdgeInsets.fromLTRB(12.w, 5.h, 12.w, 10.h),
       child: Row(
         children: [
           Expanded(
@@ -159,6 +160,7 @@ class _NewMessageState extends State<NewMessage> {
             onPressed: _userEnterMessage.trim().isEmpty ? null : _sendMessage,
             icon: Icon(Icons.send),
             color: Colors.blue,
+            padding: EdgeInsets.zero,
           ),
         ],
       ),

@@ -30,27 +30,27 @@ class ChatBubbles extends StatelessWidget {
                   time,
                   style: TextStyle(
                     color: Colors.black54,
-                    fontSize: 10.sp,
+                    fontSize: 8.sp,
                   ),
                 ),
               ),
             Padding(
               padding: isMe
-                  ? EdgeInsets.fromLTRB(0, 0, 40.w, 5.h)
-                  : EdgeInsets.fromLTRB(40.w, 0, 0, 5.h),
+                  ? EdgeInsets.fromLTRB(0, 0, 45.w, 5.h)
+                  : EdgeInsets.fromLTRB(45.w, 0, 0, 5.h),
               child: ChatBubble(
                 clipper: ChatBubbleClipper2(
                     type: isMe
                         ? BubbleType.sendBubble
                         : BubbleType.receiverBubble),
                 alignment: Alignment.topRight,
-                margin: EdgeInsets.only(top: 20),
+                margin: EdgeInsets.only(top: 20.h),
                 backGroundColor: isMe
                     ? Palette.first //Color.fromRGBO(254, 182, 36, 0.9)
                     : Colors.blueGrey[50], //Color.fromRGBO(255, 234, 217, 0.9),
                 child: Container(
                   constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.55,
+                    maxWidth: MediaQuery.of(context).size.width * 0.53,
                   ),
                   child: Column(
                     crossAxisAlignment: isMe
@@ -60,13 +60,20 @@ class ChatBubbles extends StatelessWidget {
                       Text(
                         userName,
                         style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: isMe ? Colors.black : Colors.black),
+                          fontWeight: FontWeight.bold,
+                          color: isMe ? Colors.black : Colors.black,
+                          fontSize: 13.sp,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5.h,
                       ),
                       Text(
                         message,
                         style: TextStyle(
-                            color: isMe ? Colors.black : Colors.black),
+                          color: isMe ? Colors.black : Colors.black,
+                          fontSize: 12.sp,
+                        ),
                       ),
                     ],
                   ),
@@ -80,7 +87,7 @@ class ChatBubbles extends StatelessWidget {
                   time,
                   style: TextStyle(
                     color: Colors.black54,
-                    fontSize: 10.sp,
+                    fontSize: 8.sp,
                   ),
                 ),
               ),
@@ -91,7 +98,7 @@ class ChatBubbles extends StatelessWidget {
           right: isMe ? 2.w : null,
           left: isMe ? null : 2.w,
           child: CircleAvatar(
-            radius: 25.h,
+            radius: 23.sp,
             backgroundImage: userImage != '' ? NetworkImage(userImage) : null,
           ),
         ),
