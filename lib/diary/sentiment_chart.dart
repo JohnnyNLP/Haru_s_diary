@@ -160,7 +160,7 @@ class SentimentChartState extends State<SentimentChart> {
           )
         : SingleChildScrollView(
             child: Container(
-              height: 580.h,
+              height: 780.h,
               child: WillPopScope(
                 onWillPop: () async {
                   if (widget.navigatorKey.currentState!.canPop()) {

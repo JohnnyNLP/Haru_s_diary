@@ -134,7 +134,7 @@ class DiaryListScreenState extends State<DiaryListScreen> {
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.all(16.h),
+            padding: EdgeInsetsDirectional.fromSTEB(16.w, 16.h, 16.w, 16.h),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,

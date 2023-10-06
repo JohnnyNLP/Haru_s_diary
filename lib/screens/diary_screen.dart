@@ -215,7 +215,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
             child: SafeArea(
               top: true,
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+                padding: EdgeInsetsDirectional.fromSTEB(16.w, 16.h, 16.w, 16.h),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.stretch,

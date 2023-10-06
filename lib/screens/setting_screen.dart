@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haru_diary/api/functions.dart';
 import 'package:haru_diary/custom/custom_icon_button.dart';
 import 'package:haru_diary/custom/custom_theme.dart';
 import 'package:haru_diary/custom/custom_app_bar.dart';
@@ -90,7 +89,7 @@ class _SettingScreenState extends State<SettingScreen> {
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.all(16.h),
+            padding: EdgeInsetsDirectional.fromSTEB(16.w, 16.h, 16.w, 16.h),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -102,47 +101,49 @@ class _SettingScreenState extends State<SettingScreen> {
                       height: 16.h,
                     ),
                     _buildListItem(),
-                    SizedBox(
-                      height: 16.h,
-                    ),
-                    Container(
-                      height: 50.0,
-                      decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(8.0)),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CustomIconButton(
-                            borderColor: Colors.transparent,
-                            borderRadius: 20,
-                            buttonSize: 40.h,
-                            icon: Icon(
-                              Icons.logout,
-                              color: CustomTheme.of(context).tertiary,
-                              size: 25.h,
-                            ),
-                            onPressed: () async {
-                              await func.callFunctions('test', {});
-                            },
-                          ),
-                          SizedBox(width: 8.0.w),
-                          Text(
-                            '테스트',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
+                    // SizedBox(
+                    //   height: 16.h,
+                    // ),
+                    // Container(
+                    //   height: 50.0,
+                    //   decoration: BoxDecoration(
+                    //       color: Colors.grey[200],
+                    //       borderRadius: BorderRadius.circular(8.0)),
+                    //   child: Row(
+                    //     crossAxisAlignment: CrossAxisAlignment.center,
+                    //     children: [
+                    //       CustomIconButton(
+                    //         borderColor: Colors.transparent,
+                    //         borderRadius: 20,
+                    //         buttonSize: 40.h,
+                    //         icon: Icon(
+                    //           Icons.logout,
+                    //           color: CustomTheme.of(context).tertiary,
+                    //           size: 25.h,
+                    //         ),
+                    //         onPressed: () async {
+                    //           await func.callFunctions('test', {});
+                    //         },
+                    //       ),
+                    //       SizedBox(width: 8.0.w),
+                    //       Text(
+                    //         '테스트',
+                    //         style: TextStyle(color: Colors.grey),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                   ],
                 ),
                 Column(
                   children: [
                     RichText(
                       text: TextSpan(
-                        style: TextStyle(color: Colors.black, fontSize: 16.0),
+                        style: TextStyle(
+                            color: const Color.fromARGB(128, 0, 0, 0),
+                            fontSize: 12.0),
                         children: <TextSpan>[
-                          TextSpan(text: '강아지 icon by '),
+                          // TextSpan(text: '강아지 icon by '),
                           TextSpan(
                             text: '작가 mamewmy',
                             style: TextStyle(
@@ -190,7 +191,9 @@ class _SettingScreenState extends State<SettingScreen> {
                     // ),
                     RichText(
                       text: TextSpan(
-                        style: TextStyle(color: Colors.black, fontSize: 16.0),
+                        style: TextStyle(
+                            color: const Color.fromARGB(128, 0, 0, 0),
+                            fontSize: 12.0),
                         children: <TextSpan>[
                           TextSpan(
                             text: '일기',

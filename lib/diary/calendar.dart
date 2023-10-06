@@ -57,6 +57,7 @@ class CalendarState extends State<Calendar> {
       child: Column(
         children: [
           TableCalendar(
+            daysOfWeekHeight: 24.h,
             onCalendarCreated: (pageController) {
               getMonthEvent(focusedDay: _today);
             },

@@ -86,6 +86,7 @@ class _HomeScreenNaviState extends State<HomeScreenNavi>
         ),
       ),
       body: TabBarView(
+        physics: NeverScrollableScrollPhysics(),
         controller: _tabController,
         children: [
           TabNavigator(navigatorKey: _diaryTabNavKey, child: DiaryHomeScreen()),
