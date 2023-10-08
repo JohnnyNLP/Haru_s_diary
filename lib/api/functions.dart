@@ -1,5 +1,7 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 // import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Functions {
@@ -19,6 +21,44 @@ class Functions {
   Functions._internal() {
     _functionsForProd = FirebaseFunctions.instanceFor();
     if (useEmul) _functionsForProd.useFunctionsEmulator('localhost', 5001);
+  }
+
+  Future<Map<String, dynamic>> callLambda(
+      String lambdaEndpoint, Map<String, dynamic> keyValue) async {
+    try {
+      // Extract values from the keyValue map
+      String docID = keyValue['docID'];
+      String token = keyValue['token'];
+
+      // Construct the URL with query parameters
+      String requestUrl =
+          "$lambdaEndpoint?userID=${FirebaseAuth.instance.currentUser!.uid}&docID=$docID";
+
+      // Print the full URL for debugging
+      print("Sending request to $requestUrl");
+
+      final response = await http.post(
+        Uri.parse(requestUrl),
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": 'OUp8SJXQPA9dXudxv3KOi9ZWjJzsoqk77gwqzJvM',
+          "token": token, // Assuming you want to use this header for the token
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        if (data['statusCode'] == 200) {
+          return data['body'] as Map<String, dynamic>;
+        } else {
+          throw Exception('${data['statusCode']} error: ${data['body']}');
+        }
+      } else {
+        throw Exception('Error ${response.statusCode}: ${response.body}');
+      }
+    } catch (e) {
+      throw e; // Propagate the exception for better error handling in the caller.
+    }
   }
 
   Future<dynamic> callFunctions(functionName, keyValue) async {
