@@ -14,6 +14,8 @@ class Functions {
 
   late FirebaseFunctions _functionsForProd;
 
+  final _authentication = FirebaseAuth.instance; //Firebase 인증 객체 생성
+
   factory Functions() {
     return _singleton;
   }
@@ -27,22 +29,24 @@ class Functions {
       String lambdaEndpoint, Map<String, dynamic> keyValue) async {
     try {
       // Extract values from the keyValue map
-      String docID = keyValue['docID'];
-      String token = keyValue['token'];
+      String? token = await _authentication.currentUser!.getIdToken(true);
 
       // Construct the URL with query parameters
-      String requestUrl =
-          "$lambdaEndpoint?userID=${FirebaseAuth.instance.currentUser!.uid}&docID=$docID";
+      String requestUrl = "$lambdaEndpoint?";
+      keyValue.forEach((key, value) {
+        requestUrl += '$key=$value&';
+      });
 
       // Print the full URL for debugging
       print("Sending request to $requestUrl");
 
+      // print(token);
       final response = await http.post(
         Uri.parse(requestUrl),
         headers: {
           "Content-Type": "application/json",
           "x-api-key": 'OUp8SJXQPA9dXudxv3KOi9ZWjJzsoqk77gwqzJvM',
-          "token": token, // Assuming you want to use this header for the token
+          "token": token!, // Assuming you want to use this header for the token
         },
       );
 
@@ -69,7 +73,7 @@ class Functions {
       final Map<String, dynamic> request = {
         ...{
           // 공통으로 적용되는 request
-          'userID': FirebaseAuth.instance.currentUser!.uid,
+          'userID': _authentication.currentUser!.uid,
           // 'OPENAI_API_KEY': dotenv.env['GPT_API_KEY'].toString(),
           'push': true,
         },

@@ -90,9 +90,9 @@ class _DiaryScreenState extends State<DiaryScreen> {
     func.callLambda(
       'https://wighxciiz2.execute-api.ap-northeast-2.amazonaws.com/test/submit',
       {
+        'userID': loggedUser!.uid,
         'docID': widget._docId,
         'date': widget._date,
-        'token': await loggedUser!.getIdToken(true),
       },
     );
   }

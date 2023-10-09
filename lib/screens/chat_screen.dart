@@ -121,14 +121,14 @@ class _ChatScreenState extends State<ChatScreen> {
                         var conv =
                             await _firestore.collection(collectionPath!).get();
                         var len = conv.docs.length;
-                        if (len < 5) {
+                        if (len < 11) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: Text('알림'),
                                 content: Text(
-                                    '대화가 충분히 이루어지면, 하루가 대신 일기를 작성해줍니다.\n대화를 조금만 더 진행해주세요.\n\n하루와 한 대화: ${len}마디'),
+                                    '대화가 충분히 이루어지면, 하루가 대신 일기를 작성해줍니다.\n대화를 조금만 더 진행해주세요.\n(11마디 이상의 대화가 필요합니다.)\n\n현재 하루와 나눈 대화: ${len}마디'),
                                 actions: <Widget>[
                                   TextButton(
                                     child: Text('확인'),
