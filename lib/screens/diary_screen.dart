@@ -55,7 +55,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
     super.initState();
     _getCurrentUser();
     _getDocumentReference();
-    // _fetchDiary();
   }
 
   // 로딩 상태를 토글하는 메서드
@@ -88,11 +87,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
   }
 
   void _writeDiary() async {
-    // 일기 작성
-    // func.callFunctions(
-    //   'writeDiary',
-    //   {'docId': widget._docId, 'date': widget._date},
-    // );
     func.callLambda(
       'https://wighxciiz2.execute-api.ap-northeast-2.amazonaws.com/test/submit',
       {
@@ -129,7 +123,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
         'content': content ?? _contentController.text,
         'advice': advice ?? _adviceController.text,
         'sentiment': sentiment,
-        'time': Timestamp.now(),
+        'time': widget._date,
       },
       SetOptions(merge: true),
     );
