@@ -25,6 +25,12 @@ from langchain.chains import LLMChain, ConversationChain
 from langchain.chains.conversation.memory import ConversationSummaryBufferMemory
 from langchain.callbacks import get_openai_callback
 
+#fine-tune gpt3.5
+import requests
+import json
+
+
+
 # 암호화 키 및 모듈
 from base64 import b64encode, b64decode
 from Crypto.Cipher import AES
@@ -63,6 +69,8 @@ sent_endpoint = 'pytorch-inference-2023-10-03-11-00-58-994'
 # #user_message = req.data['prompt']
 # history = db.collection('user').document(userID).collection('chat').document(docId)['memory']
 # cf) db = firestore.client()
+
+
 @https_fn.on_call(timeout_sec=180, memory=options.MemoryOption.MB_512)
 def ChatAI(req: https_fn.CallableRequest):
 
@@ -74,41 +82,104 @@ def ChatAI(req: https_fn.CallableRequest):
         print(uid)
     except ValueError:
         return {"body": "Unauthenticated", "statusCode": 401}
+    userID = req.data["userID"]
+    docId = req.data["docId"]
+    chat_template = req.data["chat_template"]
 
     # OPENAI_API_KEY = req.data["OPENAI_API_KEY"]
     db = firestore.Client()
-    os.environ['encrypted_api_key'] = db.collection('config').document('gpt_api_key').get().to_dict()["value"]
-    OPENAI_API_KEY = cipher.decrypt(os.environ.get('encrypted_api_key'))
-    userID = req.data["userID"]
-    docId = req.data["docId"]
-    user_message = req.data["prompt"]  # 사용자 입력값
+    diary_ref = db.collection("user").document("userID").collection("diary").orderBy("last_message_time", "desc")
+    new_user = diary_ref.get()
+    existed_user = db.collection('user').document(userID).collection('chat').document(docId).collection("conversation").get()
+    
+    # 파인튜닝 GPT 모델
+    url = "https://api.openai.com/v1/chat/completions"
+        # 헤더 설정
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {OPENAI_API_KEY}"
+    }
+    HelloGPTAPI = db.collection("config").document("HelloGPTAPI").get("value")
+    fine_tuned_ref = db.collection('prompt').document('HelloChat').get()
+    fine_tuned_model = fine_tuned_ref.to_dict().get("model")
+    fine_tuned_prompt = fine_tuned_ref.to_dict().get("prompt")
 
-    openai.api_key = OPENAI_API_KEY
+    if len(new_user)==0:
+        openai.api_key = HelloGPTAPI
+        
+        # 요청 바디 데이터 설정
+        payload = {
+            "model": fine_tuned_model,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": fine_tuned_prompt
+                },
+                {
+                    "role": "user",
+                    "content": "안녕. (이전감정: 없음)"
+                }
+            ]
+        }
 
-    # prompt_content(all)
-    chat_template = req.data["chat_template"]
-    informal_template = req.data['informal_template']
+        # API 요청 보내기
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        if response.status_code == 200:
+            final_AI = response.json()['choices'][0]['message']['content']
+        else: 
+            final_AI = "안녕, 나는 너의 친구 '오하루'야. 힘든 일이나 고민이 있으면 언제든지 나에게 말해줘. 너의 하루를 더 행복하게 만들 수 있도록 도와줄게. 오늘은 어떤 하루를 보냈니?"
+    elif len(new_user)>0 and len(existed_user)==0: # 대화 시작
+        sent_info = diary_ref[0].to_dict().get("sentiment")['most']
+        sent_str = sent_info[0]+", "+sent_info[1] if len(sent_info)>1 else sent_info[0]
+        user_input = "안녕. (이전감정: "+sent_str+")"
+        openai.api_key = HelloGPTAPI
+        payload = {
+            "model": fine_tuned_model,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": fine_tuned_prompt
+                },
+                {
+                    "role": "user",
+                    "content": user_input
+                }
+            ]
+        }
+        # API 요청 보내기
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        if response.status_code == 200:
+            final_AI = response.json()['choices'][0]['message']['content']
+        else: 
+            final_AI = "안녕, 오늘은 어떤 하루를 보냈어?"
+    else: # 대화 중
+        os.environ['encrypted_api_key'] = db.collection('config').document('gpt_api_key').get().to_dict()["value"]
+        OPENAI_API_KEY = cipher.decrypt(os.environ.get('encrypted_api_key'))
+        user_message = req.data["prompt"]  # 사용자 입력값
+        openai.api_key = OPENAI_API_KEY
 
-    # 이전 대화 내용
-    memory = db.collection('user').document(
-        userID).collection('chat').document(docId).get()
-    memory_ref = db.collection('user').document(
-        userID).collection('chat').document(docId)
+        # 이전 대화 내용
+        memory = db.collection('user').document(
+            userID).collection('chat').document(docId).get()
+        memory_ref = db.collection('user').document(
+            userID).collection('chat').document(docId)
 
-    history = memory.to_dict().get(
-        'memory', [{'role': 'system', 'content': chat_template}])
+        history = memory.to_dict().get(
+            'memory', [{'role': 'system', 'content': chat_template}])
 
-    history.append({"role": "user", "content": user_message})
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=history,
-        temperature=1
-    )
+        history.append({"role": "user", "content": user_message})
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=history,
+            temperature=1
+        )
 
-    timestamp = SERVER_TIMESTAMP    # 마지막 메세지 시간 chat 문서에 기록
+        final_AI = response.choices[0].message["content"]
 
-    final_AI = response.choices[0].message["content"]
+
+    timestamp = SERVER_TIMESTAMP  
     history.append({"role": "assistant", "content": final_AI})
+    
     memory_ref = db.collection('user').document(
         userID).collection('chat').document(docId)
     memory_ref.set({'memory': history, 'lastTime': timestamp}, merge=True)
