@@ -87,14 +87,19 @@ class _DiaryScreenState extends State<DiaryScreen> {
   }
 
   void _writeDiary() async {
-    func.callLambda(
-      'https://wighxciiz2.execute-api.ap-northeast-2.amazonaws.com/test/submit',
-      {
-        'userID': loggedUser!.uid,
-        'docID': widget._docId,
-        'date': widget._date,
-      },
+    // 일기 작성
+    func.callFunctions(
+      'writeDiary',
+      {'docId': widget._docId, 'date': widget._date},
     );
+    // func.callLambda(
+    //   'https://wighxciiz2.execute-api.ap-northeast-2.amazonaws.com/test/submit',
+    //   {
+    //     'userID': loggedUser!.uid,
+    //     'docID': widget._docId,
+    //     'date': widget._date,
+    //   },
+    // );
   }
 
   // 일기를 Firestore에 업데이트 하는 메서드
